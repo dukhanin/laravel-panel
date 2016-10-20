@@ -1,0 +1,37 @@
+@import "panel.list.css";
+
+body .panel-list .depth-1 td:not(.panel-list-checkbox):not(.panel-list-model-action):not(.panel-list-sort) {
+    padding-left: 6%;
+}
+
+body .panel-list .depth-2 td:not(.panel-list-checkbox):not(.panel-list-model-action):not(.panel-list-sort) {
+    padding-left: 12%;
+}
+
+body .panel-list .depth-3 td:not(.panel-list-checkbox):not(.panel-list-model-action):not(.panel-list-sort) {
+    padding-left: 18%;
+}
+
+body .panel-list .depth-4 td:not(.panel-list-checkbox):not(.panel-list-model-action):not(.panel-list-sort) {
+    padding-left: 24%;
+}
+
+body .panel-list .depth-5 td:not(.panel-list-checkbox):not(.panel-list-model-action):not(.panel-list-sort) {
+    padding-left: 30%;
+}
+
+body .panel-list .depth-6 td:not(.panel-list-checkbox):not(.panel-list-model-action):not(.panel-list-sort) {
+    padding-left: 36%;
+}
+
+body .panel-list .depth-7 td:not(.panel-list-checkbox):not(.panel-list-model-action):not(.panel-list-sort) {
+    padding-left: 42%;
+}
+
+body .panel-list .depth-8 td:not(.panel-list-checkbox):not(.panel-list-model-action):not(.panel-list-sort) {
+    padding-left: 48%;
+}
+
+body .panel-list tr td:not(.panel-list-checkbox):not(.panel-list-model-action):not(.panel-list-sort) ~ td:not(.panel-list-model-action):not(.panel-list-sort) {
+    padding-left: 12px;
+}

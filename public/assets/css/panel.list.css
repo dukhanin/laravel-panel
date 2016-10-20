@@ -1,0 +1,45 @@
+table.panel-list-table {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+td.panel-list-checkbox {
+    width: 28px;
+}
+
+td.panel-list-sort {
+    width: 60px;
+    min-width: 60px;
+}
+
+
+td.panel-list-model-action {
+    padding: 12px 4px;
+    width: 10px;;
+}
+
+td.panel-list-model-action:last-child {
+    padding-right: 12px;
+}
+
+.panel-list-tools {
+    margin: 20px 0;
+}
+
+.panel-list-empty td {
+    text-align: center;
+    padding: 30px 0 !important;
+    background-color: transparent;
+}
+
+.panel-list-move-to-select {
+    min-width: 0;
+    max-width: 220px;
+    width: auto;
+    display: inline;
+    position: relative;
+}

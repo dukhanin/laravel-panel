@@ -1,0 +1,7 @@
+.panel .inactive {
+    color: #ccc;
+}
+
+.panel .inactive img {
+    opacity: 0.4;
+}
