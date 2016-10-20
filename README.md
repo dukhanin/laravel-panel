@@ -29,10 +29,26 @@ php artisan vendor:publish --provider="Dukhanin\Panel\Providers\PanelServiceProv
 
 This includes sample files
 
-## Sample
+## Running sample
 
-To run sample just require routes/panel-sample.php from your routes/web.php
+Run sample migrations and seeders
+
+```shell
+php artisan migrate
+php artisan db:seed --class=PanelSampleSeeder
+```
+
+Require routes/panel-sample.php from your routes/web.php
 
 ```php
 require 'panel-sample.php';
+```
+
+Go and check out */panel-sample/list* url in your app for sample panels
+
+Sample classes are located in your app directory:
+
+```shell
+app/Http/Controllers/PanelSampleController.php
+app/Panel/Sample/
 ```
