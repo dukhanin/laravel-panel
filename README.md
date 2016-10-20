@@ -44,7 +44,7 @@ Require routes/panel-sample.php from your routes/web.php
 require 'panel-sample.php';
 ```
 
-Go and check out */panel-sample/list* url in your app for sample panels
+Go and check out */panel-sample/products* url in your app for sample panels
 
 Sample classes are located in your app directory:
 
