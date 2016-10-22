@@ -16,12 +16,6 @@ class PanelForm
 
     use HandlesActions, DispatchesEvents;
 
-    protected $view;
-
-    protected $validator;
-
-    protected $url;
-
     public $uploadDirectory;
 
     public $viewFile;
@@ -36,6 +30,14 @@ class PanelForm
 
     public $model;
 
+    protected $view;
+
+    protected $validator;
+
+    protected $url;
+
+    protected $config;
+
 
     public function __construct($viewFile = null)
     {
@@ -47,6 +49,12 @@ class PanelForm
 
     public function init()
     {
+    }
+
+
+    public function initConfig()
+    {
+        $this->config = 'panel';
     }
 
 
@@ -726,10 +734,14 @@ class PanelForm
 
     public function config($key, $default = null)
     {
+        if (is_null($this->config)) {
+            $this->initConfig();
+        }
+
         if ($key !== null) {
             $key = '.' . $key;
         }
 
-        return config('panel' . $key, $default);
+        return config($this->config . $key, $default);
     }
 }

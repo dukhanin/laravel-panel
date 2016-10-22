@@ -67,7 +67,7 @@
             @else
                 <thead>
                 <tr>
-                    @if(count($decorator->getGroupActions()) > 0)
+                    @if(count($decorator->getGroupActions()) > 0 || count($decorator->getMoveTo()) > 0)
                         <th class="panel-list-checkbox">
                             <input type="checkbox" />
                         </th>
@@ -90,7 +90,7 @@
                 @foreach ($decorator->getRows() as $rowKey => $row)
                     {!! html_tag_open('tr', $row, ['dblclick' => '.edit']) !!}
 
-                    @if(count($decorator->getGroupActions()) > 0)
+                    @if(count($decorator->getGroupActions()) > 0 || count($decorator->getMoveTo()) > 0)
                         <td class="panel-list-checkbox">
                             <input type="checkbox" name="group[]" value="{{$rowKey}}" />
                         </td>

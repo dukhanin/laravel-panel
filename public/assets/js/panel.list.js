@@ -1,24 +1,16 @@
 panel.list = function (node) {
-    this.node = $(node);
-
-    this.rows      = this.node.find('tbody:not(.panel-list-empty)>tr');
-    this.dataCells = this.rows.find('>td:not(.panel-list-empty, .panel-list-checkbox, .panel-list-sort, .panel-list-model-action)');
-
-    this.checkboxes         = this.rows.find('.panel-list-checkbox input');
-    this.checkboxesCheckAll = this.node.find('thead .panel-list-checkbox input');
-
+    this.node                  = $(node);
+    this.rows                  = this.node.find('tbody:not(.panel-list-empty)>tr');
+    this.dataCells             = this.rows.find('>td:not(.panel-list-empty, .panel-list-checkbox, .panel-list-sort, .panel-list-model-action)');
+    this.checkboxes            = this.rows.find('tbody .panel-list-checkbox input');
+    this.checkboxesCheckAll    = this.node.find('thead .panel-list-checkbox input');
     this.lastClickedRow        = null;
     this.lastClickedRowChecked = null;
-
-    this.actionsButtons = this.node.find('.panel-list-action');
-
-    this.groupActionsButtons = this.node.find('.panel-list-group-action');
-
-    this.modelActionsButtons = this.node.find('.panel-list-model-action a, .panel-list-model-action button');
-
-    this.categoriesSelect = this.node.find('.panel-list-categories-select');
-
-    this.moveToSelect = this.node.find('.panel-list-move-to-select');
+    this.actionsButtons        = this.node.find('.panel-list-action');
+    this.groupActionsButtons   = this.node.find('.panel-list-group-action');
+    this.modelActionsButtons   = this.node.find('.panel-list-model-action a, .panel-list-model-action button');
+    this.categoriesSelect      = this.node.find('.panel-list-categories-select');
+    this.moveToSelect          = this.node.find('.panel-list-move-to-select');
 };
 
 panel.list.prototype.init = function () {

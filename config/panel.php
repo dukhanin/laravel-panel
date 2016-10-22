@@ -52,7 +52,7 @@ return [
         },
         'group-enable'  => [
             'class'      => 'btn btn-default btn-sm',
-            'label'      => 'panel.actions.enable.group-enable',
+            'label'      => 'panel.actions.group-enable',
             'icon'       => 'fa fa-eye',
             'icon-only'  => true,
             'attributes' => [ ]

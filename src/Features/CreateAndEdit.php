@@ -21,6 +21,11 @@ trait CreateAndEdit
     public function initForm()
     {
         $this->form = new PanelForm;
+    }
+
+
+    public function setupForm()
+    {
         $this->form->addCancelButton([ 'url' => $this->getUrl() ]);
         $this->form->addSubmitButton([ 'url' => $this->getUrl() ]);
         $this->form->addApplyButton();
@@ -31,6 +36,7 @@ trait CreateAndEdit
     {
         if (is_null($this->form)) {
             $this->initForm();
+            $this->setupForm();
         }
 
         return $this->form;

@@ -36,6 +36,8 @@ class PanelList
 
     protected $groupActions;
 
+    protected $config;
+
 
     public function actionIndex()
     {
@@ -45,6 +47,7 @@ class PanelList
 
     public function init()
     {
+        $this->initConfig();
         $this->initColumns();
         $this->initActions();
         $this->initModelActions();
@@ -52,6 +55,12 @@ class PanelList
         $this->initOrder();
 
         $this->initFeatures();
+    }
+
+
+    public function initConfig()
+    {
+        $this->config = 'panel';
     }
 
 
@@ -400,11 +409,15 @@ class PanelList
 
     public function config($key, $default = null)
     {
+        if (is_null($this->config)) {
+            $this->initConfig();
+        }
+
         if ($key !== null) {
             $key = '.' . $key;
         }
 
-        return config('panel' . $key, $default);
+        return config($this->config . $key, $default);
     }
 
 
