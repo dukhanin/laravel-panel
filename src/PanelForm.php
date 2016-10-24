@@ -16,27 +16,29 @@ class PanelForm
 
     use HandlesActions, DispatchesEvents;
 
-    public $uploadDirectory;
+    protected $config;
 
-    public $viewFile;
+    protected $model;
 
-    public $inputName;
+    protected $label;
 
-    public $data;
+    protected $uploadDirectory;
 
-    public $fields;
+    protected $viewFile;
 
-    public $buttons;
+    protected $inputName;
 
-    public $model;
+    protected $data;
+
+    protected $fields;
+
+    protected $buttons;
 
     protected $view;
 
     protected $validator;
 
     protected $url;
-
-    protected $config;
 
 
     public function __construct($viewFile = null)
@@ -55,6 +57,18 @@ class PanelForm
     public function initConfig()
     {
         $this->config = 'panel';
+    }
+
+
+    public function initModel()
+    {
+
+    }
+
+
+    public function initLabel()
+    {
+        $this->label = '';
     }
 
 
@@ -96,12 +110,6 @@ class PanelForm
     public function initValidator()
     {
         $this->validator = Validator::make([ ], [ ]);
-    }
-
-
-    public function initModel()
-    {
-
     }
 
 
@@ -171,16 +179,6 @@ class PanelForm
     }
 
 
-    public function getValidator()
-    {
-        if (empty( $this->validator )) {
-            $this->initValidator();
-        }
-
-        return $this->validator;
-    }
-
-
     public function getModel()
     {
         if (is_null($this->model)) {
@@ -188,6 +186,26 @@ class PanelForm
         }
 
         return $this->model;
+    }
+
+
+    public function getLabel()
+    {
+        if (is_null($this->label)) {
+            $this->initLabel();
+        }
+
+        return $this->label;
+    }
+
+
+    public function getValidator()
+    {
+        if (empty( $this->validator )) {
+            $this->initValidator();
+        }
+
+        return $this->validator;
     }
 
 

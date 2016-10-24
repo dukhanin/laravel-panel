@@ -14,11 +14,13 @@ class PanelList
 
     use HandlesActions;
 
-    public $model;
+    protected $model;
 
-    public $order;
+    protected $label;
 
-    public $orderDesc;
+    protected $order;
+
+    protected $orderDesc;
 
     protected $query;
 
@@ -78,6 +80,12 @@ class PanelList
 
     public function initModel()
     {
+    }
+
+
+    public function initLabel()
+    {
+        $this->label = '';
     }
 
 
@@ -168,6 +176,42 @@ class PanelList
         }
 
         return $this->model;
+    }
+
+
+    public function getLabel()
+    {
+        if (is_null($this->label)) {
+            $this->initLabel();
+        }
+
+        return $this->label;
+    }
+
+
+    public function getOrder()
+    {
+        if (is_null($this->order)) {
+            $this->initOrder();
+        }
+
+        return $this->order;
+    }
+
+
+    public function getOrderDesc()
+    {
+        if (is_null($this->orderDesc)) {
+            $this->initOrder();
+        }
+
+        return $this->orderDesc;
+    }
+
+
+    public function isOrderDesc()
+    {
+        return $this->getOrderDesc();
     }
 
 

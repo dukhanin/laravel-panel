@@ -23,13 +23,18 @@
         <li @if(Route::getCurrentRoute()->getName() === 'panel-sample.products')class="active"@endif>
             <a href="{{ route('panel-sample.products') }}">Products (PanelList sample)</a>
         </li>
-        
+
         <li @if(Route::getCurrentRoute()->getName() === 'panel-sample.sections')class="active"@endif>
             <a href="{{ route('panel-sample.sections') }}">Sections (PanelTree sample)</a>
         </li>
     </ul>
 
-    @yield('content')
+    <div class="panel panel-default" style="border-top: 0; border-top-left-radius: 0; border-top-right-radius: 0;">
+        <div class="panel-body">
+            @yield('content')
+
+        </div>
+    </div>
 </div>
 
 </body>

@@ -4,17 +4,17 @@ namespace Dukhanin\Panel\Features;
 
 use Illuminate\Support\Facades\Request;
 
-trait EnableAndDisable
+trait DisableAndEnable
 {
 
-    protected $enabledKey;
+    protected $disabledKey;
 
 
-    function initFeatureEnableAndDisable()
+    function initFeatureDisableAndEnable()
     {
-        $this->initEnabledKey();
+        $this->initDisabledKey();
 
-        $this->modelActions['enable'] = $this->config('actions.enable');
+        $this->modelActions['disable'] = $this->config('actions.disable');
 
         $this->groupActions['group-enable'] = $this->config('actions.group-enable');
 
@@ -22,19 +22,19 @@ trait EnableAndDisable
     }
 
 
-    public function initEnabledKey()
+    public function initDisabledKey()
     {
-        $this->enabledKey = 'enabled';
+        $this->disabledKey = 'disabled';
     }
 
 
-    public function getEnabledKey()
+    public function getDisabledKey()
     {
-        if (is_null($this->enabledKey)) {
-            $this->initEnabledKey();
+        if (is_null($this->disabledKey)) {
+            $this->initDisabledKey();
         }
 
-        return $this->enabledKey;
+        return $this->disabledKey;
     }
 
 
@@ -44,7 +44,7 @@ trait EnableAndDisable
 
         $this->authorize('enable', $model);
 
-        $model->{$this->enabledKey} = true;
+        $model->{$this->disabledKey} = false;
         $model->save();
 
         abort(301, '', [ 'Location' => $this->getUrl() ]);
@@ -57,7 +57,7 @@ trait EnableAndDisable
 
         $this->authorize('disable', $model);
 
-        $model->{$this->enabledKey} = false;
+        $model->{$this->disabledKey} = true;
         $model->save();
 
         abort(301, '', [ 'Location' => $this->getUrl() ]);
@@ -71,7 +71,7 @@ trait EnableAndDisable
         $this->authorize('group-enable', $group);
 
         foreach ($group as $model) {
-            $model->{$this->enabledKey} = true;
+            $model->{$this->disabledKey} = false;
             $model->save();
         }
 
@@ -86,7 +86,7 @@ trait EnableAndDisable
         $this->authorize('group-disable', $group);
 
         foreach ($group as $model) {
-            $model->{$this->enabledKey} = false;
+            $model->{$this->disabledKey} = true;
             $model->save();
         }
 
@@ -96,7 +96,7 @@ trait EnableAndDisable
 
     public function applyEachRowDisabled(&$row)
     {
-        if ( ! $row['model']->{$this->enabledKey}) {
+        if ($row['model']->{$this->disabledKey}) {
             array_set($row, 'attributes.class', 'inactive');
         }
     }

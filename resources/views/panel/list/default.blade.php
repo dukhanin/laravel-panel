@@ -14,6 +14,8 @@
 <div class="panel panel-list">
     <form method="post" action="{{ $decorator->getUrl() }}" class="panel-list-form">
 
+        <h3>{{ $decorator->getLabel() }}</h3>
+
         <div class="panel-list-tools">
             <div class="row">
                 <div class="col-sm-9 m-b-xs">

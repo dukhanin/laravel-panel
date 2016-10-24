@@ -22,7 +22,9 @@ return [
             'confirm'   => 'panel.confirm.delete'
         ],
         'enable'        => function ($list, $model) {
-            if ($model->enabled) {
+            $key = method_exists($list, 'getEnabledKey') ? $list->getEnabledKey() : 'enabled';
+
+            if ($model->{$key}) {
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.disable',
@@ -35,6 +37,26 @@ return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.enable',
                     'icon'      => 'fa fa-eye-slash',
+                    'icon-only' => true,
+                ];
+            }
+        },
+        'disable'        => function ($list, $model) {
+            $key = method_exists($list, 'getDisabledKey') ? $list->getDisabledKey() : 'disabled';
+
+            if ($model->{$key}) {
+                return [
+                    'class'     => 'btn btn-default btn-xs',
+                    'label'     => 'panel.actions.enable',
+                    'icon'      => 'fa fa-eye-slash',
+                    'url'       => urlbuilder($list->getUrl())->append([ 'enable', $model->id ])->compile(),
+                    'icon-only' => true,
+                ];
+            } else {
+                return [
+                    'class'     => 'btn btn-default btn-xs',
+                    'label'     => 'panel.actions.disable',
+                    'icon'      => 'fa fa-eye',
                     'icon-only' => true,
                 ];
             }

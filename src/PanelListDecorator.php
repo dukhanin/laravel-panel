@@ -164,8 +164,8 @@ class PanelListDecorator
             return $column['label'];
         }
 
-        $thisColumnOrdered = $this->panel->order == $column['key'];
-        $orderedDesc       = $this->panel->orderDesc;
+        $thisColumnOrdered = $this->panel->getOrder() == $column['key'];
+        $orderedDesc       = $this->panel->getOrderDesc();
         $resetAnyOrder     = $thisColumnOrdered && $orderedDesc;
 
         $url = urlbuilder($this->panel->getUrl([ '!order', '!orderDesc', '!pages' ]));
