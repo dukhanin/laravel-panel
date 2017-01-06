@@ -103,6 +103,10 @@ panel.list.prototype.initMoveTo = function () {
 };
 
 panel.list.prototype.initCheckboxes = function () {
+    if (this.checkboxes.size() == 0) {
+        return;
+    }
+
     this.checkboxes.on('click', $.proxy(function (e) {
         var tr = $(e.target).closest('tr');
 
@@ -155,7 +159,7 @@ panel.list.prototype.initDoubleClick = function () {
 
         if (actionSelector) {
             var url = row.find(actionSelector).attr('href');
-            panel.go(url);
+            url && panel.go(url);
         }
     });
 

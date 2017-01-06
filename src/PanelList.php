@@ -480,7 +480,7 @@ class PanelList
             'label'   => strval($columnKey),
             'order'   => false,
             'handler' => null,
-            'width'   => null
+            'attributes.width'   => null
         ];
 
         if (is_string($column)) {
@@ -498,10 +498,12 @@ class PanelList
         }
 
         if (isset( $column['width'] )) {
-            $_column['width'] = $column['width'];
+            $_column['attributes.width'] = $column['width'];
         }
 
         $_column['label'] = trans($_column['label']);
+
+        $_column = array_merge($_column, array_except($column, ['label', 'order', 'handler', 'width', 'key']));
 
         return $_column;
     }

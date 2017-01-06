@@ -3,6 +3,7 @@
 namespace Dukhanin\Panel\Features;
 
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 
 trait Sort
 {
@@ -36,6 +37,32 @@ trait Sort
     }
 
 
+    public function actionSortSlice($primaryKey)
+    {
+        // under construction
+        
+        $group = Request::input('group');
+
+        $models = $this->findModelsOrFail($group);
+
+        $this->authorize('group-enable', $group);
+
+        $primaryKeyName = $this->getModel()->getKeyName();
+        $index          = intval($models->min('index'));
+
+        foreach ($group as $modelKey) {
+            $model = $models->where($primaryKeyName, $modelKey)->first();
+
+            if($model) {
+                $model->index = $index++;
+                $model->save();
+            }
+        }
+
+        abort(301, '', [ 'Location' => $this->getUrl() ]);
+    }
+
+
     public function isSortEnabled()
     {
         if ( ! $this->sortEnabled) {
@@ -62,7 +89,9 @@ trait Sort
 
         $this->authorize('sort', $model);
 
-        $query      = $this->getSortQuery();
+        $query                     = $this->getSortQuery();
+        $query->getQuery()->orders = [ ];
+
         $modelIndex = intval($model->{$this->sortKey});
 
         if ($direction === 'up') {
@@ -89,7 +118,7 @@ trait Sort
     }
 
 
-    protected function sortModelToTop($model)
+    protected function sortModelToBottom($model)
     {
         if ($this->denies('sort', $model)) {
             return false;
@@ -102,7 +131,7 @@ trait Sort
     }
 
 
-    protected function sortModelToBottom($model)
+    protected function sortModelToTop($model)
     {
         if ($this->denies('sort', $model)) {
             return false;
