@@ -1,7 +1,7 @@
 panel.list = function (node) {
     this.node                  = $(node);
     this.rows                  = this.node.find('tbody:not(.panel-list-empty)>tr');
-    this.dataCells             = this.rows.find('>td:not(.panel-list-empty, .panel-list-checkbox, .panel-list-sort, .panel-list-model-action)');
+    this.dataCells             = this.rows.find('.panel-list-data-cell');
     this.checkboxes            = this.rows.find('tbody .panel-list-checkbox input');
     this.checkboxesCheckAll    = this.node.find('thead .panel-list-checkbox input');
     this.lastClickedRow        = null;
