@@ -2,11 +2,14 @@
 
 namespace Dukhanin\Panel\Features;
 
+use App\Traits\JsonBackend;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 trait Sort
 {
+
+    use JsonBackend;
 
     protected $sortEnabled;
 
@@ -37,11 +40,9 @@ trait Sort
     }
 
 
-    public function actionSortSlice($primaryKey)
+    public function actionSortSlice()
     {
-        // under construction
-        
-        $group = Request::input('group');
+        $group = (array) Request::input('group');
 
         $models = $this->findModelsOrFail($group);
 
@@ -50,16 +51,20 @@ trait Sort
         $primaryKeyName = $this->getModel()->getKeyName();
         $index          = intval($models->min('index'));
 
+        $orderedList = [ ];
+
         foreach ($group as $modelKey) {
             $model = $models->where($primaryKeyName, $modelKey)->first();
 
-            if($model) {
+            $orderedList[] = $model->id;
+
+            if ($model) {
                 $model->index = $index++;
                 $model->save();
             }
         }
 
-        abort(301, '', [ 'Location' => $this->getUrl() ]);
+        return $this->data([ 'list' => $orderedList])->success()->response();
     }
 
 
@@ -99,6 +104,7 @@ trait Sort
         } else {
             $query->where($this->sortKey, '>', $modelIndex)->orderBy($this->sortKey, 'asc');
         }
+
 
         if ($neighboor = $query->first()) {
             $model->index = $neighboor->index;
@@ -154,7 +160,7 @@ trait Sort
 
     protected function getSortQuery()
     {
-        return $this->getQuery([ '!order' ]);
+        return $this->getQuery([ '!order', '!pages' ]);
     }
 
 }
