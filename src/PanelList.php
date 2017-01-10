@@ -114,7 +114,7 @@ class PanelList
 
     public function initView()
     {
-        $this->view = view($this->config('views') . '.list.default', [ 'decorator' => $this->getDecorator() ]);
+        $this->view = view($this->config('views') . '.list', [ 'decorator' => $this->getDecorator() ]);
     }
 
 

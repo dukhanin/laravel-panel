@@ -13,7 +13,7 @@ class PanelTree extends PanelList
     public function initView()
     {
 
-        $this->view = view($this->config('views') . '.tree.default', [ 'decorator' => $this->getDecorator() ]);
+        $this->view = view($this->config('views') . '.tree', [ 'decorator' => $this->getDecorator() ]);
     }
 
 

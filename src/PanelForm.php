@@ -127,7 +127,7 @@ class PanelForm
 
     public function initViewFile()
     {
-        $this->viewFile = $this->config('views') . '.form.default';
+        $this->viewFile = $this->config('views') . '.form';
     }
 
 
@@ -245,8 +245,8 @@ class PanelForm
     {
         $options = [
             $this->getView()->getName() . '.' . $field['type'],
-            $this->config('views') . '.form.default.' . $field['type'],
-            $this->config('views') . '.form.default.text'
+            $this->config('views') . '.form-fields.' . $field['type'],
+            $this->config('views') . '.form-fields.text'
         ];
 
         foreach ($options as $viewFile) {
