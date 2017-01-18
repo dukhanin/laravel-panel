@@ -2,14 +2,11 @@
 
 namespace Dukhanin\Panel\Features;
 
-use App\Traits\JsonBackend;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 trait Sort
 {
-
-    use JsonBackend;
 
     protected $sortEnabled;
 
@@ -64,7 +61,14 @@ trait Sort
             }
         }
 
-        return $this->data([ 'list' => $orderedList])->success()->response();
+        return response()->json([
+            'error'    => 0,
+            'success'  => true,
+            'messages' => [ ],
+            'data'     => [
+                'list' => $orderedList
+            ]
+        ]);
     }
 
 
@@ -104,7 +108,6 @@ trait Sort
         } else {
             $query->where($this->sortKey, '>', $modelIndex)->orderBy($this->sortKey, 'asc');
         }
-
 
         if ($neighboor = $query->first()) {
             $model->index = $neighboor->index;
