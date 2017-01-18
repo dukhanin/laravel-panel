@@ -117,7 +117,7 @@
 
 
                     @foreach ($decorator->getColumns() as $column)
-                        {!! html_tag('td', $column, array_get($row, "cells.{$column['key']}")) !!}
+                        {!! html_tag('td.panel-list-data-cell', $column, array_get($row, "cells.{$column['key']}")) !!}
                     @endforeach
 
                     @foreach ($decorator->getModelActions($row['model']) as $action)

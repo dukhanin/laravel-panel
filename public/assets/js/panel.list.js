@@ -138,7 +138,7 @@ panel.list.prototype.initCheckboxes = function () {
     }
 
     this.checkboxes.on('change', function (e) {
-        $(this).trigger.call(this, e);
+        $(this).trigger('state-changed', e);
     });
 
     this.checkboxes.on('state-changed', $.proxy(function (e) {
