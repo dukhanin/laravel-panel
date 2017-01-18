@@ -6,7 +6,7 @@ return [
         'create'        => [
             'class' => 'btn btn-default btn-sm',
             'label' => 'panel.actions.create',
-            'icon'  => 'fa fa-file-o',
+            'icon'  => 'fa fa-file-o'
         ],
         'edit'          => [
             'class'     => 'btn btn-default btn-xs',
@@ -30,14 +30,14 @@ return [
                     'label'     => 'panel.actions.disable',
                     'icon'      => 'fa fa-eye',
                     'url'       => urlbuilder($list->getUrl())->append([ 'disable', $model->id ])->compile(),
-                    'icon-only' => true,
+                    'icon-only' => true
                 ];
             } else {
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.enable',
                     'icon'      => 'fa fa-eye-slash',
-                    'icon-only' => true,
+                    'icon-only' => true
                 ];
             }
         },
@@ -50,14 +50,14 @@ return [
                     'label'     => 'panel.actions.enable',
                     'icon'      => 'fa fa-eye-slash',
                     'url'       => urlbuilder($list->getUrl())->append([ 'enable', $model->id ])->compile(),
-                    'icon-only' => true,
+                    'icon-only' => true
                 ];
             } else {
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.disable',
                     'icon'      => 'fa fa-eye',
-                    'icon-only' => true,
+                    'icon-only' => true
                 ];
             }
         },
@@ -69,7 +69,7 @@ return [
                 'icon-only' => true,
                 'url'       => urlbuilder($list->getUrl())->append('create')->query([
                     $list->getRequestAttributeName('appendTo') => $model->id
-                ])->compile(),
+                ])->compile()
             ];
         },
         'group-enable'  => [
