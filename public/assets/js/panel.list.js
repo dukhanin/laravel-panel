@@ -13,7 +13,6 @@ panel.list.prototype.init = function () {
     this.initCategories();
     this.initMoveTo();
     this.initDoubleClick();
-    this.initSortable();
 
     console.log('panel.list.init');
 };
