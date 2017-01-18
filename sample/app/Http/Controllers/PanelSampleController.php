@@ -17,7 +17,7 @@ class PanelSampleController extends Controller
 
         view()->inject('content', $panel->execute());
 
-        return view('panel.sample.layout');
+        return view('panel.sample-layout');
     }
 
     public function sections(Request $request)
@@ -27,6 +27,6 @@ class PanelSampleController extends Controller
 
         view()->inject('content', $panel->execute());
 
-        return view('panel.sample.layout');
+        return view('panel.sample-layout');
     }
 }
