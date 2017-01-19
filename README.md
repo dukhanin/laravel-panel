@@ -3,7 +3,7 @@ Laravel Panel constructor
 
 (under construction)
 
-Release in Jan 2017
+Release in March 2017
 
 ## Installation
 
@@ -50,7 +50,7 @@ Require routes/panel-sample.php from your routes/web.php
 require 'panel-sample.php';
 ```
 
-Go and check out */panel-sample/products* url in your app for sample panels
+Go and check out */panel-sample* url in your app for sample panels
 
 Sample classes are located in your app directory:
 
