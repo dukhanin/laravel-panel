@@ -143,11 +143,11 @@ panel = {
     },
 
     ajaxSuccess: function (data, textStatus, jqXHR) {
-        document.admin.handleResponseMessages(jqXHR);
+        panel.handleResponseMessages(jqXHR);
     },
 
     ajaxError: function (data, textStatus, jqXHR) {
-        document.admin.handleResponseMessages(jqXHR);
+        panel.handleResponseMessages(jqXHR);
     },
 
     ajaxComplete: function (data, textStatus, jqXHR) {

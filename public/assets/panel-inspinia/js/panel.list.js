@@ -241,10 +241,7 @@ panel.list.prototype.initSortable = function () {
                 panel.ajax({
                     url:     url[0] + '/sortSlice' + (url.length > 1 ? '?' + url[1] : ''),
                     method:  'post',
-                    data:    {group: orderedList},
-                    success: function (data) {
-                        console.log('php: ' + data.list.join(' ')); // @todo
-                    }
+                    data:    {group: orderedList}
                 });
             }, this), 100);
         }, this)
