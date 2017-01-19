@@ -84,7 +84,7 @@
                 </div>
                 <ul class="nav navbar-top-links navbar-right">
                     <li>
-                        <a href="http://retro-dvor.dev/admin/logout">
+                        <a href="#">
                             <i class="fa fa-sign-out"></i> Sign out
                         </a>
                     </li>
