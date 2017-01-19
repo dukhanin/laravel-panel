@@ -21,6 +21,12 @@ class ProductPanel extends PanelList
      * Base Panel settings
      */
 
+    public function initLabel()
+    {
+        $this->label = 'Dukhanin\Panel\PanelList';
+    }
+
+
     public function initModel()
     {
         $this->model = new Product;

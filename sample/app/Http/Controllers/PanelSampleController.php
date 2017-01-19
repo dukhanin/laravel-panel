@@ -4,29 +4,49 @@ namespace App\Http\Controllers;
 
 use App\Panel\Sample\ProductPanel;
 use App\Panel\Sample\SectionPanel;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Request;
+use Illuminate\Http\Request;
 
 class PanelSampleController extends Controller
 {
 
-    public function products(Request $request)
+    protected $panel;
+
+
+    protected function initTheme()
     {
-        $panel = new ProductPanel;
-        $panel->setUrl( action('PanelSampleController@products') );
+        $request = Request::capture();
 
-        view()->inject('content', $panel->execute());
+        if ($request->query('inspinia')) {
+            $this->panel->configSet('views', 'panel-inspinia');
 
-        return view('panel.sample-layout');
+            $this->panel->setUrl(urlbuilder($this->panel->getUrl())->query([ 'inspinia' => 1 ])->compile());
+        }
+
     }
 
-    public function sections(Request $request)
+
+    public function products()
     {
-        $panel = new SectionPanel;
-        $panel->setUrl( action('PanelSampleController@sections') );
+        view()->share('header', 'Panel Sample');
 
-        view()->inject('content', $panel->execute());
+        $this->panel = new ProductPanel;
+        $this->panel->setUrl(action('PanelSampleController@products'));
 
-        return view('panel.sample-layout');
+        $this->initTheme();
+
+        return $this->panel->execute();
+    }
+
+
+    public function sections()
+    {
+        view()->share('header', 'Panel Sample');
+
+        $this->panel = new SectionPanel;
+        $this->panel->setUrl(action('PanelSampleController@sections'));
+
+        $this->initTheme();
+
+        return $this->panel->execute();
     }
 }

@@ -7,12 +7,18 @@ use Dukhanin\Panel\PanelForm;
 class SectionForm extends PanelForm
 {
 
+    public function initLabel()
+    {
+        $this->label = 'Dukhanin\Panel\PanelForm';
+    }
+
+
     public function initFields()
     {
         $this->addSelect('parent_id', [
-            'label'   => 'Parent Section',
+            'label'     => 'Parent Section',
             'nullTitle' => false,
-            'options' => Section::options([ 'except' => $this->model->getKey(), 'depth' => 1 ])->prepend('(Root)', 0)
+            'options'   => Section::options([ 'except' => $this->model->getKey(), 'depth' => 1 ])->prepend('(Root)', 0)
         ]);
         $this->addText('name', 'Name');
         $this->addTextarea('description', 'Description');

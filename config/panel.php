@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'views'   => 'panel',
+    'views'   => 'panel-bootstrap',
     'actions' => [
         'create'        => [
             'class' => 'btn btn-default btn-sm',

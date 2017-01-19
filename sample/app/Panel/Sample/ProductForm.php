@@ -7,6 +7,12 @@ use Dukhanin\Panel\PanelForm;
 class ProductForm extends PanelForm
 {
 
+    public function initLabel()
+    {
+        $this->label = 'Dukhanin\Panel\PanelForm';
+    }
+
+
     public function initFields()
     {
         $this->addSelect('section_id', [

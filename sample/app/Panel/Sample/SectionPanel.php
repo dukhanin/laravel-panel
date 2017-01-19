@@ -16,6 +16,13 @@ class SectionPanel extends PanelTree
     /*
      * Base Panel settings
      */
+
+    public function initLabel()
+    {
+        $this->label = 'Dukhanin\Panel\PanelTree';
+    }
+
+
     public function initModel()
     {
         $this->model = new Section();

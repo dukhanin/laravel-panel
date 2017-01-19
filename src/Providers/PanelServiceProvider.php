@@ -59,7 +59,7 @@ class PanelServiceProvider extends ServiceProvider
     protected function publishViews()
     {
         $this->publishes([
-            $this->path('resources/views/panel/') => resource_path('views/panel/'),
+            $this->path('resources/views/') => resource_path('views/'),
         ], 'views');
     }
 
@@ -69,7 +69,6 @@ class PanelServiceProvider extends ServiceProvider
         $this->publishes([
             $this->path('sample/app/')       => app_path('/'),
             $this->path('sample/database/')  => database_path('/'),
-            $this->path('sample/resources/') => resource_path('/'),
             $this->path('sample/routes/')    => base_path('routes/'),
         ], 'sample');
     }

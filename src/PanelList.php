@@ -8,6 +8,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 use Dukhanin\Support\Traits\HandlesActions;
+use Mockery\CountValidator\Exception;
 
 class PanelList
 {
@@ -27,6 +28,8 @@ class PanelList
     protected $policy;
 
     protected $view;
+
+    protected $layout;
 
     protected $decorator;
 
@@ -49,20 +52,13 @@ class PanelList
 
     public function init()
     {
-        $this->initConfig();
-        $this->initColumns();
-        $this->initActions();
-        $this->initModelActions();
-        $this->initGroupActions();
-        $this->initOrder();
-
         $this->initFeatures();
     }
 
 
     public function initConfig()
     {
-        $this->config = 'panel';
+        $this->config = config('panel');
     }
 
 
@@ -115,6 +111,12 @@ class PanelList
     public function initView()
     {
         $this->view = view($this->config('views') . '.list', [ 'decorator' => $this->getDecorator() ]);
+    }
+
+
+    public function initLayout()
+    {
+        $this->layout = $this->config('views') . '.layout';
     }
 
 
@@ -255,6 +257,16 @@ class PanelList
         }
 
         return $this->view;
+    }
+
+
+    public function getLayout()
+    {
+        if (is_null($this->layout)) {
+            $this->initLayout();
+        }
+
+        return $this->layout;
     }
 
 
@@ -451,17 +463,23 @@ class PanelList
     }
 
 
-    public function config($key, $default = null)
+    public function config($key = null, $default = null)
     {
         if (is_null($this->config)) {
             $this->initConfig();
         }
 
-        if ($key !== null) {
-            $key = '.' . $key;
+        return array_get($this->config, $key, $default);
+    }
+
+
+    public function configSet($key, $value)
+    {
+        if (is_null($this->config)) {
+            $this->initConfig();
         }
 
-        return config($this->config . $key, $default);
+        return array_set($this->config, $key, $value);
     }
 
 
@@ -476,11 +494,11 @@ class PanelList
     protected function validateColumn($columnKey, $column)
     {
         $_column = [
-            'key'     => strval($columnKey),
-            'label'   => strval($columnKey),
-            'order'   => false,
-            'handler' => null,
-            'attributes.width'   => null
+            'key'              => strval($columnKey),
+            'label'            => strval($columnKey),
+            'order'            => false,
+            'handler'          => null,
+            'attributes.width' => null
         ];
 
         if (is_string($column)) {
@@ -503,7 +521,7 @@ class PanelList
 
         $_column['label'] = trans($_column['label']);
 
-        $_column = array_merge($_column, array_except($column, ['label', 'order', 'handler', 'width', 'key']));
+        $_column = array_merge($_column, array_except($column, [ 'label', 'order', 'handler', 'width', 'key' ]));
 
         return $_column;
     }

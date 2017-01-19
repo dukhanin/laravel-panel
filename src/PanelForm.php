@@ -24,8 +24,6 @@ class PanelForm
 
     protected $uploadDirectory;
 
-    protected $viewFile;
-
     protected $inputName;
 
     protected $data;
@@ -35,6 +33,8 @@ class PanelForm
     protected $buttons;
 
     protected $view;
+
+    protected $layout;
 
     protected $validator;
 
@@ -56,7 +56,7 @@ class PanelForm
 
     public function initConfig()
     {
-        $this->config = 'panel';
+        $this->config = config('panel');
     }
 
 
@@ -125,16 +125,15 @@ class PanelForm
     }
 
 
-    public function initViewFile()
+    public function initView()
     {
-        $this->viewFile = $this->config('views') . '.form';
+        $this->view = view($this->config('views') . '.form', [ 'form' => $this ]);
     }
 
 
-    public function initView()
+    public function initLayout()
     {
-        $this->view       = view($this->getViewFile());
-        $this->view->form = $this;
+        $this->layout = $this->config('views') . '.layout';
     }
 
 
@@ -321,16 +320,6 @@ class PanelForm
     }
 
 
-    public function getViewFile()
-    {
-        if (is_null($this->viewFile)) {
-            $this->initViewFile();
-        }
-
-        return $this->viewFile;
-    }
-
-
     public function getView()
     {
         if (is_null($this->view)) {
@@ -338,6 +327,16 @@ class PanelForm
         }
 
         return $this->view;
+    }
+
+
+    public function getLayout()
+    {
+        if (is_null($this->layout)) {
+            $this->initLayout();
+        }
+
+        return $this->layout;
     }
 
 
@@ -750,16 +749,22 @@ class PanelForm
     }
 
 
-    public function config($key, $default = null)
+    public function config($key = null, $default = null)
     {
         if (is_null($this->config)) {
             $this->initConfig();
         }
 
-        if ($key !== null) {
-            $key = '.' . $key;
+        return array_get($this->config, $key, $default);
+    }
+
+
+    public function configSet($key, $value)
+    {
+        if (is_null($this->config)) {
+            $this->initConfig();
         }
 
-        return config($this->config . $key, $default);
+        return array_set($this->config, $key, $value);
     }
 }

@@ -26,6 +26,8 @@ trait CreateAndEdit
 
     public function setupForm()
     {
+        $this->form->configSet(null, $this->config());
+
         $this->form->addCancelButton([ 'url' => $this->getUrl() ]);
         $this->form->addSubmitButton([ 'url' => $this->getUrl() ]);
         $this->form->addApplyButton();
