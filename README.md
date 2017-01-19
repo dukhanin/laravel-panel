@@ -21,16 +21,16 @@ After updating composer, add the PanelServiceProvider to the providers array in 
 Dukhanin\Panel\Providers\PanelServiceProvider::class,
 ```
 
-Update composer autoload cache:
-
-```shell
-composer dump-autoload
-```
-
 Copy all required package files to your application with the publish command:
 
 ```shell
 php artisan vendor:publish --provider="Dukhanin\Panel\Providers\PanelServiceProvider"
+```
+
+Update composer autoload cache:
+
+```shell
+composer dump-autoload
 ```
 
 This includes sample files
