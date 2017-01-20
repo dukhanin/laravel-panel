@@ -2,17 +2,15 @@
 
 namespace Dukhanin\Panel\Providers;
 
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Contracts\Auth\Access\Gate as GateContract;
+
+use Symfony\Component\Console\Input\ArgvInput;
 
 class PanelServiceProvider extends ServiceProvider
 {
 
     public function boot()
     {
-
         $this->publishConfig();
 
         $this->publishLang();
@@ -29,6 +27,13 @@ class PanelServiceProvider extends ServiceProvider
 
     public function register()
     {
+    }
+
+
+    protected function pusblish()
+    {
+
+
     }
 
 
@@ -66,10 +71,16 @@ class PanelServiceProvider extends ServiceProvider
 
     protected function publishSample()
     {
+        $publishWithSample = (new ArgvInput)->hasParameterOption('--tag=sample');
+
+        if ( ! $publishWithSample) {
+            return;
+        }
+
         $this->publishes([
-            $this->path('sample/app/')       => app_path('/'),
-            $this->path('sample/database/')  => database_path('/'),
-            $this->path('sample/routes/')    => base_path('routes/'),
+            $this->path('sample/app/')      => app_path('/'),
+            $this->path('sample/database/') => database_path('/'),
+            $this->path('sample/routes/')   => base_path('routes/'),
         ], 'sample');
     }
 

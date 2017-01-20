@@ -37,6 +37,12 @@ This includes sample files
 
 ## Running sample
 
+Publish sample files (they wouldnt publish with vendor:publish command without defined --tag=sample)
+
+```shell
+php artisan vendor:publish --provider="Dukhanin\Panel\Providers\PanelServiceProvider" --tag=sample
+```
+
 Run sample migrations and seeders
 
 ```shell
@@ -50,7 +56,7 @@ Require routes/panel-sample.php from your routes/web.php
 require 'panel-sample.php';
 ```
 
-Go and check out */panel-sample/products* url in your app for sample panels
+Go and check out */panel-sample* url in your app for sample panels
 
 Sample classes are located in your app directory:
 
