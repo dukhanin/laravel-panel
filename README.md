@@ -3,7 +3,7 @@ Laravel Panel constructor
 
 (under construction)
 
-Release in Jan 2017
+Release in March 2017
 
 ## Installation
 
