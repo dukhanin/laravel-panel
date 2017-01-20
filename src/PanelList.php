@@ -116,7 +116,7 @@ class PanelList
 
     public function initLayout()
     {
-        $this->layout = $this->config('views') . '.layout';
+        $this->layout = $this->config('layout');
     }
 
 
@@ -208,6 +208,12 @@ class PanelList
         }
 
         return $this->orderDesc;
+    }
+
+
+    public function setLayout($layout)
+    {
+        $this->layout = $layout;
     }
 
 

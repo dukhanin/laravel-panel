@@ -18,8 +18,12 @@ class PanelSampleController extends Controller
 
         if ($request->query('inspinia')) {
             $this->panel->configSet('views', 'panel-inspinia');
+            $this->panel->configSet('layout', 'panel-inspinia.layout');
 
             $this->panel->setUrl(urlbuilder($this->panel->getUrl())->query([ 'inspinia' => 1 ])->compile());
+        } else {
+            $this->panel->configSet('views', 'panel-bootstrap');
+            $this->panel->configSet('layout', 'panel-bootstrap.layout');
         }
 
     }

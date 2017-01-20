@@ -2,6 +2,7 @@
 
 return [
     'views'   => 'panel-bootstrap',
+    'layout'  => 'layouts.app',
     'actions' => [
         'create'        => [
             'class' => 'btn btn-default btn-sm',
