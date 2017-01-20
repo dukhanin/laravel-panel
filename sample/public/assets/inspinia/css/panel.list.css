@@ -1,0 +1,97 @@
+table.panel-list-table {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+.panel-list .table-hover > tbody.panel-list-empty > tr:hover {
+    background-color: transparent;
+}
+
+.panel-list .table-hover > tbody:not(.panel-list-empty) > tr:not(.panel-list-model-action) {
+    cursor: pointer;
+}
+
+.panel-list .table-hover > tbody:not(.panel-list-empty) > tr.bg-warning:hover {
+    background-color: rgba(238, 234, 213, 0.91);
+}
+
+.panel-list th a {
+    color: #676a6c;
+}
+
+td.panel-list-checkbox {
+    width: 54px;
+}
+
+td.panel-list-sort {
+    width: 70px;
+    min-width: 70px;
+}
+
+body .panel-list table.panel-list-table thead th.panel-list-sort-handler {
+    width: 1%;
+}
+
+body .panel-list table.panel-list-table tbody td.panel-list-sort-handler {
+    font-size: 1px;
+    width: 1%;
+    cursor: move;
+    background-image: -webkit-repeating-radial-gradient(center center, rgba(0,0,0,.2), rgba(0,0,0,.2) 1px, transparent 1px, transparent 100%);
+    background-image: -moz-repeating-radial-gradient(center center, rgba(0,0,0,.2), rgba(0,0,0,.2) 1px, transparent 1px, transparent 100%);
+    background-image: -ms-repeating-radial-gradient(center center, rgba(0,0,0,.2), rgba(0,0,0,.2) 1px, transparent 1px, transparent 100%);
+    background-image: repeating-radial-gradient(center center, rgba(0,0,0,.2), rgba(0,0,0,.2) 1px, transparent 1px, transparent 100%);
+    -webkit-background-size: 3px 3px;
+    -moz-background-size: 3px 3px;
+    background-size: 3px 3px;
+}
+
+.panel-list td.panel-list-model-action {
+    padding: 12px 4px;
+    width: 10px;
+}
+
+td.panel-list-model-action:last-child {
+    padding-right: 12px;
+}
+
+.panel-list-tools {
+    margin: 20px 0;
+}
+
+.panel-list-empty td {
+    text-align: center;
+    padding: 30px 0 !important;
+    background-color: transparent;
+}
+
+.panel-list-move-to-select {
+    min-width: 0;
+    max-width: 220px;
+    width: auto;
+    display: inline;
+    position: relative;
+    top: 2px;
+}
+
+.panel-list-table > thead > tr > td.inactive,
+.panel-list-table > tbody > tr > td.inactive,
+.panel-list-table > tfoot > tr > td.inactive,
+.panel-list-table > thead > tr > th.inactive,
+.panel-list-table > tbody > tr > th.inactive,
+.panel-list-table > tfoot > tr > th.inactive,
+.panel-list-table > thead > tr.inactive > td:not(.panel-list-model-action),
+.panel-list-table > tbody > tr.inactive > td:not(.panel-list-model-action),
+.panel-list-table > tfoot > tr.inactive > td:not(.panel-list-model-action),
+.panel-list-table > thead > tr.inactive > th,
+.panel-list-table > tbody > tr.inactive > th,
+.panel-list-table > tfoot > tr.inactive > th {
+    color: #bbb;
+}
+
+.panel-list .inactive img {
+    opacity: 0.4;
+}

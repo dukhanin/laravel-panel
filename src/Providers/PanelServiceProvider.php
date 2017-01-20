@@ -82,6 +82,7 @@ class PanelServiceProvider extends ServiceProvider
             $this->path('sample/app/')      => app_path('/'),
             $this->path('sample/database/') => database_path('/'),
             $this->path('sample/routes/')   => base_path('routes/'),
+            $this->path('sample/public/assets/')   => public_path('assets/'),
         ], 'sample');
     }
 

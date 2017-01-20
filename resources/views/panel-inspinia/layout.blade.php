@@ -5,13 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>dukhanin/laravel-panel sample</title>
 
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/bootstrap.min.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/font-awesome/css/font-awesome.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/inspinia-animate.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/inspinia.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/icheck.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/sweetalert.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/awesome-bootstrap-checkbox.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/bootstrap.min.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/font-awesome/css/font-awesome.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/inspinia-animate.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/inspinia.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/icheck.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/sweetalert.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/awesome-bootstrap-checkbox.css') }}"/>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -26,7 +26,7 @@
             <ul class="nav metismenu" id="side-menu">
                 <li class="nav-header">
                     <div class="dropdown profile-element"> <span>
-                            <img alt="image" class="img-circle" src="/assets/panel-inspinia/img/profile_small.jpg"
+                            <img alt="image" class="img-circle" src="/assets/inspinia/img/profile_small.jpg"
                                  style="max-width: 48px;"/>
                              </span>
                         <a data-toggle="dropdown" class="dropdown-toggle" href="#">
@@ -155,14 +155,14 @@
 </div>
 
 
-<script src="{{ URL::asset('assets/panel-inspinia/js/jquery-2.1.1.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/bootstrap.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/jquery.metisMenu.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/jquery.slimscroll.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/pace.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/icheck.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/sweetalert.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/inspinia.interface.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/jquery-2.1.1.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/bootstrap.min.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/jquery.metisMenu.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/jquery.slimscroll.min.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/pace.min.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/icheck.min.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/sweetalert.min.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/inspinia.interface.js') }}"></script>
 
 @stack('scripts')
 
