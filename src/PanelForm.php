@@ -133,7 +133,7 @@ class PanelForm
 
     public function initLayout()
     {
-        $this->layout = $this->config('views') . '.layout';
+        $this->layout = $this->config('layout');
     }
 
 
@@ -397,6 +397,12 @@ class PanelForm
         }
 
         return $this->uploadDirectory;
+    }
+
+
+    public function setLayout($layout)
+    {
+        $this->layout = $layout;
     }
 
 
