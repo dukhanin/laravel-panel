@@ -71,7 +71,8 @@ class PanelServiceProvider extends ServiceProvider
 
     protected function publishSample()
     {
-        $publishWithSample = (new ArgvInput)->hasParameterOption('--tag=sample');
+        $input             = new ArgvInput(isset( $_SERVER['argv'] ) ? $_SERVER['argv'] : [ ]);
+        $publishWithSample = $input->hasParameterOption('--tag=sample');
 
         if ( ! $publishWithSample) {
             return;
