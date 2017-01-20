@@ -43,6 +43,12 @@ Publish sample files (they wouldnt publish with vendor:publish command without d
 php artisan vendor:publish --provider="Dukhanin\Panel\Providers\PanelServiceProvider" --tag=sample
 ```
 
+Update composer autoload cache:
+
+```shell
+composer dump-autoload
+```
+
 Run sample migrations and seeders
 
 ```shell
