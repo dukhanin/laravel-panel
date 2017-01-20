@@ -97,7 +97,7 @@
                     </thead>
                     <tbody>
                     @foreach ($decorator->getRows() as $rowKey => $row)
-                        {!! html_tag_open('tr', $row, ['dblclick' => '.edit']) !!}
+                        {!! html_tag_open('tr', $row) !!}
 
                         @if(count($decorator->getGroupActions()) > 0 || count($decorator->getMoveTo()) > 0)
                             <td class="panel-list-checkbox">

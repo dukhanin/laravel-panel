@@ -14,6 +14,11 @@
         $(function () {
             var panelList = new panel.list('.panel-list');
             panelList.init();
+
+            $('.i-checks').iCheck({
+                checkboxClass: 'icheckbox_square-green',
+                radioClass: 'iradio_square-green'
+            });
         });
     </script>
 @endpush
@@ -109,7 +114,7 @@
                         </thead>
                         <tbody>
                         @foreach ($decorator->getRows() as $rowKey => $row)
-                            {!! html_tag_open('tr', array_except($row, ['cells', 'model']), ['dblclick' => '.edit', 'key' => $rowKey]) !!}
+                            {!! html_tag_open('tr', array_except($row, ['cells', 'model']), ['key' => $rowKey]) !!}
 
                             @if(0 && $decorator->isSortEnabled())
                                 <td class="panel-list-sort-handler">

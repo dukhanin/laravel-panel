@@ -12,7 +12,6 @@ panel.list.prototype.init = function () {
     this.initCheckboxes();
     this.initCategories();
     this.initMoveTo();
-    this.initDoubleClick();
 
     console.log('panel.list.init');
 };
@@ -181,18 +180,6 @@ panel.list.prototype.initCheckboxes = function () {
             checkbox.prop('checked', this.lastClickedCheckboxChecked).trigger('state-changed');
         }
     }, this));
-};
-
-panel.list.prototype.initDoubleClick = function () {
-    this.dataCells.on('dblclick', function (e) {
-        var row            = $(e.target).closest('tr'),
-            actionSelector = row.data('dblclick'),
-            url            = row.find(actionSelector).attr('href');
-
-        if (actionSelector && url) {
-            panel.go(url);
-        }
-    });
 };
 
 panel.list.prototype.updateCheckboxesCheckAll = function () {

@@ -16,7 +16,6 @@ panel.list.prototype.init = function () {
     this.initCheckboxes();
     this.initCategories();
     this.initMoveTo();
-    this.initDoubleClick();
     this.initSortable();
 
     console.log('panel.list.init');
@@ -181,19 +180,6 @@ panel.list.prototype.initCheckboxes = function () {
             checkbox.iCheck(this.lastClickedCheckboxChecked ? 'check' : 'uncheck');
         }
     }, this));
-};
-
-panel.list.prototype.initDoubleClick = function () {
-    this.dataCells.on('dblclick', function (e) {
-        var row            = $(e.target).closest('tr'),
-            actionSelector = row.data('dblclick'),
-            url            = row.find(actionSelector).attr('href');
-
-        if (actionSelector && url) {
-            panel.go(url);
-        }
-    });
-
 };
 
 panel.list.prototype.initSortable = function () {
