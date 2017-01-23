@@ -302,6 +302,10 @@ class PanelForm
 
     public function getFieldErrors($name)
     {
+        if ( ! $this->isSubmit()) {
+            return [ ];
+        }
+
         return $this->getValidator()->errors()->get($name);
     }
 
@@ -370,7 +374,7 @@ class PanelForm
 
     public function getDataFromRequest($name = null, $default = null)
     {
-        return $this->getRequest()->input($this->getInputName(), [ ]);
+        return $this->getRequest()->input($this->getInputName($name), [ ]);
     }
 
 
@@ -573,7 +577,7 @@ class PanelForm
     public function isFailure()
     {
         $validator = $this->getValidator();
-        $validator->setData((array) $this->data);
+        $validator->setData((array) $this->getData());
 
         return $this->isSubmit() && $validator->fails();
     }
@@ -582,7 +586,7 @@ class PanelForm
     public function isSuccess()
     {
         $validator = $this->getValidator();
-        $validator->setData((array) $this->data);
+        $validator->setData((array) $this->getData());
 
         return $this->isSubmit() && $validator->passes();
     }
