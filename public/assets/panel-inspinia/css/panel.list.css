@@ -95,3 +95,8 @@ td.panel-list-model-action:last-child {
 .panel-list .inactive img {
     opacity: 0.4;
 }
+
+td.panel-list-data-cell a {
+    color: inherit;
+    text-decoration: underline;
+}
