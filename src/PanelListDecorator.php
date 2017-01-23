@@ -151,10 +151,16 @@ class PanelListDecorator
         $model  = $cell['model'];
 
         if (isset( $column['handler'] )) {
-            return is_callable($column['handler']) ? $column['handler']($model, $cell, $row) : 'invalid handler';
+            $content = is_callable($column['handler']) ? $column['handler']($model, $cell, $row) : 'invalid handler';
+        } else {
+            $content = $model->getAttribute($column['key']);
         }
 
-        return $model->getAttribute($column['key']);
+        if (array_get($column, 'link')) {
+            $content = $this->linkCell($cell, $row, $content);
+        }
+
+        return $content;
     }
 
 
@@ -184,6 +190,21 @@ class PanelListDecorator
         }
 
         return html_tag($tag, [ 'url' => $url->compile(), 'title' => false ], ...$overwrites);
+    }
+
+
+    public function linkCell(&$cell, &$row, $content, $action = 'edit')
+    {
+        $model = $cell['model'];
+
+        if ( ! $this->allows($action, $model)) {
+            return $content;
+        }
+
+        return html_tag('a', [
+            'content' => $content,
+            'attributes.href'    => urlbuilder($this->getUrl())->append('edit/' . $model->id)->compile()
+        ]);
     }
 
 

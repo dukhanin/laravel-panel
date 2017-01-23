@@ -132,6 +132,7 @@ class PanelList
             'name' => [
                 'label'   => trans('panel.labels.name'),
                 'order'   => true,
+                'link'    => true,
                 'handler' => function ($model, &$cell, &$row) {
                     return $model->name;
                 }
