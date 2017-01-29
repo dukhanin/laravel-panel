@@ -22,15 +22,15 @@ return [
             'icon-only' => true,
             'confirm'   => 'panel.confirm.delete'
         ],
-        'enable'        => function ($list, $model) {
-            $key = method_exists($list, 'getEnabledKey') ? $list->getEnabledKey() : 'enabled';
+        'enable'        => function ($model, $panel) {
+            $key = method_exists($panel, 'getEnabledKey') ? $panel->getEnabledKey() : 'enabled';
 
             if ($model->{$key}) {
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.disable',
                     'icon'      => 'fa fa-eye',
-                    'url'       => urlbuilder($list->getUrl())->append([ 'disable', $model->id ])->compile(),
+                    'url'       => urlbuilder($panel->getUrl())->append([ 'disable', $model->id ])->compile(),
                     'icon-only' => true
                 ];
             } else {
@@ -42,15 +42,15 @@ return [
                 ];
             }
         },
-        'disable'        => function ($list, $model) {
-            $key = method_exists($list, 'getDisabledKey') ? $list->getDisabledKey() : 'disabled';
+        'disable'       => function ($model, $panel) {
+            $key = method_exists($panel, 'getDisabledKey') ? $panel->getDisabledKey() : 'disabled';
 
             if ($model->{$key}) {
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.enable',
                     'icon'      => 'fa fa-eye-slash',
-                    'url'       => urlbuilder($list->getUrl())->append([ 'enable', $model->id ])->compile(),
+                    'url'       => urlbuilder($panel->getUrl())->append([ 'enable', $model->id ])->compile(),
                     'icon-only' => true
                 ];
             } else {
@@ -62,14 +62,14 @@ return [
                 ];
             }
         },
-        'append' => function ($list, $model) {
+        'append'        => function ($model, $panel) {
             return [
                 'class'     => 'btn btn-default btn-xs',
                 'label'     => 'panel.actions.append',
                 'icon'      => 'fa fa-plus',
                 'icon-only' => true,
-                'url'       => urlbuilder($list->getUrl())->append('create')->query([
-                    $list->getRequestAttributeName('appendTo') => $model->id
+                'url'       => urlbuilder($panel->getUrl())->append('create')->query([
+                    $panel->getRequestAttributeName('appendTo') => $model->id
                 ])->compile()
             ];
         },

@@ -124,7 +124,7 @@ class PanelListDecorator
     public function renderModelAction($action, $model = null, ...$overwrites)
     {
         if (is_callable($action)) {
-            $action = $action($this->panel, $model);
+            $action = $action($model, $this->panel);
         }
 
         $action = html_tag_add_class($action, $action['key']);
@@ -156,9 +156,7 @@ class PanelListDecorator
             $content = $model->getAttribute($column['key']);
         }
 
-        if (array_get($column, 'link')) {
-            $content = $this->linkCell($cell, $row, $content);
-        }
+        $content = $this->linkCell($cell, $row, $content);
 
         return $content;
     }
@@ -178,10 +176,10 @@ class PanelListDecorator
         $tag = array_only($column, [ 'label', 'width', 'order', 'class', 'attributes' ]);
 
         if ( ! $resetAnyOrder) {
-            $url->query([ 'order' => $column['key'] ]);
+            $url->query([ $this->getRequestAttributeName('order') => $column['key'] ]);
 
             if ($thisColumnOrdered && ! $orderedDesc) {
-                $url->query([ 'orderDesc' => 1 ]);
+                $url->query([ $this->getRequestAttributeName('orderDesc') => 1 ]);
             }
         }
 
@@ -193,17 +191,27 @@ class PanelListDecorator
     }
 
 
-    public function linkCell(&$cell, &$row, $content, $action = 'edit')
+    public function linkCell(&$cell, &$row, $content, $defaultAction = 'edit')
     {
         $model = $cell['model'];
 
-        if ( ! $this->allows($action, $model)) {
+        if ($action = value(array_get($cell, 'column.action'))) {
+            $action = $action === true ? $defaultAction : $action;
+            $url    = $this->allows($action, $model) ? urlbuilder($this->getUrl())->append([
+                $action,
+                $model->id
+            ])->compile() : null;
+        } else {
+            $url = value(array_get($cell, 'column.url'));
+        }
+
+        if (empty( $url )) {
             return $content;
         }
 
         return html_tag('a', [
-            'content' => $content,
-            'attributes.href'    => urlbuilder($this->getUrl())->append('edit/' . $model->id)->compile()
+            'content'         => $content,
+            'attributes.href' => $url
         ]);
     }
 

@@ -13,7 +13,9 @@ use Mockery\CountValidator\Exception;
 class PanelList
 {
 
-    use HandlesActions;
+    use HandlesActions {
+        execute as _execute;
+    }
 
     protected $model;
 
@@ -43,15 +45,36 @@ class PanelList
 
     protected $config;
 
+    protected $requestAttributePrefix;
+
+    protected static $stack;
+
 
     public function actionIndex()
     {
-        return $this->getView()->render();
+        return $this->getView();
+    }
+
+
+    public function execute()
+    {
+        PanelList::$stack++;
+
+        $response = $this->_execute();
+
+        PanelList::$stack--;
+
+        return $response;
     }
 
 
     public function init()
     {
+        $this->initActions();
+        $this->initModelActions();
+        $this->initGroupActions();
+        $this->initColumns();
+
         $this->initFeatures();
     }
 
@@ -132,7 +155,7 @@ class PanelList
             'name' => [
                 'label'   => trans('panel.labels.name'),
                 'order'   => true,
-                'link'    => true,
+                'action'  => true,
                 'handler' => function ($model, &$cell, &$row) {
                     return $model->name;
                 }
@@ -156,6 +179,12 @@ class PanelList
     public function initGroupActions()
     {
         $this->groupActions = [ ];
+    }
+
+
+    public function initRequestAttributePrefix()
+    {
+        $this->requestAttributePrefix = PanelList::$stack > 1 ? str_repeat('_', PanelList::$stack - 1) : '';
     }
 
 
@@ -374,7 +403,17 @@ class PanelList
 
     public function getRequestAttributeName($attribute)
     {
-        return strval($attribute);
+        return $this->getRequestAttributePrefix() . strval($attribute);
+    }
+
+
+    public function getRequestAttributePrefix()
+    {
+        if (is_null($this->requestAttributePrefix)) {
+            $this->initRequestAttributePrefix();
+        }
+
+        return $this->requestAttributePrefix;
     }
 
 
@@ -630,18 +669,18 @@ class PanelList
     {
         $columns = $this->getColumns();
 
-        if (empty( $columns[$this->order]['order'] )) {
+        if (empty( $columns[$this->getOrder()]['order'] )) {
             return;
         }
 
         $select->getQuery()->orders = null;
 
-        $order = $columns[$this->order]['order'];
+        $order = $columns[$this->getOrder()]['order'];
 
         if (is_callable($order)) {
             call_user_func($order, $select, $this);
         } else {
-            $select->orderBy($order, $this->orderDesc ? 'desc' : 'asc');
+            $select->orderBy($order, $this->getOrderDesc() ? 'desc' : 'asc');
         }
     }
 

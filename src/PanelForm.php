@@ -693,7 +693,7 @@ class PanelForm
         $this->init();
         $this->handle();
 
-        return $this->render();
+        return $this->getView();
     }
 
 
