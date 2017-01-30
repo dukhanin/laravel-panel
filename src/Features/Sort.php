@@ -2,11 +2,14 @@
 
 namespace Dukhanin\Panel\Features;
 
+use Dukhanin\Panel\PanelTree;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 
 trait Sort
 {
+
+    protected $modelToSort;
 
     protected $sortEnabled;
 
@@ -94,14 +97,14 @@ trait Sort
 
     protected function sort($primaryKey, $direction)
     {
-        $model = $this->findModelOrFail($primaryKey);
+        $this->modelToSort = $this->findModelOrFail($primaryKey);
 
-        $this->authorize('sort', $model);
+        $this->authorize('sort', $this->modelToSort);
 
         $query                     = $this->getSortQuery();
         $query->getQuery()->orders = [ ];
 
-        $modelIndex = intval($model->{$this->sortKey});
+        $modelIndex = intval($this->modelToSort->{$this->sortKey});
 
         if ($direction === 'up') {
             $query->where($this->sortKey, '<', $modelIndex)->orderBy($this->sortKey, 'desc');
@@ -110,15 +113,15 @@ trait Sort
         }
 
         if ($neighboor = $query->first()) {
-            $model->index = $neighboor->index;
-            $model->save();
+            $this->modelToSort->index = $neighboor->index;
+            $this->modelToSort->save();
 
             $neighboor->index = $modelIndex;
             $neighboor->save();
         } elseif ($direction === 'up') {
-            $model->index = -1;
+            $this->modelToSort->index = -1;
         } else {
-            $model->index = 9999999;
+            $this->modelToSort->index = 9999999;
         }
 
         $this->resortModels();
@@ -133,7 +136,7 @@ trait Sort
             return false;
         }
 
-        $max = $this->getSortQuery()->max($this->sortKey) + 1;
+        $max = $this->getSortQuery($model)->max($this->sortKey) + 1;
 
         $model->{$this->sortKey} = $max;
         $model->save();
@@ -149,7 +152,7 @@ trait Sort
         $model->{$this->sortKey} = -1;
         $model->save();
 
-        $this->resortModels();
+        $this->resortModels($model);
     }
 
 
@@ -163,6 +166,10 @@ trait Sort
 
     protected function getSortQuery()
     {
+        if ($this instanceof PanelTree) {
+            return $this->getQueryBranch($this->modelToSort->{$this->getParentKey()}, [ '!order', '!pages' ]);
+        }
+
         return $this->getQuery([ '!order', '!pages' ]);
     }
 

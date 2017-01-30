@@ -13,9 +13,7 @@ use Mockery\CountValidator\Exception;
 class PanelList
 {
 
-    use HandlesActions {
-        execute as _execute;
-    }
+    use HandlesActions;
 
     protected $model;
 
@@ -47,24 +45,10 @@ class PanelList
 
     protected $requestAttributePrefix;
 
-    protected static $stack;
-
 
     public function actionIndex()
     {
         return $this->getView();
-    }
-
-
-    public function execute()
-    {
-        PanelList::$stack++;
-
-        $response = $this->_execute();
-
-        PanelList::$stack--;
-
-        return $response;
     }
 
 
@@ -184,7 +168,8 @@ class PanelList
 
     public function initRequestAttributePrefix()
     {
-        $this->requestAttributePrefix = PanelList::$stack > 1 ? str_repeat('_', PanelList::$stack - 1) : '';
+        $this->requestAttributePrefix = @$GLOBALS['HandlesActionsStack'] > 1 ? str_repeat('_',
+            @$GLOBALS['HandlesActionsStack'] - 1) : '';
     }
 
 
