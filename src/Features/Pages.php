@@ -29,7 +29,7 @@ trait Pages
 
     public function initPerPage()
     {
-        $this->perPage = 10;
+        $this->perPage = 20;
     }
 
 

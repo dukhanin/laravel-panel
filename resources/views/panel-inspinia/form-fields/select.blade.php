@@ -1,5 +1,5 @@
 <?
-$nullTitle = isset( $nullTitle ) ? $nullTitle : trans('du-panel.labels.choose');
+$nullTitle = isset( $nullTitle ) ? $nullTitle : trans('panel.labels.choose');
 
 if ( ! isset( $options ) || ! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {
     $options = [ ];

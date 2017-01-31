@@ -753,7 +753,11 @@ class PanelForm
             $settings['after'] = strval($settings['after']);
         }
 
-        $settings['label'] = trans($settings['label']);
+        if ( ! isset( $settings['label'] )) {
+            $settings['label'] = $key;
+        } else {
+            $settings['label'] = trans($settings['label']);
+        }
 
         return $settings + [ 'key' => $key ];
     }
