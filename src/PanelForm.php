@@ -407,6 +407,8 @@ class PanelForm
     public function setLayout($layout)
     {
         $this->layout = $layout;
+
+        return $this;
     }
 
 
