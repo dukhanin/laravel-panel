@@ -322,7 +322,12 @@ class PanelList
     {
         $apply[] = '!pages';
 
-        return $this->getQuery($apply)->count();
+        $query = $this->getQuery($apply);
+
+        $query->orders      = [ ];
+        $query->unionOrders = [ ];
+
+        return $query->count();
     }
 
 
