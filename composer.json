@@ -11,7 +11,7 @@
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "5.3.*",
-        "dukhanin/laravel-support": "~1.0"
+        "dukhanin/laravel-support": "dev-master"
     },
     "autoload": {
         "psr-4": {
