@@ -484,7 +484,7 @@ class PanelForm
 
     public function addSubmitButton(array $button = [ ])
     {
-        $this->addButton('submit', array_merge_recursive($this->config('buttons.submit'), $button));
+        $this->addButton('submit', array_merge($this->config('buttons.submit'), $button));
 
         if ( ! empty( $this->buttons['submit']['url'] )) {
             $this->succeed(function ($form) {
@@ -496,13 +496,13 @@ class PanelForm
 
     public function addCancelButton(array $button = [ ])
     {
-        $this->addButton('cancel', array_merge_recursive($this->config('buttons.cancel'), $button));
+        $this->addButton('cancel', array_merge($this->config('buttons.cancel'), $button));
     }
 
 
     public function addApplyButton(array $button = [ ])
     {
-        $this->addButton('apply', array_merge_recursive($this->config('buttons.apply'), $button));
+        $this->addButton('apply', array_merge($this->config('buttons.apply'), $button));
 
         $this->succeed(function ($form) {
             if ( ! Request::input('_apply')) {
@@ -705,7 +705,7 @@ class PanelForm
             $button = call_user_func($button, $this);
         }
 
-        $_button = array_merge_recursive($this->config('buttons.default'), [ 'key' => $key ], (array) $button);
+        $_button = array_merge($this->config('buttons.default'), [ 'key' => $key ], (array) $button);
 
         if (empty( $_button['label'] )) {
             $_button['label'] = $key;
