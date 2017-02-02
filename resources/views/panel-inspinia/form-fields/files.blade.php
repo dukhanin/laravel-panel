@@ -1,6 +1,6 @@
 <?php
 $errors = $form->getFieldErrors($field['key']);
-$id = 'file-' . mt_rand(1, 1000);
+$id     = 'file-' . mt_rand(1, 1000);
 
 $value = $form->getInputValue($field['key']);
 
@@ -8,8 +8,8 @@ if ( ! is_array($value)) {
     $value = [ $value ];
 }
 
-$value = array_map('intval', $value);
-$files = \App\File\File::findMany($value);
+$value   = array_map('intval', $value);
+$files   = \App\File\File::findMany($value);
 $resizes = isset( $resizes ) ? (array) $resizes : [ ];
 ?>
 
@@ -55,16 +55,18 @@ $resizes = isset( $resizes ) ? (array) $resizes : [ ];
 
 <script type="text/javascript">
     $(function () {
-        var input = $('#<? echo $id; ?>');
+        var input = $('#{!! $id !!}');
 
         var inputFiles = input.inputFiles({
             resizes: {!! json_encode($resizes) !!}
+
         });
         inputFiles.init();
 
         @foreach($files as $file)
             inputFiles.addFile(new panel.file({!! $file !!}));
         @endforeach
+
 
     });
     // ]]>

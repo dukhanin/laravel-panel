@@ -1,4 +1,4 @@
-<?
+<?php
 global $checkboxesIndex;
 
 $value    = $form->getInputValue($field['key']);

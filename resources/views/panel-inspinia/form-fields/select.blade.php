@@ -1,4 +1,4 @@
-<?
+<?php
 $nullTitle = isset( $nullTitle ) ? $nullTitle : trans('panel.labels.choose');
 
 if ( ! isset( $options ) || ! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {

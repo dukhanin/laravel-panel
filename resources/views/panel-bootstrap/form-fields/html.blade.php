@@ -1,4 +1,4 @@
-<?
+<?php
 $value = $form->getInputValue($field['key']);
 $errors = $form->getFieldErrors($field['key']);
 

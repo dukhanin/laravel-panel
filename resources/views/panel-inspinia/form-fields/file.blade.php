@@ -43,7 +43,7 @@ $file = \App\File\File::find($value);
 
 <script type="text/javascript">
     $(function () {
-        var input = $('#<? echo $id; ?>');
+        var input = $('#{!! $id !!}');
 
         input.panelFiles();
 
