@@ -7,14 +7,13 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Model;
 use Dukhanin\Support\Traits\DispatchesEvents;
-use Dukhanin\Support\Traits\HandlesActions;
 use UnexpectedValueException;
 use ErrorException;
 
 class PanelForm
 {
 
-    use HandlesActions, DispatchesEvents;
+    use DispatchesEvents;
 
     protected $config;
 
@@ -374,7 +373,7 @@ class PanelForm
 
     public function getDataFromRequest($name = null, $default = null)
     {
-        return $this->getRequest()->input($this->getInputName($name), [ ]);
+        return Request::input($this->getInputName($name), [ ]);
     }
 
 
@@ -596,7 +595,7 @@ class PanelForm
 
     public function isSubmit()
     {
-        return $this->getRequest()->input($this->getInputName());
+        return Request::input($this->getInputName());
     }
 
 
