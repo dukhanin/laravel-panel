@@ -3,7 +3,7 @@
  */
 
 panel.list = function (node) {
-    this.node = $(node);
+    this.node        = $(node);
 };
 
 panel.list.prototype.init = function () {
@@ -42,18 +42,18 @@ panel.list.prototype.initParams = function () {
 };
 
 panel.list.prototype.initActions = function () {
-
-};
-
-panel.list.prototype.initGroupActions = function () {
-    this.groupActionsButtons.click(function (e) {
+    this.actionsButtons.click(function (e) {
         var button   = $(this),
             confirm  = button.data('confirm'),
-            url      = button.data('url'),
-            form     = button.closest('form'),
+            blank    = button.attr('target') == '_blank',
+            url      = button.attr('href'),
             callback = function () {
-                form.attr('action', url);
-                form.submit();
+                if (blank) {
+                    var win = window.open(url, '_blank');
+                    win.focus();
+                } else {
+                    document.location = url;
+                }
             };
 
         if (confirm) {
@@ -63,6 +63,31 @@ panel.list.prototype.initGroupActions = function () {
         }
 
         e.preventDefault();
+    });
+};
+
+panel.list.prototype.initGroupActions = function () {
+    this.groupActionsButtons.click(function (e) {
+        e.preventDefault();
+
+        var button   = $(this),
+            confirm  = button.data('confirm'),
+            url      = button.data('url'),
+            form     = button.closest('form'),
+            callback = function () {
+                form.attr('action', url);
+                form.submit();
+            };
+
+        if(!url) {
+            return;
+        }
+
+        if (confirm) {
+            panel.confirm(confirm, callback);
+        } else {
+            callback.call(this);
+        }
     });
 };
 
@@ -145,9 +170,11 @@ panel.list.prototype.initCheckboxes = function () {
         var row        = $(e.target).closest('tr'),
             rowChecked = e.target.checked;
 
-        row.toggleClass('bg-warning selected', rowChecked);
+        row.toggleClass('panel-list-selected', rowChecked);
         this.updateCheckboxesCheckAll();
     }, this));
+
+    this.checkboxes.trigger('ifToggled');
 
     this.checkboxesCheckAll.on('ifToggled', $.proxy(function (e) {
         this.checkboxes.iCheck(e.target.checked ? 'check' : 'uncheck');
@@ -186,7 +213,7 @@ panel.list.prototype.initSortable = function () {
 
     $(this.node).find('tbody').sortable({
         handle: '.panel-list-sort-handler',
-        items:  'tr:not(.selected)',
+        items:  'tr:not(.panel-list-selected)',
         start:  $.proxy(function (e, ui) {
             this.sortableInProgress = true;
 
@@ -198,15 +225,15 @@ panel.list.prototype.initSortable = function () {
                 checkbox.iCheck('check');
             }
 
-            if (this.rows.filter('.selected').size() > 1) {
-                this.rows.filter('.selected').hide();
+            if (this.rows.filter('.panel-list-selected').size() > 1) {
+                this.rows.filter('.panel-list-selected').hide();
                 // @todo unstable ordering in multiply mode
             }
         }, this),
         stop:   $.proxy(function (e, ui) {
             var row = ui.item;
 
-            row.after(this.rows.filter('.selected').css('display', 'table-row'));
+            row.after(this.rows.filter('.panel-list-selected').css('display', 'table-row'));
 
             this.sortableInProgress = false;
         }, this),
@@ -225,9 +252,9 @@ panel.list.prototype.initSortable = function () {
                 var url = this.url.split('?');
 
                 panel.ajax({
-                    url:     url[0] + '/sortSlice' + (url.length > 1 ? '?' + url[1] : ''),
-                    method:  'post',
-                    data:    {group: orderedList}
+                    url:    url[0] + '/sortSlice' + (url.length > 1 ? '?' + url[1] : ''),
+                    method: 'post',
+                    data:   {group: orderedList}
                 });
             }, this), 100);
         }, this)
@@ -235,7 +262,7 @@ panel.list.prototype.initSortable = function () {
 };
 
 panel.list.prototype.updateCheckboxesCheckAll = function () {
-    var checked        = this.checkboxes.size() > 0 && this.checkboxes.size() == this.checkboxes.filter(':checked').size();
+    var checked = this.checkboxes.size() > 0 && this.checkboxes.size() == this.checkboxes.filter(':checked').size();
 
     this.checkboxesCheckAll.prop('checked', checked);
     this.checkboxesCheckAll.parent().toggleClass('checked', checked);

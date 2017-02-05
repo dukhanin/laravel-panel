@@ -16,7 +16,6 @@ td.panel-list-sort {
     min-width: 60px;
 }
 
-
 td.panel-list-model-action {
     padding: 12px 4px;
     width: 10px;
@@ -42,4 +41,12 @@ td.panel-list-model-action:last-child {
     width: auto;
     display: inline;
     position: relative;
+}
+
+.panel-list-selected {
+    background-color: #fcf8e3;
+}
+
+.panel-list-selected:focus, .panel-list-selected:hover {
+    background-color: #f7ecb5
 }

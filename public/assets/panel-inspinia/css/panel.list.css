@@ -7,6 +7,18 @@ table.panel-list-table {
     user-select: none;
 }
 
+.panel-list .mail-box-header {
+    padding: 0px 20px 10px 20px;
+}
+
+.panel-list .panel-list-empty tr td {
+    border: 0;
+}
+
+.panel-list .mail-box-header h2 {
+    margin-top: 20px;
+}
+
 .panel-list .table-hover > tbody.panel-list-empty > tr:hover {
     background-color: transparent;
 }
@@ -40,10 +52,10 @@ body .panel-list table.panel-list-table tbody td.panel-list-sort-handler {
     font-size: 1px;
     width: 1%;
     cursor: move;
-    background-image: -webkit-repeating-radial-gradient(center center, rgba(0,0,0,.2), rgba(0,0,0,.2) 1px, transparent 1px, transparent 100%);
-    background-image: -moz-repeating-radial-gradient(center center, rgba(0,0,0,.2), rgba(0,0,0,.2) 1px, transparent 1px, transparent 100%);
-    background-image: -ms-repeating-radial-gradient(center center, rgba(0,0,0,.2), rgba(0,0,0,.2) 1px, transparent 1px, transparent 100%);
-    background-image: repeating-radial-gradient(center center, rgba(0,0,0,.2), rgba(0,0,0,.2) 1px, transparent 1px, transparent 100%);
+    background-image: -webkit-repeating-radial-gradient(center center, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2) 1px, transparent 1px, transparent 100%);
+    background-image: -moz-repeating-radial-gradient(center center, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2) 1px, transparent 1px, transparent 100%);
+    background-image: -ms-repeating-radial-gradient(center center, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2) 1px, transparent 1px, transparent 100%);
+    background-image: repeating-radial-gradient(center center, rgba(0, 0, 0, .2), rgba(0, 0, 0, .2) 1px, transparent 1px, transparent 100%);
     -webkit-background-size: 3px 3px;
     -moz-background-size: 3px 3px;
     background-size: 3px 3px;
@@ -58,8 +70,8 @@ td.panel-list-model-action:last-child {
     padding-right: 12px;
 }
 
-.panel-list-tools {
-    margin: 20px 0;
+h2 + .panel-list-tools {
+    margin-top: 20px;
 }
 
 .panel-list-empty td {
@@ -75,6 +87,14 @@ td.panel-list-model-action:last-child {
     display: inline;
     position: relative;
     top: 2px;
+}
+
+.panel-list-selected {
+    background-color: #fcf8e3
+}
+
+.panel-list-selected:focus, .panel-list-selected:hover {
+    background-color: #f7ecb5
 }
 
 .panel-list-table > thead > tr > td.inactive,

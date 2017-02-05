@@ -1,5 +1,5 @@
 panel.list = function (node) {
-    this.node = $(node);
+    this.node          = $(node);
 };
 
 panel.list.prototype.init = function () {
@@ -50,6 +50,10 @@ panel.list.prototype.initGroupActions = function () {
                 form.attr('action', url);
                 form.submit();
             };
+
+        if (!url) {
+            return;
+        }
 
         if (confirm) {
             panel.confirm(confirm, callback);
@@ -145,7 +149,7 @@ panel.list.prototype.initCheckboxes = function () {
             row        = checkbox.closest('tr'),
             rowChecked = checkbox.prop('checked');
 
-        row.toggleClass('bg-warning selected', rowChecked);
+        row.toggleClass('panel-list-selected', rowChecked);
         this.updateCheckboxesCheckAll();
     }, this));
 
