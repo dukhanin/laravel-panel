@@ -449,6 +449,12 @@ class PanelForm
             $this->fields[$field['key']] = $field;
         } else {
             $this->fields[] = $field;
+
+            end($this->fields);
+            $key = key($this->fields);
+            reset($this->fields);
+
+            $this->fields[$key]['key'] = $key;
         }
 
         return $this;
