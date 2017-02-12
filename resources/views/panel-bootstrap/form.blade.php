@@ -16,7 +16,7 @@
             @if ($form->isFailure())
                 <div class="form-group">
                     <div class="col-sm-10 col-sm-offset-2 text-danger">
-                        <i class="fa fa-warning"></i> @lang('panel.labels.validation-failed')
+                        <i class="fa fa-warning"></i> @lang( $decorator->config('labels.validation-failed') )
                     </div>
                 </div>
             @endif

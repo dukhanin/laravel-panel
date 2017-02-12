@@ -18,7 +18,7 @@
 @endpush
 
 @section('content')
-    <div class="panel panel-list" id="{{ $panelId }}">
+    <div class="panel-list" id="{{ $panelId }}">
         <form method="post" action="{{ $decorator->getUrl() }}" class="panel-list-form">
 
             <h4>{{ $decorator->getLabel() }}</h4>
@@ -39,7 +39,7 @@
                                     data-confirm=""
                                     data-url="{{ urlbuilder($decorator->getUrl())->append('groupMoveTo/dummyMoveTo') }}">
 
-                                <option value="">@lang('panel.labels.move-to')</option>
+                                <option value="">@lang( $decorator->config('labels.move-to') )</option>
 
                                 @foreach($decorator->getMoveTo() as $key => $label)
                                     <option value="{{$key}}">&nbsp;&nbsp;&nbsp;&nbsp;{{$label}}</option>
@@ -69,7 +69,7 @@
                     <tbody class="panel-list-empty">
                     <tr>
                         <td colspan="99" class="inactive">
-                            @lang('panel.labels.list-empty')
+                            @lang( $decorator->config('labels.list-empty') )
                         </td>
                     </tr>
                     </tbody>
@@ -112,12 +112,12 @@
                                        class="btn btn-default btn-xs"
                                        data-toggle="tooltip"
                                        data-placement="auto"
-                                       title="@lang('panel.labels.sort-up')"><i class="fa fa-angle-up"></i></a>
+                                       title="@lang( $decorator->config('labels.sort-up') )"><i class="fa fa-angle-up"></i></a>
                                     <a href="{!! urlbuilder($decorator->getUrl())->append(['sortDown', $row['model']->getKey()]) !!}"
                                        class="btn btn-default btn-xs"
                                        data-toggle="tooltip"
                                        data-placement="auto"
-                                       title="@lang('panel.labels.sort-down')"><i class="fa fa-angle-down"></i></a>
+                                       title="@lang( $decorator->config('labels.sort-down') )"><i class="fa fa-angle-down"></i></a>
                                 </div>
                             </td>
                         @endif

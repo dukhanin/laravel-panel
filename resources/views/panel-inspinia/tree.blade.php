@@ -2,7 +2,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.tree.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.list.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.tree.css') }}"/>
 @endpush
 
@@ -21,7 +21,7 @@
 @endpush
 
 @section('content')
-    <div class="panel panel-list panel-tree" id="{{ $panelId }}">
+    <div class="panel-list panel-tree" id="{{ $panelId }}">
         <form method="post" action="{{ $decorator->getUrl() }}" class="panel-list-form">
 
             <div class="mail-box-header">
@@ -45,7 +45,7 @@
                                         data-confirm=""
                                         data-url="{{ urlbuilder($decorator->getUrl())->append('groupMoveTo/dummyMoveTo') }}">
 
-                                    <option value="">@lang('panel.labels.move-to')</option>
+                                    <option value="">@lang( $decorator->config('labels.move-to') )</option>
 
                                     @foreach($decorator->getMoveTo() as $key => $label)
                                         <option value="{{$key}}">&nbsp;&nbsp;&nbsp;&nbsp;{{$label}}</option>
@@ -81,7 +81,7 @@
                         <tbody class="panel-list-empty">
                         <tr>
                             <td colspan="99">
-                                <h2>@lang('panel.labels.list-empty')</h2>
+                                <h2>@lang( $decorator->config('labels.list-empty') )</h2>
                             </td>
                         </tr>
                         </tbody>
@@ -138,12 +138,12 @@
                                            class="btn btn-xs btn-white"
                                            data-toggle="tooltip"
                                            data-placement="auto"
-                                           title="@lang('panel.labels.sort-up')"><i class="fa fa-angle-up"></i></a>
+                                           title="@lang( $decorator->config('labels.sort-up') )"><i class="fa fa-angle-up"></i></a>
                                         <a href="{!! urlbuilder($decorator->getUrl())->append(['sortDown', $row['model']->getKey()]) !!}"
                                            class="btn btn-xs btn-white"
                                            data-toggle="tooltip"
                                            data-placement="auto"
-                                           title="@lang('panel.labels.sort-down')"><i class="fa fa-angle-down"></i></a>
+                                           title="@lang( $decorator->config('labels.sort-down') )"><i class="fa fa-angle-down"></i></a>
                                     </div>
                                 </td>
                             @endif

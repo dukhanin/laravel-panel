@@ -3,6 +3,13 @@
 return [
     'views'   => 'panel-bootstrap',
     'layout'  => 'layouts.app',
+    'labels'  => [
+        'list-empty'        => 'panel.labels.list-empty',
+        'move-to'           => 'panel.labels.move-to',
+        'sort-up'           => 'panel.labels.sort-up',
+        'sort-down'         => 'panel.labels.sort-down',
+        'validation-failed' => 'panel.labels.validation-failed',
+    ],
     'actions' => [
         'create'        => [
             'class' => 'btn btn-default btn-sm',

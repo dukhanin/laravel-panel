@@ -19,7 +19,7 @@
                 @if ($form->isFailure())
                     <div class="form-group">
                         <div class="col-sm-10 text-danger">
-                            <i class="fa fa-warning"></i> @lang('panel.labels.validation-failed')
+                            <i class="fa fa-warning"></i> @lang( $form->config('labels.validation-failed') )
                         </div>
                     </div>
                 @endif
