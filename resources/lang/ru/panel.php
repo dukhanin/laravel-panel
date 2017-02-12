@@ -1,12 +1,13 @@
 <?php
 
 return [
-    'buttons' => [
-        'submit' => 'Сохранить',
-        'apply'  => 'Применить',
-        'cancel' => 'Отмена'
+    'buttons'   => [
+        'submit'  => 'Сохранить',
+        'confirm' => 'Подтвердить',
+        'apply'   => 'Применить',
+        'cancel'  => 'Отмена'
     ],
-    'actions' => [
+    'actions'   => [
         'create'        => 'Создать',
         'edit'          => 'Редактировать',
         'delete'        => 'Удалить',
@@ -17,12 +18,12 @@ return [
         'group-disable' => 'Скрыть',
         'group-delete'  => 'Удалить',
     ],
-    'confirm' => [
+    'confirm'   => [
         'default'      => 'Подтвердите действие',
         'delete'       => 'Действительно удалить?',
         'group-delete' => 'Действительно удалить?',
     ],
-    'labels'  => [
+    'labels'    => [
         'list-empty'        => 'Список пуст',
         'move-to'           => 'Переместить...',
         'choose'            => 'Выбрать...',
@@ -30,5 +31,9 @@ return [
         'sort-up'           => 'Вверх',
         'sort-down'         => 'Вниз',
         'validation-failed' => 'Ошибки при заполнении полей'
+    ],
+    'responses' => [
+        'success' => 'Успешно!',
+        'error'   => 'Ошибка!',
     ]
 ];

@@ -131,3 +131,7 @@ h2 + .panel-list-tools {
 .panel-list-table {
     margin-bottom: 0;
 }
+
+.tabs-container + .panel-list .mail-box-header {
+    border-top: 1px solid #fff;
+}

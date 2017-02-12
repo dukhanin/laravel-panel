@@ -57,6 +57,20 @@
 
 </div>
 
+<script>
+    $(function(){
+        $(function () {
+            panel.labels = {!! json_encode( trans('panel') ) !!};
+
+            $.ajaxSetup({
+                headers: {
+                    'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                }
+            });
+        });
+    });
+</script>
+
 @stack('scripts')
 
 </body>

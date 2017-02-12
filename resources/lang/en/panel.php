@@ -1,12 +1,13 @@
 <?php
 
 return [
-    'buttons' => [
-        'submit' => 'Save',
-        'apply'  => 'Apply',
-        'cancel' => 'Cancel'
+    'buttons'   => [
+        'submit'  => 'Save',
+        'confirm' => 'Confirm',
+        'apply'   => 'Apply',
+        'cancel'  => 'Cancel'
     ],
-    'actions' => [
+    'actions'   => [
         'create'        => 'Create New',
         'edit'          => 'Edit',
         'delete'        => 'Delete',
@@ -17,18 +18,22 @@ return [
         'group-disable' => 'Disable',
         'group-delete'  => 'Delete',
     ],
-    'confirm' => [
+    'confirm'   => [
         'default'      => 'Confirm action',
         'delete'       => 'Delete item?',
         'group-delete' => 'Delete items?',
     ],
-    'labels'  => [
+    'labels'    => [
         'list-empty'        => 'No items',
         'move-to'           => 'Move to...',
         'choose'            => 'Choose...',
         'name'              => 'Name',
         'sort-up'           => 'Sort Up',
         'sort-down'         => 'Sort Down',
-        'validation-failed' => 'Validation Failed'
+        'validation-failed' => 'Validation Failed',
+    ],
+    'responses' => [
+        'success' => 'Success!',
+        'error'   => 'Error!',
     ]
 ];

@@ -6,7 +6,7 @@
 @endpush
 
 @section('content')
-    <div class="ibox float-e-margins du-form">
+    <div class="ibox float-e-margins panel-form">
         @if ( $form->getLabel() )
             <div class="ibox-title">
                 <h5>{{ $form->getLabel() }}</h5>

@@ -1,4 +1,13 @@
-.tabs-container+.panel-form {
+.tabs-container + .panel-form {
     border-left: 1px solid #e7eaec;
     border-bottom: 1px solid #e7eaec;
+}
+
+.tabs-container + .panel-form {
+    border-top: 1px solid #fff;
+}
+
+.tabs-container + .panel-form .ibox-title {
+    border-top: 0;
+    position: relative;
 }

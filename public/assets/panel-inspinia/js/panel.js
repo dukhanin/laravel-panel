@@ -1,12 +1,17 @@
-$(function () {
-    $.ajaxSetup({
-        headers: {
-            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
-        }
-    });
-});
-
 panel = {
+    labels:  {
+        buttons:   {
+            confirm: 'Confirm',
+            cancel:  'Cancel'
+        },
+        confirm:   {
+            'default': 'Really?'
+        },
+        responses: {
+            success: 'Success!',
+            error:   'Error!'
+        }
+    },
     confirm: function (message, callback) {
         if (typeof message !== 'object') {
             message = {
@@ -15,7 +20,7 @@ panel = {
         }
 
         if ('undefined' === typeof message.title) {
-            message.title = 'Really?';
+            message.title = this.labels.confirm.default;
         }
 
         if ('undefined' === typeof message.text) {
@@ -31,11 +36,11 @@ panel = {
         }
 
         if ('undefined' === typeof message.confirmButtonText) {
-            message.confirmButtonText = 'Confirm';
+            message.confirmButtonText = this.labels.buttons.confirm;
         }
 
         if ('undefined' === typeof message.cancelButtonText) {
-            message.cancelButtonText = 'Cancel';
+            message.cancelButtonText = this.labels.buttons.cancel;
         }
 
         if ('undefined' === typeof message.closeOnConfirm) {
@@ -68,11 +73,11 @@ panel = {
 
         if (typeof data == 'object' && data.success) {
             message.type  = 'success';
-            message.title = 'Success!';
+            message.title = '';
         }
         else {
             message.type  = 'error';
-            message.title = 'Error';
+            message.title = '';
 
             if (typeof data == 'object' && data.error) {
                 message.title += ' ' + data.error;
@@ -80,7 +85,6 @@ panel = {
         }
 
         if (message.type === 'error' || message.text) {
-            //@todo @dukhanin
             swal(message);
         }
     },

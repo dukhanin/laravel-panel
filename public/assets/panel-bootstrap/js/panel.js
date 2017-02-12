@@ -1,8 +1,22 @@
-panel = {};
+panel = {
+    labels:  {
+        buttons:   {
+            confirm: 'Confirm',
+            cancel:  'Cancel'
+        },
+        confirm:   {
+            'default': 'Really?'
+        },
+        responses: {
+            success: 'Success!',
+            error:   'Error!'
+        }
+    }
+};
 
 panel.confirm = function (confirmText, callback) {
     if (!confirmText && 'string' === typeof confirmText) {
-        confirmText = 'Confirm current action';
+        confirmText = this.labels.confirm.default;
     }
 
     if (confirm(confirmText)) {

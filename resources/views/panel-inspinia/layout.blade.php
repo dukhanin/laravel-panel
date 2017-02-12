@@ -12,18 +12,6 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/plugins/sweetalert/sweetalert.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}"/>
 
-    <style>
-        .tabs-container + .ibox, .tabs-container + .panel-list .mail-box-header {
-            border-top: 1px solid #fff;
-        }
-
-        .tabs-container + .ibox .ibox-title {
-            border-top: 0;
-            position: relative;
-            top: 2px;
-        }
-    </style>
-
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @stack('styles')
@@ -173,6 +161,18 @@
 <script src="{{ URL::asset('assets/inspinia/js/plugins/pace/pace.min.js') }}"></script>
 <script src="{{ URL::asset('assets/inspinia/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 <script src="{{ URL::asset('assets/inspinia/js/inspinia.js') }}"></script>
+
+<script>
+    $(function () {
+        panel.labels = {!! json_encode( trans('panel') ) !!};
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
+    });
+</script>
 
 @stack('scripts')
 
