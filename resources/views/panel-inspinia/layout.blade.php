@@ -13,6 +13,18 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/sweetalert.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/awesome-bootstrap-checkbox.css') }}"/>
 
+    <style>
+        .tabs-container + .ibox {
+            border-top: 0;
+        }
+
+        .tabs-container + .ibox .ibox-title {
+            border-top: 0;
+            position: relative;
+            top: 2px;
+        }
+    </style>
+
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
     @stack('styles')
