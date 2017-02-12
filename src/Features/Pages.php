@@ -39,10 +39,7 @@ trait Pages
         $this->paginator->setPageName($this->getRequestAttributeName('page'));
 
         $url = urlbuilder($this->getUrl([ '!pages' ]));
-
-        foreach ($url->query() as $key => $value) {
-            $this->paginator->addQuery($key, $value);
-        }
+        $this->paginator->appends( $url->query() );
 
         $url->query(false);
 
