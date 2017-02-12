@@ -9,13 +9,13 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/font-awesome/css/font-awesome.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/inspinia-animate.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/inspinia.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/icheck.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/sweetalert.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/awesome-bootstrap-checkbox.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/plugins/iCheck/custom.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/plugins/sweetalert/sweetalert.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}"/>
 
     <style>
-        .tabs-container + .ibox {
-            border-top: 0;
+        .tabs-container + .ibox, .tabs-container + .panel-list .mail-box-header {
+            border-top: 1px solid #fff;
         }
 
         .tabs-container + .ibox .ibox-title {
@@ -169,12 +169,12 @@
 
 <script src="{{ URL::asset('assets/inspinia/js/jquery-2.1.1.js') }}"></script>
 <script src="{{ URL::asset('assets/inspinia/js/bootstrap.min.js') }}"></script>
-<script src="{{ URL::asset('assets/inspinia/js/jquery.metisMenu.js') }}"></script>
-<script src="{{ URL::asset('assets/inspinia/js/jquery.slimscroll.min.js') }}"></script>
-<script src="{{ URL::asset('assets/inspinia/js/pace.min.js') }}"></script>
-<script src="{{ URL::asset('assets/inspinia/js/icheck.min.js') }}"></script>
-<script src="{{ URL::asset('assets/inspinia/js/sweetalert.min.js') }}"></script>
-<script src="{{ URL::asset('assets/inspinia/js/inspinia.interface.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/plugins/pace/pace.min.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/plugins/iCheck/icheck.min.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
+<script src="{{ URL::asset('assets/inspinia/js/inspinia.js') }}"></script>
 
 @stack('scripts')
 
