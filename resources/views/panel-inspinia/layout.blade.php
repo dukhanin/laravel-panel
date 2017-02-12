@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/font-awesome/css/font-awesome.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/inspinia-animate.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/inspinia.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/plugins/iCheck/custom.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/plugins/sweetalert/sweetalert.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}"/>
 
@@ -172,7 +171,6 @@
 <script src="{{ URL::asset('assets/inspinia/js/plugins/metisMenu/jquery.metisMenu.js') }}"></script>
 <script src="{{ URL::asset('assets/inspinia/js/plugins/slimscroll/jquery.slimscroll.min.js') }}"></script>
 <script src="{{ URL::asset('assets/inspinia/js/plugins/pace/pace.min.js') }}"></script>
-<script src="{{ URL::asset('assets/inspinia/js/plugins/iCheck/icheck.min.js') }}"></script>
 <script src="{{ URL::asset('assets/inspinia/js/plugins/sweetalert/sweetalert.min.js') }}"></script>
 <script src="{{ URL::asset('assets/inspinia/js/inspinia.js') }}"></script>
 

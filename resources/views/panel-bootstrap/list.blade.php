@@ -11,14 +11,14 @@
 
     <script>
         $(function() {
-            var panelList = new panel.list('.panel-list');
+            var panelList = new panel.list('#{{ $panelId = str_random() }}');
             panelList.init();
         });
     </script>
 @endpush
 
 @section('content')
-    <div class="panel panel-list">
+    <div class="panel panel-list" id="{{ $panelId }}">
         <form method="post" action="{{ $decorator->getUrl() }}" class="panel-list-form">
 
             <h4>{{ $decorator->getLabel() }}</h4>

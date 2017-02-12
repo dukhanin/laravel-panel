@@ -1,11 +1,3 @@
-table.panel-list-table {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
 
 .panel-list .mail-box-header {
     padding: 0px 20px 10px 20px;
@@ -35,11 +27,25 @@ table.panel-list-table {
     color: #676a6c;
 }
 
-td.panel-list-checkbox {
+.panel-list-checkbox {
     width: 54px;
 }
 
-td.panel-list-sort {
+.panel-list-checkbox .checkbox {
+    margin-top: 2px;
+    margin-bottom: 0;
+}
+
+.panel-list-checkbox .checkbox input[type="checkbox"] {
+    cursor: pointer;
+    -ms-transform: scale(1.8); /* IE */
+    -moz-transform: scale(1.8); /* FF */
+    -webkit-transform: scale(1.8); /* Safari and Chrome */
+    -o-transform: scale(1.8); /* Opera */
+    padding: 10px;
+}
+
+.panel-list-sort {
     width: 70px;
     min-width: 70px;
 }

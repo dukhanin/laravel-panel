@@ -3,7 +3,7 @@
  */
 
 panel.list = function (node) {
-    this.node        = $(node);
+    this.node = $(node);
 };
 
 panel.list.prototype.init = function () {
@@ -79,7 +79,7 @@ panel.list.prototype.initGroupActions = function () {
                 form.submit();
             };
 
-        if(!url) {
+        if (!url) {
             return;
         }
 
@@ -162,11 +162,11 @@ panel.list.prototype.initMoveTo = function () {
 };
 
 panel.list.prototype.initCheckboxes = function () {
-    if (this.checkboxes.size() == 0) {
+    if (this.checkboxes.length == 0) {
         return;
     }
 
-    this.checkboxes.on('ifToggled', $.proxy(function (e) {
+    this.checkboxes.on('state-changed', $.proxy(function (e) {
         var row        = $(e.target).closest('tr'),
             rowChecked = e.target.checked;
 
@@ -174,27 +174,33 @@ panel.list.prototype.initCheckboxes = function () {
         this.updateCheckboxesCheckAll();
     }, this));
 
-    this.checkboxes.trigger('ifToggled');
+    this.checkboxes.on('change', function (e) {
+        $(this).trigger('state-changed', e);
+    });
 
-    this.checkboxesCheckAll.on('ifToggled', $.proxy(function (e) {
-        this.checkboxes.iCheck(e.target.checked ? 'check' : 'uncheck');
+    this.checkboxesCheckAll.on('change', $.proxy(function (e) {
+        this.checkboxes.prop('checked', $(e.target).prop('checked')).trigger('state-changed');
     }, this));
 
-    this.dataCells.on('mousedown', $.proxy(function (e) {
-        var checkbox       = $(e.target).closest('tr').find('.panel-list-checkbox input'),
-            checkboxAction = checkbox.prop('checked') ? 'uncheck' : 'check';
+    this.checkboxes.trigger('state-changed');
 
-        checkbox.iCheck(checkboxAction);
+    this.dataCells.on('mousedown', $.proxy(function (e) {
+        var checkbox = $(e.target).closest('tr').find('.panel-list-checkbox input'),
+            checked  = !checkbox.prop('checked');
+
+        checkbox.prop('checked', checked).trigger('state-changed');
 
         if (e.shiftKey && this.lastClickedCheckbox) {
             var lastClickedCheckboxIndex = this.checkboxes.index(this.lastClickedCheckbox),
                 currentCheckboxIndex     = this.checkboxes.index(checkbox);
 
-            this.checkboxes.slice(lastClickedCheckboxIndex, currentCheckboxIndex).iCheck(checkboxAction);
+            this.checkboxes.slice(lastClickedCheckboxIndex, currentCheckboxIndex).prop('checked', checked).trigger('state-changed');
+
+            e.preventDefault(); // Disable text selection
         }
 
         this.lastClickedCheckbox        = checkbox;
-        this.lastClickedCheckboxChecked = checkbox.prop('checked');
+        this.lastClickedCheckboxChecked = checked;
     }, this));
 
     this.dataCells.on('mouseenter', $.proxy(function (e) {
@@ -204,7 +210,9 @@ panel.list.prototype.initCheckboxes = function () {
 
         if (e.buttons == 1 || e.buttons == 3) {
             var checkbox = $(e.target).closest('tr').find('.panel-list-checkbox input');
-            checkbox.iCheck(this.lastClickedCheckboxChecked ? 'check' : 'uncheck');
+            checkbox.prop('checked', this.lastClickedCheckboxChecked).trigger('state-changed');
+
+            this.clearBrowserSelection();
         }
     }, this));
 };
@@ -266,4 +274,27 @@ panel.list.prototype.updateCheckboxesCheckAll = function () {
 
     this.checkboxesCheckAll.prop('checked', checked);
     this.checkboxesCheckAll.parent().toggleClass('checked', checked);
+};
+
+panel.list.prototype.clearBrowserSelection = function () {
+    if (window.getSelection) {
+        if (window.getSelection().empty) {
+            // Chrome
+            window.getSelection().empty();
+            return;
+        }
+
+        if (window.getSelection().removeAllRanges) {
+            // Firefox
+            window.getSelection().removeAllRanges();
+            return;
+        }
+
+        return;
+    }
+
+    if (document.selection) {
+        // IE
+        document.selection.empty();
+    }
 };

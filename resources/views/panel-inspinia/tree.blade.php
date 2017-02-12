@@ -1,6 +1,8 @@
 @extends($decorator->getLayout())
 
 @push('styles')
+    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.tree.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.tree.css') }}"/>
 @endpush
 
@@ -12,19 +14,14 @@
 
     <script>
         $(function () {
-            var panelList = new panel.list('.panel-list');
+            var panelList = new panel.list('#{{ $panelId = str_random() }}');
             panelList.init();
-
-            $('.i-checks').iCheck({
-                checkboxClass: 'icheckbox_square-green',
-                radioClass: 'iradio_square-green'
-            });
         });
     </script>
 @endpush
 
 @section('content')
-    <div class="panel-list panel-tree">
+    <div class="panel panel-list panel-tree" id="{{ $panelId }}">
         <form method="post" action="{{ $decorator->getUrl() }}" class="panel-list-form">
 
             <div class="mail-box-header">
@@ -97,7 +94,10 @@
 
                             @if(count($decorator->getGroupActions()) > 0 || count($decorator->getMoveTo()) > 0)
                                 <th class="check-mail panel-list-checkbox">
-                                    <input type="checkbox" class="i-checks"/>
+                                    <div class="checkbox">
+                                        <input type="checkbox" />
+                                        <label></label>
+                                    </div>
                                 </th>
                             @endif
 
@@ -124,7 +124,10 @@
 
                             @if(count($decorator->getGroupActions()) > 0 || count($decorator->getMoveTo()) > 0)
                                 <td class="check-mail panel-list-checkbox">
-                                    <input type="checkbox" class="i-checks" name="group[]" value="{{$rowKey}}"/>
+                                    <div class="checkbox">
+                                        <input type="checkbox" name="group[]" value="{{$rowKey}}"/>
+                                        <label></label>
+                                    </div>
                                 </td>
                             @endif
 

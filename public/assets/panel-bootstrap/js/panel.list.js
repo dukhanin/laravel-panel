@@ -168,6 +168,8 @@ panel.list.prototype.initCheckboxes = function () {
                 currentCheckboxIndex     = this.checkboxes.index(checkbox);
 
             this.checkboxes.slice(lastClickedCheckboxIndex, currentCheckboxIndex).prop('checked', checked).trigger('state-changed');
+
+            e.preventDefault(); // Disable text selection
         }
 
         this.lastClickedCheckbox        = checkbox;
@@ -182,6 +184,8 @@ panel.list.prototype.initCheckboxes = function () {
         if (e.buttons == 1 || e.buttons == 3) {
             var checkbox = $(e.target).closest('tr').find('.panel-list-checkbox input');
             checkbox.prop('checked', this.lastClickedCheckboxChecked).trigger('state-changed');
+
+            this.clearBrowserSelection();
         }
     }, this));
 };
@@ -191,4 +195,27 @@ panel.list.prototype.updateCheckboxesCheckAll = function () {
 
     this.checkboxesCheckAll.prop('checked', checked);
     this.checkboxesCheckAll.parent().toggleClass('checked', checked);
+};
+
+panel.list.prototype.clearBrowserSelection = function () {
+    if (window.getSelection) {
+        if (window.getSelection().empty) {
+            // Chrome
+            window.getSelection().empty();
+            return;
+        }
+
+        if (window.getSelection().removeAllRanges) {
+            // Firefox
+            window.getSelection().removeAllRanges();
+            return;
+        }
+
+        return;
+    }
+
+    if (document.selection) {
+        // IE
+        document.selection.empty();
+    }
 };

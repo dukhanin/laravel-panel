@@ -1,5 +1,3 @@
-@import "panel.list.css";
-
 body .panel-list .depth-1 td:not(.panel-list-checkbox):not(.panel-list-model-action):not(.panel-list-sort) {
     padding-left: 6%;
 }

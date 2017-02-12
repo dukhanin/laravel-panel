@@ -2,6 +2,7 @@
 
 @push('styles')
     <link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.list.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.tree.css') }}"/>
 @endpush
 
@@ -11,14 +12,14 @@
 
     <script>
         $(function() {
-            var panelList = new panel.list('.panel-list');
+            var panelList = new panel.list('#{{ $panelId = str_random() }}');
             panelList.init();
         });
     </script>
 @endpush
 
 @section('content')
-    <div class="panel panel-list panel-tree">
+    <div class="panel panel-list panel-tree" id="{{ $panelId }}">
         <form method="post" action="{{ $decorator->getUrl() }}" class="panel-list-form">
 
             <h4>{{ $decorator->getLabel() }}</h4>
