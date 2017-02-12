@@ -99,8 +99,9 @@ h2 + .panel-list-tools {
     background-color: #fcf8e3
 }
 
-.panel-list-selected:focus, .panel-list-selected:hover {
-    background-color: #f7ecb5
+
+.table-hover>tbody>tr.panel-list-selected:focus, .table-hover>tbody>tr.panel-list-selected:hover {
+    background-color: rgba(252, 241, 187, 0.75)
 }
 
 .panel-list-table > thead > tr > td.inactive,
@@ -122,7 +123,11 @@ h2 + .panel-list-tools {
     opacity: 0.4;
 }
 
-td.panel-list-data-cell a {
+.panel-list-data-cell a {
     color: inherit;
     text-decoration: underline;
+}
+
+.panel-list-table {
+    margin-bottom: 0;
 }
