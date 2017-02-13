@@ -1,8 +1,8 @@
 <?php
 global $checkboxesIndex;
 
-$value    = $form->getInputValue($field['key']);
-$errors   = $form->getFieldErrors($field['key']);
+$value    = $form->inputValue($field['key']);
+$errors   = $form->fieldErrors($field['key']);
 $disabled = ! empty( $disabled );
 $state    = isset($state) ? $state : false;
 
@@ -26,7 +26,7 @@ if ($value instanceof Illuminate\Database\Eloquent\Collection) {
             <div class="checkbox @if( $state ) text-{{ $state }} checkbox-{{ $state }} @endif">
                 <input type="checkbox"
                        id="checkbox-{{ ++$checkboxesIndex }}"
-                       name="{{  $form->getHtmlInputName($field['key']) }}[]"
+                       name="{{  $form->htmlInputName($field['key']) }}[]"
                        value="{{ $optionKey }}"
                        @if( $disabled ) disabled="" @endif
                        @if( in_array($optionKey, $value) ) checked @endif

@@ -2,26 +2,21 @@
 
 namespace Dukhanin\Panel;
 
+use Dukhanin\Support\Traits\HasUrl;
 use InvalidArgumentException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
-use Dukhanin\Support\Traits\HandlesActions;
-use Mockery\CountValidator\Exception;
 
 class PanelList
 {
 
-    use HandlesActions;
+    use HasUrl;
 
     protected $model;
 
     protected $label;
-
-    protected $order;
-
-    protected $orderDesc;
 
     protected $query;
 
@@ -43,12 +38,28 @@ class PanelList
 
     protected $config;
 
-    protected $requestAttributePrefix;
 
-
-    public function actionIndex()
+    public function callAction($action, $parameters)
     {
-        return $this->getView();
+        $this->init();
+
+        if (is_callable([ $this, 'before' ])) {
+            $this->before();
+        }
+
+        $res = call_user_func_array([ $this, $action ], $parameters);
+
+        if (is_callable([ $this, 'after' ])) {
+            $this->after();
+        }
+
+        return $res;
+    }
+
+
+    public function showList()
+    {
+        return $this->view();
     }
 
 
@@ -83,6 +94,7 @@ class PanelList
 
     public function initModel()
     {
+
     }
 
 
@@ -92,23 +104,16 @@ class PanelList
     }
 
 
-    public function initOrder()
-    {
-        $this->order     = $this->getRequestAttribute('order');
-        $this->orderDesc = $this->getRequestAttribute('orderDesc', false);
-    }
-
-
     public function initQuery()
     {
-        $this->query = $this->getModel()->newQuery();
+        $this->query = $this->model()->newQuery();
     }
 
 
     public function initPolicy()
     {
         try {
-            $this->policy = Gate::getPolicyFor($this->getModel());
+            $this->policy = Gate::policyFor($this->model());
         } catch (InvalidArgumentException $e) {
 
         }
@@ -117,13 +122,7 @@ class PanelList
 
     public function initView()
     {
-        $this->view = view($this->config('views') . '.list', [ 'decorator' => $this->getDecorator() ]);
-    }
-
-
-    public function initLayout()
-    {
-        $this->layout = $this->config('layout');
+        $this->view = view($this->config('views') . '.list', [ 'panel' => $this->decorator() ]);
     }
 
 
@@ -166,14 +165,7 @@ class PanelList
     }
 
 
-    public function initRequestAttributePrefix()
-    {
-        $this->requestAttributePrefix = @$GLOBALS['HandlesActionsStack'] > 1 ? str_repeat('_',
-            @$GLOBALS['HandlesActionsStack'] - 1) : '';
-    }
-
-
-    public function getUrl(array $apply = [ '*' ])
+    public function url(array $apply = [ '*' ])
     {
         if (empty( $this->url )) {
             $this->initUrl();
@@ -186,7 +178,7 @@ class PanelList
     }
 
 
-    public function getModel()
+    public function model()
     {
         if (is_null($this->model)) {
             $this->initModel();
@@ -196,7 +188,7 @@ class PanelList
     }
 
 
-    public function getLabel()
+    public function label()
     {
         if (is_null($this->label)) {
             $this->initLabel();
@@ -206,62 +198,40 @@ class PanelList
     }
 
 
-    public function getOrder()
-    {
-        if (is_null($this->order)) {
-            $this->initOrder();
-        }
-
-        return $this->order;
-    }
-
-
-    public function getOrderDesc()
-    {
-        if (is_null($this->orderDesc)) {
-            $this->initOrder();
-        }
-
-        return $this->orderDesc;
-    }
-
-
-    public function setLayout($layout)
-    {
-        $this->layout = $layout;
-    }
-
-
-    public function isOrderDesc()
-    {
-        return $this->getOrderDesc();
-    }
-
-
-    public function getQuery(array $apply = [ '*' ])
+    public function query(array $apply = [ '*' ])
     {
         if (is_null($this->query)) {
             $this->initQuery();
         }
 
-        if ( ! ( $this->query instanceof \Illuminate\Database\Query\Builder ) && ! ( $this->query instanceof \Illuminate\Database\Eloquent\Builder ) && ! ( $this->query instanceof \Illuminate\Database\Eloquent\Relations\Relation )) {
-            throw new UnexpectedValueException(__CLASS__ . '::query attribute is empty or invalid');
-        }
-
         $select = clone $this->query;
+
         $this->apply($select, $apply, 'applyQuery');
 
         return $select;
     }
 
 
-    public function getList(array $apply = [ '*' ])
+    public function items(array $apply = [ '*' ])
     {
-        return $this->getQuery($apply)->get();
+        return $this->query($apply)->get();
     }
 
 
-    public function getPolicy()
+    public function total(array $apply = [ ])
+    {
+        $apply[] = '!pages';
+
+        $builder = $this->query($apply);
+
+        $builder->getQuery()->orders      = [ ];
+        $builder->getQuery()->unionOrders = [ ];
+
+        return $builder->count();
+    }
+
+
+    public function policy()
     {
         if (is_null($this->policy)) {
             $this->initPolicy();
@@ -271,7 +241,7 @@ class PanelList
     }
 
 
-    public function getView()
+    public function view()
     {
         if (is_null($this->view)) {
             $this->initView();
@@ -281,17 +251,7 @@ class PanelList
     }
 
 
-    public function getLayout()
-    {
-        if (is_null($this->layout)) {
-            $this->initLayout();
-        }
-
-        return $this->layout;
-    }
-
-
-    public function getDecorator()
+    public function decorator()
     {
         if (is_null($this->decorator)) {
             $this->initDecorator();
@@ -301,7 +261,7 @@ class PanelList
     }
 
 
-    public function getColumns()
+    public function columns()
     {
         if (is_null($this->columns)) {
             $this->initColumns();
@@ -318,20 +278,7 @@ class PanelList
     }
 
 
-    public function getTotal(array $apply = [ ])
-    {
-        $apply[] = '!pages';
-
-        $builder = $this->getQuery($apply);
-
-        $builder->getQuery()->orders      = [ ];
-        $builder->getQuery()->unionOrders = [ ];
-
-        return $builder->count();
-    }
-
-
-    public function getActions()
+    public function actions()
     {
         $actions = [ ];
 
@@ -347,7 +294,7 @@ class PanelList
     }
 
 
-    public function getModelActions($model = null)
+    public function modelActions($model = null)
     {
         $actions = [ ];
 
@@ -366,7 +313,7 @@ class PanelList
     }
 
 
-    public function getGroupActions()
+    public function groupActions()
     {
         $actions = [ ];
 
@@ -383,33 +330,15 @@ class PanelList
     }
 
 
-    public function getRequestAttribute($attribute, $default = null)
+    public function input($key = null, $default = null)
     {
-        $attribute = $this->getRequestAttributeName($attribute);
-
-        return $this->getRequest()->query->get($attribute, $default);
-    }
-
-
-    public function getRequestAttributeName($attribute)
-    {
-        return $this->getRequestAttributePrefix() . strval($attribute);
-    }
-
-
-    public function getRequestAttributePrefix()
-    {
-        if (is_null($this->requestAttributePrefix)) {
-            $this->initRequestAttributePrefix();
-        }
-
-        return $this->requestAttributePrefix;
+        return request()->input($key, $default);
     }
 
 
     public function findModel($primaryKey)
     {
-        return $this->getQuery([ '!pages', '!order' ])->find($primaryKey);
+        return $this->query([ '!pages', '!order' ])->find($primaryKey);
     }
 
 
@@ -425,7 +354,7 @@ class PanelList
 
     public function findModels($primaryKeys)
     {
-        return $this->getQuery([ '!pages' ])->findMany($primaryKeys);
+        return $this->query([ '!pages' ])->findMany($primaryKeys);
     }
 
 
@@ -441,13 +370,25 @@ class PanelList
 
     public function allows($ability, $arguments = [ ])
     {
-        $policy = $this->getPolicy();
+        $policy = $this->policy();
+
+        if ($policy === null) {
+            return false;
+        }
+
+        if (is_bool($policy)) {
+            return $policy;
+        }
+
+        if (empty( $arguments )) {
+            $arguments = [ $this->model() ];
+        }
 
         if (starts_with($ability, 'group-')) {
             $ability = preg_replace('/^group-/', '', $ability);
 
             if (empty( $arguments )) {
-                $arguments = [ $this->getModel() ];
+                $arguments = [ $this->model() ];
             }
 
             foreach ($arguments as $model) {
@@ -459,20 +400,8 @@ class PanelList
             return true;
         }
 
-        if ($policy === null) {
-            return false;
-        }
-
-        if (is_bool($policy)) {
-            return $policy;
-        }
-
         if ( ! is_array($arguments)) {
             $arguments = [ $arguments ];
-        }
-
-        if (empty( $arguments )) {
-            $arguments = [ $this->getModel() ];
         }
 
         return method_exists($policy, $ability) && $policy->$ability(Auth::user(), ...$arguments);
@@ -521,7 +450,7 @@ class PanelList
 
     protected function newModel()
     {
-        $model = clone $this->getModel();
+        $model = clone $this->model();
 
         return $model;
     }
@@ -529,7 +458,7 @@ class PanelList
 
     protected function validateColumn($columnKey, $column)
     {
-        $_column = [
+        $valid = [
             'key'              => strval($columnKey),
             'label'            => strval($columnKey),
             'order'            => false,
@@ -538,39 +467,39 @@ class PanelList
         ];
 
         if (is_string($column)) {
-            $_column['label'] = $column;
+            $valid['label'] = $column;
         } elseif (isset( $column['label'] )) {
-            $_column['label'] = strval($column['label']);
+            $valid['label'] = strval($column['label']);
         }
 
         if (isset( $column['order'] )) {
-            $_column['order'] = $column['order'] === true ? $_column['key'] : $column['order'];
+            $valid['order'] = $column['order'] === true ? $valid['key'] : $column['order'];
         }
 
         if (isset( $column['handler'] )) {
-            $_column['handler'] = $column['handler'];
+            $valid['handler'] = $column['handler'];
         }
 
         if (isset( $column['width'] )) {
-            $_column['attributes.width'] = $column['width'];
+            $valid['attributes.width'] = $column['width'];
         }
 
-        $_column['label'] = trans($_column['label']);
+        $valid['label'] = trans($valid['label']);
 
-        $_column = array_merge($_column, array_except($column, [ 'label', 'order', 'handler', 'width', 'key' ]));
+        $valid = array_merge($valid, array_except($column, [ 'label', 'order', 'handler', 'width', 'key' ]));
 
-        return $_column;
+        return $valid;
     }
 
 
     protected function validateAction($actionKey, $action, $model = null)
     {
-        $actionDefaults = [
+        $defaults = [
             'key'       => strval($actionKey),
             'label'     => strval($actionKey),
             'global'    => false,
             'class'     => '',
-            'url'       => urlbuilder($this->getUrl())->append([
+            'url'       => urlbuilder($this->url())->append([
                 camel_case($actionKey),
                 $model ? $model->id : ''
             ])->compile(),
@@ -580,7 +509,7 @@ class PanelList
 
         $action = $this->resolveAction($actionKey, $action, $model);
 
-        $action = array_merge($actionDefaults, $action);
+        $action = array_merge($defaults, $action);
 
         $action['label'] = trans($action['label']);
 
@@ -649,44 +578,23 @@ class PanelList
     }
 
 
-    protected function applyQueryDefaultOrder($select)
+    static public function routes($name = null)
     {
+        $className = '\\' . get_called_class();
 
-    }
+        $route = app('router')->get('', "{$className}@showList");
 
-
-    protected function applyQueryOrder($select)
-    {
-        $columns = $this->getColumns();
-
-        if (empty( $columns[$this->getOrder()]['order'] )) {
-            return;
+        if ( ! is_null($name)) {
+            $route->name($name);
         }
 
-        $select->getQuery()->orders = null;
+        foreach (class_uses(get_called_class()) as $trait) {
+            $method = 'routesFeature' . class_basename($trait);
 
-        $order = $columns[$this->getOrder()]['order'];
-
-        if (is_callable($order)) {
-            call_user_func($order, $select, $this);
-        } else {
-            $select->orderBy($order, $this->getOrderDesc() ? 'desc' : 'asc');
-        }
-    }
-
-
-    protected function applyUrlOrder(&$url)
-    {
-        $query = [ ];
-
-        if ($this->order) {
-            $query[$this->getRequestAttributeName('order')] = $this->order;
+            if (is_callable([ $trait, $method ])) {
+                $trait::$method($className);
+            }
         }
 
-        if ($this->orderDesc) {
-            $query[$this->getRequestAttributeName('orderDesc')] = 1;
-        }
-
-        $url = $url->query($query);
     }
 }

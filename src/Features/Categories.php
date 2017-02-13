@@ -24,11 +24,11 @@ trait Categories
 
     public function initCategory()
     {
-        $this->category = $this->getRequestAttribute('category');
+        $this->category = $this->input('category');
     }
 
 
-    public function getCategories()
+    public function categories()
     {
         if (is_null($this->categories)) {
             $this->initCategories();
@@ -47,7 +47,7 @@ trait Categories
     protected function applyUrlCategory(&$url)
     {
         if ( ! empty( $this->category )) {
-            $url->query([ $this->getRequestAttributeName('category') => $this->category ]);
+            $url->query([ 'category' => $this->category ]);
         }
     }
 

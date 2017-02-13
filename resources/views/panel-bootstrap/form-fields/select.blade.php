@@ -5,8 +5,8 @@ if ( ! isset( $options ) || ! is_array($options) && ! $options instanceof Illumi
     $options = [ ];
 }
 
-$errors            = $form->getFieldErrors($field['key']);
-$nullTitleSelected = in_array($form->getInputValue($field['key']), array( NULL, '' ), true);
+$errors            = $form->fieldErrors($field['key']);
+$nullTitleSelected = in_array($form->inputValue($field['key']), array( NULL, '' ), true);
 ?>
 
 
@@ -19,7 +19,7 @@ $nullTitleSelected = in_array($form->getInputValue($field['key']), array( NULL, 
         {!! html_tag_open(
             'select.form-control',
             array_except($field, ['key', 'type', 'label', 'nullTitle']),
-            ['attributes.name' => $form->getHtmlInputName($field['key'])]
+            ['attributes.name' => $form->htmlInputName($field['key'])]
         ) !!}
 
         @if($nullTitle !== false)
@@ -29,7 +29,7 @@ $nullTitleSelected = in_array($form->getInputValue($field['key']), array( NULL, 
         @foreach($options as $optionKey => $optionLabel)
             <option
                     value="{{ $optionKey }}"
-                    @if(! $nullTitleSelected && $form->getInputValue($field['key']) == $optionKey) selected @endif
+                    @if(! $nullTitleSelected && $form->inputValue($field['key']) == $optionKey) selected @endif
                     >{{ $optionLabel }}</option>
         @endforeach
         {!! html_tag_close('select') !!}

@@ -1,8 +1,8 @@
 <?php
-$errors = $form->getFieldErrors($field['key']);
+$errors = $form->fieldErrors($field['key']);
 $id     = 'file-' . mt_rand(1, 1000);
 
-$value = $form->getInputValue($field['key']);
+$value = $form->inputValue($field['key']);
 
 if ( ! is_array($value)) {
     $value = [ $value ];
@@ -25,7 +25,7 @@ $resizes = isset( $resizes ) ? (array) $resizes : [ ];
             [
                 'attributes.type' => 'file',
                 'attributes.multiple' => true,
-                'attributes.name' => $form->getHtmlInputName($field['key']) . '[]',
+                'attributes.name' => $form->htmlInputName($field['key']) . '[]',
             ]
         ) !!}
 

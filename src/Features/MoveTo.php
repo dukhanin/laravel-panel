@@ -2,23 +2,39 @@
 
 namespace Dukhanin\Panel\Features;
 
-use Illuminate\Support\Facades\Request;
-
 trait MoveTo
 {
 
-    protected $moveTo;
+    protected $moveToOptions;
+
+
+    public static function routesFeatureMoveTo($className)
+    {
+        app('router')->post('groupMoveTo/{id}', "{$className}@groupMoveTo");
+    }
 
 
     public function initFeatureMoveTo()
     {
-        $this->initMoveTo();
+        $this->initMoveToOptions();
     }
 
 
-    public function actionGroupMoveTo($location)
+    public function initMoveToOptions()
     {
-        $group = $this->findModelsOrFail(Request::input('group'));
+        $this->moveToOptions = [ ];
+    }
+
+
+    public function moveTo($model, $location)
+    {
+        // extendable
+    }
+
+
+    public function groupMoveTo($location)
+    {
+        $group = $this->findModelsOrFail($this->input('group'));
 
         $this->authorize('group-move-to', $group);
 
@@ -26,29 +42,17 @@ trait MoveTo
             $this->moveTo($model, $location);
         }
 
-        abort(301, '', [ 'Location' => $this->getUrl() ]);
+        return redirect()->to($this->url());
     }
 
 
-    public function initMoveTo()
+    public function moveToOptions()
     {
-        $this->moveTo = [ ];
-    }
-
-
-    public function getMoveTo()
-    {
-        if (is_null($this->moveTo)) {
-            $this->initMoveTo();
+        if (is_null($this->moveToOptions)) {
+            $this->initMoveToOptions();
         }
 
-        return $this->moveTo;
-    }
-
-
-    public function moveTo($model, $location)
-    {
-
+        return $this->moveToOptions;
     }
 
 }

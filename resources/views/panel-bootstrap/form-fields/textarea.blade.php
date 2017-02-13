@@ -1,5 +1,5 @@
 <?php
-$errors = $form->getFieldErrors( $field['key'] );
+$errors = $form->fieldErrors( $field['key'] );
 ?>
 
 
@@ -14,8 +14,8 @@ $errors = $form->getFieldErrors( $field['key'] );
             ],
             array_except($field, ['key', 'type', 'label']),
             [
-                'attributes.name' => $form->getHtmlInputName($field['key']),
-                'content' => e( strval($form->getInputValue($field['key'])) )
+                'attributes.name' => $form->htmlInputName($field['key']),
+                'content' => e( strval($form->inputValue($field['key'])) )
             ]
         ) !!}
 

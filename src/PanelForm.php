@@ -2,13 +2,13 @@
 
 namespace Dukhanin\Panel;
 
-use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Model;
 use Dukhanin\Support\Traits\DispatchesEvents;
-use UnexpectedValueException;
 use ErrorException;
+
+// сделать списки валидации Collection + validate
 
 class PanelForm
 {
@@ -90,13 +90,13 @@ class PanelForm
 
     public function initDataFromRequest()
     {
-        $this->data = $this->getDataFromRequest();
+        $this->data = $this->dataFromRequest();
     }
 
 
     public function initDataFromModel()
     {
-        $this->data = $this->getDataFromModel();
+        $this->data = $this->dataFromModel();
     }
 
 
@@ -114,7 +114,7 @@ class PanelForm
 
     public function initUrl()
     {
-        $this->url = Request::fullUrl();
+        $this->url = request()->fullUrl();
     }
 
 
@@ -177,7 +177,7 @@ class PanelForm
     }
 
 
-    public function getModel()
+    public function model()
     {
         if (is_null($this->model)) {
             $this->initModel();
@@ -187,7 +187,7 @@ class PanelForm
     }
 
 
-    public function getLabel()
+    public function label()
     {
         if (is_null($this->label)) {
             $this->initLabel();
@@ -197,7 +197,7 @@ class PanelForm
     }
 
 
-    public function getValidator()
+    public function validator()
     {
         if (empty( $this->validator )) {
             $this->initValidator();
@@ -207,7 +207,7 @@ class PanelForm
     }
 
 
-    public function getUrl()
+    public function url()
     {
         if (is_null($this->url)) {
             $this->initUrl();
@@ -217,19 +217,19 @@ class PanelForm
     }
 
 
-    public function getSubmitUrl()
+    public function submitUrl()
     {
-        return $this->getUrl();
+        return $this->url();
     }
 
 
-    public function getMethod()
+    public function method()
     {
         return 'POST';
     }
 
 
-    public function getFields()
+    public function fields()
     {
         if (is_null($this->fields)) {
             $this->initFields();
@@ -239,10 +239,10 @@ class PanelForm
     }
 
 
-    public function getFieldView($field)
+    public function fieldView($field)
     {
         $options = [
-            $this->getView()->getName() . '.' . $field['type'],
+            $this->view()->getName() . '.' . $field['type'],
             $this->config('views') . '.form-fields.' . $field['type'],
             $this->config('views') . '.form-fields.text'
         ];
@@ -257,7 +257,7 @@ class PanelForm
     }
 
 
-    public function getInputName($name = null)
+    public function inputName($name = null)
     {
         if (is_null($this->inputName)) {
             $this->initInputName();
@@ -279,9 +279,9 @@ class PanelForm
     }
 
 
-    public function getHtmlInputName($name = null)
+    public function htmlInputName($name = null)
     {
-        $inputName = $this->getInputName($name);
+        $inputName = $this->inputName($name);
         $inputName = explode('.', $inputName);
 
         $first = array_shift($inputName);
@@ -299,17 +299,17 @@ class PanelForm
     }
 
 
-    public function getFieldErrors($name)
+    public function fieldErrors($name)
     {
         if ( ! $this->isSubmit()) {
             return [ ];
         }
 
-        return $this->getValidator()->errors()->get($name);
+        return $this->validator()->errors()->get($name);
     }
 
 
-    public function getInputValue($name)
+    public function inputValue($name)
     {
         if (is_null($name)) {
             return null;
@@ -319,11 +319,11 @@ class PanelForm
             return $this->fields[$name]['value'];
         }
 
-        return $this->getData($name);
+        return $this->data($name);
     }
 
 
-    public function getView()
+    public function view()
     {
         if (is_null($this->view)) {
             $this->initView();
@@ -333,17 +333,7 @@ class PanelForm
     }
 
 
-    public function getLayout()
-    {
-        if (is_null($this->layout)) {
-            $this->initLayout();
-        }
-
-        return $this->layout;
-    }
-
-
-    public function getButtons()
+    public function buttons()
     {
         if (is_null($this->buttons)) {
             $this->initButtons();
@@ -361,7 +351,7 @@ class PanelForm
     }
 
 
-    public function getData($name = null, $default = null)
+    public function data($name = null, $default = null)
     {
         if (is_null($this->data)) {
             $this->initData();
@@ -371,43 +361,35 @@ class PanelForm
     }
 
 
-    public function getDataFromRequest($name = null, $default = null)
+    public function dataFromRequest($name = null, $default = null)
     {
-        return Request::input($this->getInputName($name), [ ]);
+        return request()->input($this->inputName($name), [ ]);
     }
 
 
-    public function getDataFromModel($name = null, $default = null)
+    public function dataFromModel($name = null, $default = null)
     {
         if ($name !== null) {
-            return $this->getAttrubute($name, $default);
+            return $this->model()->getAttrubute($name, $default);
         }
 
-        return $this->model->attributesToArray();
+        return $this->model()->attributesToArray();
     }
 
 
-    public function getDataDefault()
+    public function dataDefault()
     {
         return [ ];
     }
 
 
-    public function getUploadDirectory()
+    public function uploadDirectory()
     {
         if (is_null($this->uploadDirectory)) {
             $this->initUploadDirectory();
         }
 
         return $this->uploadDirectory;
-    }
-
-
-    public function setLayout($layout)
-    {
-        $this->layout = $layout;
-
-        return $this;
     }
 
 
@@ -475,93 +457,11 @@ class PanelForm
 
     public function addButton($key, $button = [ ])
     {
-        $key = strval($key);
+        $button = $this->validateButton($key, $button);
 
-        if (is_array($button) || is_callable($button)) {
-            $this->buttons[$key] = $button;
-        } else {
-            throw new UnexpectedValueException('Invalid type for button value. Button must be array or callable');
-        }
+        $this->buttons[$button['key']] = $button;
 
         return $this;
-    }
-
-
-    public function addSubmitButton(array $button = [ ])
-    {
-        $this->addButton('submit', array_merge($this->config('buttons.submit'), $button));
-
-        if ( ! empty( $this->buttons['submit']['url'] )) {
-            $this->succeed(function ($form) {
-                abort(301, '', [ 'Location' => $form->buttons['submit']['url'] ]);
-            }, -2);
-        }
-    }
-
-
-    public function addCancelButton(array $button = [ ])
-    {
-        $this->addButton('cancel', array_merge($this->config('buttons.cancel'), $button));
-    }
-
-
-    public function addApplyButton(array $button = [ ])
-    {
-        $this->addButton('apply', array_merge($this->config('buttons.apply'), $button));
-
-        $this->succeed(function ($form) {
-            if ( ! Request::input('_apply')) {
-                return;
-            }
-
-            if ($this->model->wasRecentlyCreated) {
-                $url = urlbuilder(Request::fullUrl())->pop('/create')->append([
-                    'edit',
-                    $this->model->getKey()
-                ])->compile();
-            } else {
-                $url = Request::server('HTTP_REFERER');
-            }
-
-            abort(301, '', [ 'Location' => $url ]);
-        }, -1);
-    }
-
-
-    public function addButtonBefore($keyBefore, $key, $button = [ ])
-    {
-        $keyBefore      = strval($keyBefore);
-        $keys           = array_keys($this->buttons);
-        $keyBeforeIndex = array_search($keyBefore, $keys);
-
-        $this->addButton($key, $button);
-
-        if ($keyBeforeIndex !== false) {
-            $button = $this->buttons[$key];
-            unset( $this->buttons[$key] );
-
-            $left  = array_slice($this->buttons, 0, $keyBeforeIndex);
-            $right = array_slice($this->buttons, $keyBeforeIndex);
-
-            $left[$key]    = $button;
-            $this->buttons = $left + $right;
-        }
-
-        return $this;
-    }
-
-
-    public function addButtonAfter($keyAfter, $key = null, $button = [ ])
-    {
-        $keyAfter      = strval($keyAfter);
-        $keys          = array_keys($this->buttons);
-        $keyAfterIndex = array_search($keyAfter, $keys);
-
-        if ($keyAfterIndex === false || ( $keyAfterIndex + 1 ) == count($keys)) {
-            return $this->addButton($key, $button);
-        }
-
-        return $this->addButtonBefore($keys[$keyAfterIndex + 1], $key, $button);
     }
 
 
@@ -583,8 +483,8 @@ class PanelForm
 
     public function isFailure()
     {
-        $validator = $this->getValidator();
-        $validator->setData((array) $this->getData());
+        $validator = $this->validator();
+        $validator->setData((array) $this->data());
 
         return $this->isSubmit() && $validator->fails();
     }
@@ -592,8 +492,8 @@ class PanelForm
 
     public function isSuccess()
     {
-        $validator = $this->getValidator();
-        $validator->setData((array) $this->getData());
+        $validator = $this->validator();
+        $validator->setData((array) $this->data());
 
         return $this->isSubmit() && $validator->passes();
     }
@@ -601,7 +501,7 @@ class PanelForm
 
     public function isSubmit()
     {
-        return Request::input($this->getInputName());
+        return request()->input($this->inputName());
     }
 
 
@@ -657,7 +557,7 @@ class PanelForm
 
     public function fillModel()
     {
-        $this->model->fill($this->getData());
+        $this->model->fill($this->data());
     }
 
 
@@ -691,7 +591,7 @@ class PanelForm
 
     public function render()
     {
-        return $this->getView()->render();
+        return $this->view()->render();
     }
 
 
@@ -700,7 +600,7 @@ class PanelForm
         $this->init();
         $this->handle();
 
-        return $this->getView();
+        return $this->view();
     }
 
 
@@ -710,7 +610,8 @@ class PanelForm
             $button = call_user_func($button, $this);
         }
 
-        $_button = array_merge($this->config('buttons.default'), [ 'key' => $key ], (array) $button);
+        $_button = array_merge($this->config('buttons.default', [ ]), $this->config("buttons.{$key}", [ ]),
+            (array) $button, [ 'key' => $key ]);
 
         if (empty( $_button['label'] )) {
             $_button['label'] = $key;
@@ -719,7 +620,7 @@ class PanelForm
         if (isset( $button['url'] )) {
             $_button['url'] = $button['url'];
         } else {
-            $_button['url'] = $this->getSubmitUrl();
+            $_button['url'] = $this->submitUrl();
         }
 
         if (isset( $button['type'] )) {

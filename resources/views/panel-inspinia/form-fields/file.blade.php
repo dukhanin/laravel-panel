@@ -1,8 +1,8 @@
 <?php
-$errors = $form->getFieldErrors($field['key']);
+$errors = $form->fieldErrors($field['key']);
 $id = 'file-' . mt_rand(1, 1000);
 
-$value = $form->getInputValue($field['key']);
+$value = $form->inputValue($field['key']);
 $value = intval($value);
 $file = \App\File\File::find($value);
 ?>
@@ -18,7 +18,7 @@ $file = \App\File\File::find($value);
             array_except($field, ['key', 'type', 'label']),
             [
                 'attributes.type' => 'file',
-                'attributes.name' => $form->getHtmlInputName($field['key']),
+                'attributes.name' => $form->htmlInputName($field['key']),
             ]
         ) !!}
 

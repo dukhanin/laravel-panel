@@ -1,4 +1,4 @@
-@extends($form->getLayout())
+@extends($form->config('layout'))
 
 @push('styles')
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.css') }}"/>
@@ -7,14 +7,14 @@
 
 @section('content')
     <div class="ibox float-e-margins panel-form">
-        @if ( $form->getLabel() )
+        @if ( $form->label() )
             <div class="ibox-title">
-                <h5>{{ $form->getLabel() }}</h5>
+                <h5>{{ $form->label() }}</h5>
             </div>
         @endif
 
         <div class="ibox-content">
-            <form method="{{ $form->getMethod() }}" action="{{ $form->getSubmitUrl() }}" class="form-horizontal">
+            <form method="{{ $form->method() }}" action="{{ $form->submitUrl() }}" class="form-horizontal">
 
                 @if ($form->isFailure())
                     <div class="form-group">
@@ -25,8 +25,8 @@
                 @endif
 
 
-                @foreach ($form->getFields() as $field)
-                    @include($form->getFieldView($field), array_merge([
+                @foreach ($form->fields() as $field)
+                    @include($form->fieldView($field), array_merge([
                         'form'  => $form,
                         'field' => $field
                     ], $field))
@@ -36,7 +36,7 @@
 
                 <div class="form-group">
                     <div class="col-lg-10 text-right">
-                        @foreach ($form->getButtons() as $buttonKey => $button)
+                        @foreach ($form->buttons() as $buttonKey => $button)
                             @if ($button['type'] == 'submit')
                                 @continue
                             @endif
@@ -45,7 +45,7 @@
                         @endforeach
 
 
-                        @foreach ($form->getButtons() as $buttonKey => $button)
+                        @foreach ($form->buttons() as $buttonKey => $button)
                             @if ($button['type'] != 'submit')
                                 @continue
                             @endif

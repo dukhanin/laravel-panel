@@ -32,12 +32,12 @@
     @show
 
     <ul class="nav nav-tabs" role="tablist">
-        <li @if(Route::getCurrentRoute()->getName() === 'panel-sample.products')class="active"@endif>
-            <a href="{{ route('panel-sample.products') }}">Products</a>
+        <li @if(str_contains(app('router')->currentRouteAction(), 'PanelSampleProductsController'))class="active"@endif>
+            <a href="{{ action('PanelSampleProductsController@showList') }}">Products</a>
         </li>
 
-        <li @if(Route::getCurrentRoute()->getName() === 'panel-sample.sections')class="active"@endif>
-            <a href="{{ route('panel-sample.sections') }}">Sections</a>
+        <li @if(str_contains(app('router')->currentRouteAction(), 'PanelSampleSectionsController'))class="active"@endif>
+            <a href="{{ action('PanelSampleSectionsController@showList') }}">Sections</a>
         </li>
         <li class="pull-right">
             <select onchange="document.location=this.value;">
@@ -58,7 +58,7 @@
 </div>
 
 <script>
-    $(function(){
+    $(function () {
         $(function () {
             panel.labels = {!! json_encode( trans('panel') ) !!};
 

@@ -1,5 +1,5 @@
 <?php
-$errors = $form->getFieldErrors($field['key']);
+$errors = $form->fieldErrors($field['key']);
 ?>
 <div class="form-group @if( ! empty($errors) ) has-error @endif">
     <label class="col-lg-10">
@@ -12,8 +12,8 @@ $errors = $form->getFieldErrors($field['key']);
             array_except($field, ['key', 'type', 'label']),
             [
                 'attributes.type' => 'text',
-                'attributes.name' => $form->getHtmlInputName($field['key']),
-                'attributes.value' => $form->getInputValue($field['key'])
+                'attributes.name' => $form->htmlInputName($field['key']),
+                'attributes.value' => $form->inputValue($field['key'])
             ]
         ) !!}
 

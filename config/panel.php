@@ -30,14 +30,14 @@ return [
             'confirm'   => 'panel.confirm.delete'
         ],
         'enable'        => function ($panel, $model) {
-            $key = method_exists($panel, 'getEnabledKey') ? $panel->getEnabledKey() : 'enabled';
+            $key = method_exists($panel, 'getEnabledKey') ? $panel->enabledKey() : 'enabled';
 
             if ($model->{$key}) {
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.disable',
                     'icon'      => 'fa fa-eye',
-                    'url'       => urlbuilder($panel->getUrl())->append([ 'disable', $model->id ])->compile(),
+                    'url'       => urlbuilder($panel->url())->append([ 'disable', $model->id ])->compile(),
                     'icon-only' => true
                 ];
             } else {
@@ -50,14 +50,14 @@ return [
             }
         },
         'disable'       => function ($panel, $model) {
-            $key = method_exists($panel, 'getDisabledKey') ? $panel->getDisabledKey() : 'disabled';
+            $key = method_exists($panel, 'getDisabledKey') ? $panel->disabledKey() : 'disabled';
 
             if ($model->{$key}) {
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.enable',
                     'icon'      => 'fa fa-eye-slash',
-                    'url'       => urlbuilder($panel->getUrl())->append([ 'enable', $model->id ])->compile(),
+                    'url'       => urlbuilder($panel->url())->append([ 'enable', $model->id ])->compile(),
                     'icon-only' => true
                 ];
             } else {
@@ -75,8 +75,8 @@ return [
                 'label'     => 'panel.actions.append',
                 'icon'      => 'fa fa-plus',
                 'icon-only' => true,
-                'url'       => urlbuilder($panel->getUrl())->append('create')->query([
-                    $panel->getRequestAttributeName('appendTo') => $model->id
+                'url'       => urlbuilder($panel->url())->append('create')->query([
+                    'appendTo' => $model->id
                 ])->compile()
             ];
         },

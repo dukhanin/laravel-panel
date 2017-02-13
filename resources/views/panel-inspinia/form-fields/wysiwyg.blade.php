@@ -1,5 +1,5 @@
 <?php
-$errors = $form->getFieldErrors($field['key']);
+$errors = $form->fieldErrors($field['key']);
 $id     = 'wysiwyg-' . mt_rand(1, 1000);
 
 $config = config('wysiwyg.default');
@@ -17,9 +17,9 @@ $config['filemanager_subfolder'] = $form->getUploadDirectory();
             'textarea.form-control#' . $id,
             array_except($field, ['key', 'type', 'label']),
             [
-                'attributes.name' => $form->getHtmlInputName($field['key']),
+                'attributes.name' => $form->htmlInputName($field['key']),
                 'attributes.style' => 'height: 400px',
-                'content' => e($form->getInputValue($field['key']))
+                'content' => e($form->inputValue($field['key']))
             ]
         ) !!}
 

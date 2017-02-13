@@ -10,6 +10,13 @@ trait CreateAndEdit
     protected $form;
 
 
+    public static function routesFeatureCreateAndEdit($className)
+    {
+        app('router')->match(['get', 'post'], 'create', "{$className}@create");
+        app('router')->match(['get', 'post'], 'edit/{id}', "{$className}@edit");
+    }
+
+
     public function initFeatureCreateAndEdit()
     {
         $this->actions['create'] = $this->config('actions.create');
@@ -28,13 +35,17 @@ trait CreateAndEdit
     {
         $this->form->configSet(null, $this->config());
 
-        $this->form->addCancelButton([ 'url' => $this->getUrl() ]);
-        $this->form->addSubmitButton([ 'url' => $this->getUrl() ]);
-        $this->form->addApplyButton();
+        $this->form->addButton('cancel', [ 'url' => $this->url() ]);
+        $this->form->addButton('submit');
+        $this->form->addButton('apply');
+
+        $this->redirectToFormAfterApply();
+
+        $this->redirectToListAfterSave();
     }
 
 
-    public function getForm()
+    public function form()
     {
         if (is_null($this->form)) {
             $this->initForm();
@@ -45,33 +56,51 @@ trait CreateAndEdit
     }
 
 
-    public function actionEdit($primaryKey)
+    public function edit($primaryKey)
     {
         $model = $this->findModelOrFail($primaryKey);
 
         $this->authorize('edit', $model);
 
-        return $this->getForm()->setModel($model)->execute();
+        return $this->form()->setModel($model)->execute();
     }
 
 
-    public function actionCreate()
+    public function create()
     {
         $model = $this->newModel();
 
         $this->authorize('create', $model);
 
-        if (in_array(Sort::class, class_uses_recursive(get_class($this)))) {
-            $this->getForm()->succeed(function () use ($model) {
-                if ($this->sortNewModelToTop) {
-                    $this->sortModelToTop($model);
-                } else {
-                    $this->sortModelToBottom($model);
-                }
-            });
-        }
-
-        return $this->getForm()->setModel($model)->execute();
+        return $this->form()->setModel($model)->execute();
     }
 
+
+    private function redirectToFormAfterApply()
+    {
+        $this->form()->succeed(function () {
+            if ( ! $this->input('_apply')) {
+                return;
+            }
+
+            $url = request()->fullUrl();
+
+            if ($this->form()->model()->wasRecentlyCreated) {
+                $url = urlbuilder($url)->pop('/create')->append([
+                    'edit',
+                    $this->form()->model()->getKey()
+                ])->compile();
+            }
+
+            abort(301, '', [ 'Location' => $url ]);
+        }, -1);
+    }
+
+
+    private function redirectToListAfterSave()
+    {
+        $this->form()->succeed(function () {
+            abort(301, '', [ 'Location' => $this->url() ]);
+        }, -2);
+    }
 }

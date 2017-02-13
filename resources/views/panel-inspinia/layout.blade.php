@@ -109,12 +109,12 @@
 
             <div class="tabs-container">
                 <ul class="nav nav-tabs">
-                    <li @if(Route::getCurrentRoute()->getName() === 'panel-sample.products')class="active"@endif>
-                        <a href="{{ route('panel-sample.products') }}?inspinia=1">Products</a>
+                    <li @if(str_contains(app('router')->currentRouteAction(), 'PanelSampleProductsController'))class="active"@endif>
+                        <a href="{{ action('PanelSampleProductsController@showList') }}?inspinia=1">Products</a>
                     </li>
 
-                    <li @if(Route::getCurrentRoute()->getName() === 'panel-sample.sections')class="active"@endif>
-                        <a href="{{ route('panel-sample.sections') }}?inspinia=1">Sections</a>
+                    <li @if(str_contains(app('router')->currentRouteAction(), 'PanelSampleSectionsController'))class="active"@endif>
+                        <a href="{{ action('PanelSampleSectionsController@showList') }}?inspinia=1">Sections</a>
                     </li>
                     <li class="pull-right">
                         <select onchange="document.location=this.value;">

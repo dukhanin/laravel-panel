@@ -4,7 +4,6 @@ namespace Dukhanin\Panel\Features;
 
 use Dukhanin\Panel\PanelTree;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Request;
 
 trait Sort
 {
@@ -18,6 +17,12 @@ trait Sort
     protected $sortNewModelToTop;
 
 
+    public static function routesFeatureSort($className)
+    {
+        app('router')->post('groupMoveTo', "{$className}@groupMoveTo");
+    }
+
+
     public function initFeatureSort()
     {
         $this->sortEnabled = true;
@@ -28,27 +33,27 @@ trait Sort
     }
 
 
-    public function actionSortUp($primaryKey)
+    public function sortUp($primaryKey)
     {
         return $this->sort($primaryKey, 'up');
     }
 
 
-    public function actionSortDown($primaryKey)
+    public function sortDown($primaryKey)
     {
         return $this->sort($primaryKey, 'down');
     }
 
 
-    public function actionSortSlice()
+    public function sortSlice()
     {
-        $group = (array) Request::input('group');
+        $group = (array) $this->input('group');
 
         $models = $this->findModelsOrFail($group);
 
         $this->authorize('group-enable', $group);
 
-        $primaryKeyName = $this->getModel()->getKeyName();
+        $primaryKeyName = $this->model()->getKeyName();
         $index          = intval($models->min('index'));
 
         $orderedList = [ ];
@@ -85,7 +90,7 @@ trait Sort
             return true;
         }
 
-        $columns = $this->getColumns();
+        $columns = $this->columns();
 
         if ( ! isset( $columns[$this->order]['order'] )) {
             return false;
@@ -101,7 +106,8 @@ trait Sort
 
         $this->authorize('sort', $this->modelToSort);
 
-        $query                     = $this->getSortQuery();
+        $query = $this->sortQuery();
+
         $query->getQuery()->orders = [ ];
 
         $modelIndex = intval($this->modelToSort->{$this->sortKey});
@@ -126,7 +132,7 @@ trait Sort
 
         $this->resortModels();
 
-        abort(301, '', [ 'Location' => $this->getUrl() ]);
+        return redirect()->to($this->url());
     }
 
 
@@ -136,7 +142,7 @@ trait Sort
             return false;
         }
 
-        $max = $this->getSortQuery($model)->max($this->sortKey) + 1;
+        $max = $this->sortQuery($model)->max($this->sortKey) + 1;
 
         $model->{$this->sortKey} = $max;
         $model->save();
@@ -159,18 +165,18 @@ trait Sort
     protected function resortModels()
     {
         // @todo @dukhanin mysql support only!
-        $this->getSortQuery()->orderBy($this->sortKey,
+        $this->sortQuery()->orderBy($this->sortKey,
             'asc')->update([ $this->sortKey => DB::raw('(select @i := IF(@i IS NULL, 0 , @i + 1))') ]);
     }
 
 
-    protected function getSortQuery()
+    protected function sortQuery()
     {
         if ($this instanceof PanelTree) {
-            return $this->getQueryBranch($this->modelToSort->{$this->getParentKey()}, [ '!order', '!pages' ]);
+            return $this->queryBranch($this->modelToSort->{$this->parentKey()}, [ '!order', '!pages' ]);
         }
 
-        return $this->getQuery([ '!order', '!pages' ]);
+        return $this->query([ '!order', '!pages' ]);
     }
 
 }

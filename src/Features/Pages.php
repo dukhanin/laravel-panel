@@ -23,7 +23,7 @@ trait Pages
 
     public function initPage()
     {
-        $this->page = $this->getRequestAttribute('page', 1);
+        $this->page = $this->input('page', 1);
     }
 
 
@@ -35,15 +35,43 @@ trait Pages
 
     public function initPaginator()
     {
-        $this->paginator = new LengthAwarePaginator($this->perPage, $this->getTotal(), $this->perPage, $this->page);
-        $this->paginator->setPageName($this->getRequestAttributeName('page'));
+        $this->paginator = new LengthAwarePaginator($this->perPage(), $this->total(), $this->perPage(), $this->page());
+        $this->paginator->setPageName('page');
 
-        $url = urlbuilder($this->getUrl([ '!pages' ]));
-        $this->paginator->appends( $url->query() );
+        $url = urlbuilder($this->url([ '!pages' ]));
 
-        $url->query(false);
+        $this->paginator->appends($url->query());
+        $this->paginator->setPath($url->query(false)->compile());
+    }
 
-        $this->paginator->setPath($url->compile());
+
+    public function perPage()
+    {
+        if (is_null($this->perPage)) {
+            $this->initPerPage();
+        }
+
+        return $this->perPage;
+    }
+
+
+    public function page()
+    {
+        if (is_null($this->page)) {
+            $this->initPage();
+        }
+
+        return $this->page;
+    }
+
+
+    public function paginator()
+    {
+        if (is_null($this->paginator)) {
+            $this->initPaginator();
+        }
+
+        return $this->paginator;
     }
 
 
@@ -56,19 +84,9 @@ trait Pages
     }
 
 
-    public function getPaginator()
-    {
-        if (is_null($this->paginator)) {
-            $this->initPaginator();
-        }
-
-        return $this->paginator;
-    }
-
-
     protected function applyUrlPages(&$url)
     {
-        $url->query([ $this->getRequestAttributeName('page') => $this->page ]);
+        $url->query([ 'page' => $this->page ]);
     }
 
 }

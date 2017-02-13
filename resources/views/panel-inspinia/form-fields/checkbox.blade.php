@@ -1,19 +1,19 @@
 <?php
 global $checkboxesIndex;
 
-$errors = $form->getFieldErrors($field['key']);
+$errors = $form->fieldErrors($field['key']);
 $state    = isset($state) ? $state : false;
 $icon     = isset($icon) ? $icon : false;
 ?>
 
 <div class="checkbox @if( ! empty($errors) )  has-error @endif">
-    <input type="hidden" name="{{ $form->getHtmlInputName($field['key']) }}" value="0"/>
+    <input type="hidden" name="{{ $form->htmlInputName($field['key']) }}" value="0"/>
 
     <input type="checkbox"
            id="checkbox-{{ ++$checkboxesIndex }}"
-           name="{{  $form->getHtmlInputName($field['key']) }}"
+           name="{{  $form->htmlInputName($field['key']) }}"
            value="1"
-           @if( $form->getInputValue($field['key']) ) checked @endif
+           @if( $form->inputValue($field['key']) ) checked @endif
             />
 
     <label class="@if( $state ) text-{{ $state }} checkbox-{{ $state }} @endif" for="checkbox-{{ $checkboxesIndex }}">

@@ -91,9 +91,9 @@ class ProductPanel extends PanelList
      * MoveTo
      */
 
-    public function initMoveTo()
+    public function initMoveToOptions()
     {
-        $this->moveTo = Section::options();
+        $this->moveToOptions = Section::options();
     }
 
 

@@ -1,4 +1,4 @@
-@extends($decorator->getLayout())
+@extends($panel->config('layout'))
 
 @push('styles')
     <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.css') }}"/>
@@ -21,47 +21,47 @@
 
 @section('content')
     <div class="panel-list" id="{{ $panelId }}">
-        <form method="post" action="{{ $decorator->getUrl() }}" class="panel-list-form">
+        <form method="post" action="{{ $panel->url() }}" class="panel-list-form">
 
             <div class="mail-box-header">
                 <h2>
-                    {{ $decorator->getLabel() }}
+                    {{ $panel->label() }}
                 </h2>
 
                 <div class="panel-list-tools mail-tools m-t-md">
                     <div class="row">
                         <div class="col-sm-9 m-b-xs">
-                            @foreach ($decorator->getActions() as $action)
-                                {!! $decorator->renderAction($action, '.panel-list-action') !!}
+                            @foreach ($panel->actions() as $action)
+                                {!! $panel->renderAction($action, '.panel-list-action') !!}
                             @endforeach
 
-                            @foreach ($decorator->getGroupActions() as $actionKey => $action)
-                                {!! $decorator->renderGroupAction($action, 'button.panel-list-group-action', [ 'attributes.type' => 'submit' ]) !!}
+                            @foreach ($panel->groupActions() as $actionKey => $action)
+                                {!! $panel->renderGroupAction($action, 'button.panel-list-group-action', [ 'attributes.type' => 'submit' ]) !!}
                             @endforeach
 
-                            @if( count($decorator->getMoveTo()) > 0 )
+                            @if( count($panel->moveToOptions()) > 0 )
                                 <select class="panel-list-move-to-select input-sm form-control"
                                         data-confirm=""
-                                        data-url="{{ urlbuilder($decorator->getUrl())->append('groupMoveTo/dummyMoveTo') }}">
+                                        data-url="{{ urlbuilder($panel->url())->append('groupMoveTo/dummyMoveTo') }}">
 
-                                    <option value="">@lang( $decorator->config('labels.move-to') )</option>
+                                    <option value="">@lang( $panel->config('labels.move-to') )</option>
 
-                                    @foreach($decorator->getMoveTo() as $key => $label)
+                                    @foreach($panel->moveToOptions() as $key => $label)
                                         <option value="{{$key}}">&nbsp;&nbsp;&nbsp;&nbsp;{{$label}}</option>
                                     @endforeach
                                 </select>
                             @endif
                         </div>
 
-                        @if( count($decorator->getCategories()) > 0 )
+                        @if( count($panel->categories()) > 0 )
                             <div class="col-sm-3">
                                 <select class="panel-list-categories-select input-sm form-control input-s-sm inline"
-                                        data-url="{{ urlbuilder($decorator->getUrl(['!pages', '!categories']))->query([
-                                                        $decorator->getRequestAttributeName('category') => 'dummyCategory'
+                                        data-url="{{ urlbuilder($panel->url(['!pages', '!categories']))->query([
+                                                        'category' => 'dummyCategory'
                                                     ]) }}">
-                                    @foreach($decorator->getCategories() as $categoryKey=>$category)
+                                    @foreach($panel->categories() as $categoryKey=>$category)
                                         <option value="{{$categoryKey}}"
-                                                @if($categoryKey == $decorator->category) selected @endif>{{$category}}</option>
+                                                @if($categoryKey == $panel->category) selected @endif>{{$category}}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -76,22 +76,22 @@
 
                 <table class="table table-hover table-mail panel-list-table">
 
-                    @if( $decorator->isEmpty())
+                    @if( $panel->isEmpty())
                         <tbody class="panel-list-empty">
                         <tr>
                             <td colspan="99">
-                                <h2>@lang( $decorator->config('labels.list-empty') )</h2>
+                                <h2>@lang( $panel->config('labels.list-empty') )</h2>
                             </td>
                         </tr>
                         </tbody>
                     @else
                         <thead>
                         <tr>
-                            @if($decorator->isSortEnabled())
+                            @if($panel->isSortEnabled())
                                 <th class="panel-list-sort-handler">&nbsp;</th>
                             @endif
 
-                            @if(count($decorator->getGroupActions()) > 0 || count($decorator->getMoveTo()) > 0)
+                            @if(count($panel->groupActions()) > 0 || count($panel->moveToOptions()) > 0)
                                 <th class="check-mail panel-list-checkbox">
                                     <div class="checkbox">
                                         <input type="checkbox" />
@@ -100,28 +100,28 @@
                                 </th>
                             @endif
 
-                            @if($decorator->isSortEnabled())
+                            @if($panel->isSortEnabled())
                                 <th></th>
                             @endif
 
-                            @foreach ($decorator->getColumns() as $column)
+                            @foreach ($panel->columns() as $column)
                                 <th>
-                                    {!! $decorator->renderColumnHead($column) !!}
+                                    {!! $panel->renderColumnHead($column) !!}
                                 </th>
                             @endforeach
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($decorator->getRows() as $rowKey => $row)
+                        @foreach ($panel->rows() as $rowKey => $row)
                             {!! html_tag_open('tr', array_except($row, ['cells', 'model']), ['key' => $rowKey]) !!}
 
-                            @if($decorator->isSortEnabled())
+                            @if($panel->isSortEnabled())
                                 <td class="panel-list-sort-handler">
                                     &nbsp;
                                 </td>
                             @endif
 
-                            @if(count($decorator->getGroupActions()) > 0 || count($decorator->getMoveTo()) > 0)
+                            @if(count($panel->groupActions()) > 0 || count($panel->moveToOptions()) > 0)
                                 <td class="check-mail panel-list-checkbox">
                                     <div class="checkbox">
                                         <input type="checkbox" name="group[]" value="{{$rowKey}}"/>
@@ -130,31 +130,31 @@
                                 </td>
                             @endif
 
-                            @if($decorator->isSortEnabled())
+                            @if($panel->isSortEnabled())
                                 <td class="panel-list-sort">
                                     <div class="btn-group">
-                                        <a href="{!! urlbuilder($decorator->getUrl())->append(['sortUp', $row['model']->getKey()]) !!}"
+                                        <a href="{!! urlbuilder($panel->url())->append(['sortUp', $row['model']->getKey()]) !!}"
                                            class="btn btn-xs btn-white"
                                            data-toggle="tooltip"
                                            data-placement="auto"
-                                           title="@lang( $decorator->config('labels.sort-up') )"><i class="fa fa-angle-up"></i></a>
-                                        <a href="{!! urlbuilder($decorator->getUrl())->append(['sortDown', $row['model']->getKey()]) !!}"
+                                           title="@lang( $panel->config('labels.sort-up') )"><i class="fa fa-angle-up"></i></a>
+                                        <a href="{!! urlbuilder($panel->url())->append(['sortDown', $row['model']->getKey()]) !!}"
                                            class="btn btn-xs btn-white"
                                            data-toggle="tooltip"
                                            data-placement="auto"
-                                           title="@lang( $decorator->config('labels.sort-down') )"><i class="fa fa-angle-down"></i></a>
+                                           title="@lang( $panel->config('labels.sort-down') )"><i class="fa fa-angle-down"></i></a>
                                     </div>
                                 </td>
                             @endif
 
 
-                            @foreach ($decorator->getColumns() as $column)
+                            @foreach ($panel->columns() as $column)
                                 {!! html_tag('td.mail-subject.panel-list-data-cell', $column, [ 'label' => false ], array_get($row, "cells.{$column['key']}")) !!}
                             @endforeach
 
-                            @foreach ($decorator->getModelActions($row['model']) as $action)
+                            @foreach ($panel->modelActions($row['model']) as $action)
                                 <td class="panel-list-model-action">
-                                    {!! $decorator->renderModelAction($action, $row['model']) !!}
+                                    {!! $panel->renderModelAction($action, $row['model']) !!}
                                 </td>
                             @endforeach
                             {!! html_tag_close('tr') !!}
@@ -163,9 +163,9 @@
                     @endif
                 </table>
 
-                @if($decorator->getPaginator())
+                @if($panel->paginator())
                     <div class="pull-right">
-                        {!! $decorator->getPaginator()->render() !!}
+                        {!! $panel->paginator()->render() !!}
                     </div>
                 @endif
 

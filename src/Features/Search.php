@@ -16,7 +16,7 @@ trait Search
 
     public function initSearch()
     {
-        $this->search = $this->getRequestAttribute('search');
+        $this->search = $this->input('search');
     }
 
 
@@ -29,8 +29,7 @@ trait Search
     protected function applyUrlSearch(&$url)
     {
         if (trim($this->search)) {
-            $url->query([ $this->getRequestAttributeName('search') => $this->search ]);
+            $url->query([ 'search' => $this->search ]);
         }
     }
-
 }

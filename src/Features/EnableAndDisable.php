@@ -2,12 +2,19 @@
 
 namespace Dukhanin\Panel\Features;
 
-use Illuminate\Support\Facades\Request;
-
 trait EnableAndDisable
 {
 
     protected $enabledKey;
+
+
+    public static function routesFeatureEnableAndDisable($className)
+    {
+        app('router')->get('enable/{id}', "{$className}@enable");
+        app('router')->get('disable/{id}', "{$className}@disable");
+        app('router')->post('groupEnable', "{$className}@groupEnable");
+        app('router')->post('groupDisable', "{$className}@groupDisable");
+    }
 
 
     function initFeatureEnableAndDisable()
@@ -28,7 +35,7 @@ trait EnableAndDisable
     }
 
 
-    public function getEnabledKey()
+    public function enabledKey()
     {
         if (is_null($this->enabledKey)) {
             $this->initEnabledKey();
@@ -38,65 +45,65 @@ trait EnableAndDisable
     }
 
 
-    public function actionEnable($primaryKey)
+    public function enable($primaryKey)
     {
         $model = $this->findModelOrFail($primaryKey);
 
         $this->authorize('enable', $model);
 
-        $model->{$this->enabledKey} = true;
+        $model->{$this->enabledKey()} = true;
         $model->save();
 
-        abort(301, '', [ 'Location' => $this->getUrl() ]);
+        return redirect()->to($this->url());
     }
 
 
-    public function actionDisable($primaryKey)
+    public function disable($primaryKey)
     {
         $model = $this->findModelOrFail($primaryKey);
 
         $this->authorize('disable', $model);
 
-        $model->{$this->enabledKey} = false;
+        $model->{$this->enabledKey()} = false;
         $model->save();
 
-        abort(301, '', [ 'Location' => $this->getUrl() ]);
+        abort(301, '', [ 'Location' => $this->url() ]);
     }
 
 
-    public function actionGroupEnable()
+    public function groupEnable()
     {
-        $group = $this->findModelsOrFail(Request::input('group'));
+        $group = $this->findModelsOrFail($this->input('group'));
 
         $this->authorize('group-enable', $group);
 
         foreach ($group as $model) {
-            $model->{$this->enabledKey} = true;
+            $model->{$this->enabledKey()} = true;
             $model->save();
         }
 
-        abort(301, '', [ 'Location' => $this->getUrl() ]);
+        abort(301, '', [ 'Location' => $this->url() ]);
     }
 
 
-    public function actionGroupDisable()
+    public function groupDisable()
     {
-        $group = $this->findModelsOrFail(Request::input('group'));
+        $group = $this->findModelsOrFail($this->input('group'));
 
         $this->authorize('group-disable', $group);
 
         foreach ($group as $model) {
-            $model->{$this->enabledKey} = false;
+            $model->{$this->enabledKey()} = false;
             $model->save();
         }
 
-        abort(301, '', [ 'Location' => $this->getUrl() ]);
+        abort(301, '', [ 'Location' => $this->url() ]);
     }
 
 
     public function applyEachRowDisabled(&$row)
     {
-        if ( ! $row['model']->{$this->enabledKey}) {
+        if ( ! $row['model']->{$this->enabledKey()}) {
             array_set($row, 'attributes.class', 'inactive');
         }
     }

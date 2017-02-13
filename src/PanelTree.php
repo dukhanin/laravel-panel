@@ -12,7 +12,7 @@ class PanelTree extends PanelList
 
     public function initView()
     {
-        $this->view = view($this->config('views') . '.tree', [ 'decorator' => $this->getDecorator() ]);
+        $this->view = view($this->config('views') . '.tree', [ 'panel' => $this->decorator() ]);
     }
 
 
@@ -40,7 +40,7 @@ class PanelTree extends PanelList
     }
 
 
-    public function getParentKey()
+    public function parentKey()
     {
         if (is_null($this->parentKey)) {
             $this->initParentKey();
@@ -50,7 +50,7 @@ class PanelTree extends PanelList
     }
 
 
-    public function getParentKeyValue()
+    public function parentKeyValue()
     {
         if (is_null($this->parentKeyValue)) {
             $this->initParentKeyValue();
@@ -60,16 +60,16 @@ class PanelTree extends PanelList
     }
 
 
-    public function getQueryBranch($parentKeyValue = null, array $apply = [ '*' ])
+    public function queryBranch($parentKeyValue = null, array $apply = [ '*' ])
     {
-        return $this->getQuery($apply)->where($this->getParentKey(),
-            is_null($parentKeyValue) ? $this->getParentKeyValue() : $parentKeyValue);
+        return $this->query($apply)->where($this->parentKey(),
+            is_null($parentKeyValue) ? $this->parentKeyValue() : $parentKeyValue);
     }
 
 
-    public function getList(array $apply = [ '*' ])
+    public function items(array $apply = [ '*' ])
     {
-        return $this->getQueryBranch(null, $apply)->get();
+        return $this->queryBranch(null, $apply)->get();
     }
 
 
@@ -77,7 +77,7 @@ class PanelTree extends PanelList
     {
         $model = parent::newModel();
 
-        $parentKeyValue = $this->getRequestAttribute('appendTo');
+        $parentKeyValue = request()->input('appendTo');
 
         if ($parentKeyValue) {
             $parent = $this->findModel($parentKeyValue);
@@ -88,18 +88,18 @@ class PanelTree extends PanelList
         }
 
         if (is_null($parentKeyValue)) {
-            $parentKeyValue = $this->getParentKeyValue();
+            $parentKeyValue = $this->parentKeyValue();
         }
 
-        $model->{$this->getParentKey()} = $parentKeyValue;
+        $model->{$this->parentKey()} = $parentKeyValue;
 
         return $model;
     }
 
 
-    protected function getSortQuery()
+    protected function sortQuery()
     {
-        return $this->getQueryBranch($this->model->{$this->getParentKey()}, [ '!order' ]);
+        return $this->queryBranch($this->model()->{$this->parentKey()}, [ '!order' ]);
     }
 
 }

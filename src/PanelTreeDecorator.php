@@ -15,14 +15,14 @@ class PanelTreeDecorator extends PanelListDecorator
     protected function initRowsRecursive($parentKeyValue = null, $depth = 0)
     {
         if (is_null($parentKeyValue)) {
-            $parentKeyValue = $this->panel->getParentKeyValue();
+            $parentKeyValue = $this->panel->parentKeyValue();
         }
 
-        foreach ($this->getQueryBranch($parentKeyValue)->get() as $model) {
+        foreach ($this->queryBranch($parentKeyValue)->get() as $model) {
             $row = &$this->rows[$model->getKey()];
             $row = [ 'model' => $model, 'cells' => [ ], 'class' => 'depth-' . $depth ];
 
-            foreach ($this->getColumns() as $columnKey => $column) {
+            foreach ($this->columns() as $columnKey => $column) {
                 $cell            = &$row['cells'][$columnKey];
                 $cell            = [ 'model' => $model, 'column' => $column, ];
                 $cell['content'] = $this->renderCell($cell, $row);

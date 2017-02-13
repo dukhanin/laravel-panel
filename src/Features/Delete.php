@@ -7,6 +7,13 @@ use Illuminate\Support\Facades\Request;
 trait Delete
 {
 
+    public static function routesFeatureDelete($className)
+    {
+        app('router')->get('delete/{id}', "{$className}@delete");
+        app('router')->post('groupDelete', "{$className}@groupDelete");
+    }
+
+
     public function initFeatureDelete()
     {
         $this->modelActions['delete'] = $this->config('actions.delete');
@@ -15,7 +22,7 @@ trait Delete
     }
 
 
-    public function actionDelete($primaryKey)
+    public function delete($primaryKey)
     {
         $model = $this->findModelOrFail($primaryKey);
 
@@ -23,11 +30,11 @@ trait Delete
 
         $model->delete();
 
-        abort(301, '', [ 'Location' => $this->getUrl() ]);
+        return redirect()->to($this->url());
     }
 
 
-    public function actionGroupDelete()
+    public function groupDelete()
     {
         $group = $this->findModelsOrFail(Request::input('group'));
 
@@ -37,6 +44,6 @@ trait Delete
             $model->delete();
         }
 
-        abort(301, '', [ 'Location' => $this->getUrl() ]);
+        return redirect()->to($this->url());
     }
 }

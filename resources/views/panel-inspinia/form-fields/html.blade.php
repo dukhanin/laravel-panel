@@ -1,6 +1,6 @@
 <?php
-$value = $form->getInputValue($field['key']);
-$errors = $form->getFieldErrors($field['key']);
+$value = $form->inputValue($field['key']);
+$errors = $form->fieldErrors($field['key']);
 
 if ( ! empty( $data )) {
     $value = $data;

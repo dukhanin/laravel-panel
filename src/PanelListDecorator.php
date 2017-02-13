@@ -21,25 +21,25 @@ class PanelListDecorator
     {
         $this->rows = [ ];
 
-        foreach ($this->getList() as $model) {
+        foreach ($this->items() as $model) {
             $row = &$this->rows[$model->getKey()];
             $row = [ 'model' => $model, 'cells' => [ ], 'class' => [ ] ];
 
-            foreach ($this->getColumns() as $columnKey => $column) {
+            foreach ($this->columns() as $columnKey => $column) {
                 $cell            = &$row['cells'][$columnKey];
                 $cell            = [ 'model' => $model, 'column' => $column, ];
                 $cell['content'] = $this->renderCell($cell, $row);
             }
             unset( $cell );
 
-            $this->panel->eachRow($row);
+            $this->eachRow($row);
         }
 
         unset( $row );
     }
 
 
-    public function getRows()
+    public function rows()
     {
         if (is_null($this->rows)) {
             $this->initRows();
@@ -49,48 +49,48 @@ class PanelListDecorator
     }
 
 
-    public function getCategories()
+    public function categories()
     {
-        return method_exists($this->panel, 'getCategories') ? $this->panel->getCategories() : collect();
+        return method_exists($this->panel, 'categories') ? $this->panel->categories() : collect();
     }
 
 
-    public function getMoveTo()
+    public function moveToOptions()
     {
-        return method_exists($this->panel, 'getMoveTo') ? $this->panel->getMoveTo() : collect();
+        return method_exists($this->panel, 'moveToOptions') ? $this->panel->moveToOptions() : collect();
     }
 
 
-    public function getPaginator()
+    public function paginator()
     {
-        return method_exists($this->panel, 'getPaginator') ? $this->panel->getPaginator() : null;
+        return method_exists($this->panel, 'paginator') ? $this->panel->paginator() : null;
     }
 
 
-    public function getColumns()
+    public function columns()
     {
         if ( ! isset( $this->cache['columns'] )) {
-            $this->cache['columns'] = $this->panel->getColumns();
+            $this->cache['columns'] = $this->panel->columns();
         }
 
         return $this->cache['columns'];
     }
 
 
-    public function getActions()
+    public function actions()
     {
         if ( ! isset( $this->cache['actions'] )) {
-            $this->cache['actions'] = $this->panel->getActions();
+            $this->cache['actions'] = $this->panel->actions();
         }
 
         return $this->cache['actions'];
     }
 
 
-    public function getGroupActions()
+    public function groupActions()
     {
         if ( ! isset( $this->cache['groupActions'] )) {
-            $this->cache['groupActions'] = $this->panel->getGroupActions();
+            $this->cache['groupActions'] = $this->panel->groupActions();
         }
 
         return $this->cache['groupActions'];
@@ -105,7 +105,7 @@ class PanelListDecorator
 
     public function isEmpty()
     {
-        return empty( $this->getRows() );
+        return empty( $this->rows() );
     }
 
 
@@ -164,22 +164,22 @@ class PanelListDecorator
 
     public function renderColumnHead($column, ...$overwrites)
     {
-        if (empty( $column['order'] )) {
+        if ( ! is_callable([ $this->panel, 'order' ]) || empty( $column['order'] )) {
             return $column['label'];
         }
 
-        $thisColumnOrdered = $this->panel->getOrder() == $column['key'];
-        $orderedDesc       = $this->panel->getOrderDesc();
+        $thisColumnOrdered = $this->order() == $column['key'];
+        $orderedDesc       = $this->orderDesc();
         $resetAnyOrder     = $thisColumnOrdered && $orderedDesc;
 
-        $url = urlbuilder($this->panel->getUrl([ '!order', '!orderDesc', '!pages' ]));
+        $url = urlbuilder($this->url([ '!order', '!orderDesc', '!pages' ]));
         $tag = array_only($column, [ 'label', 'width', 'order', 'class', 'attributes' ]);
 
         if ( ! $resetAnyOrder) {
-            $url->query([ $this->getRequestAttributeName('order') => $column['key'] ]);
+            $url->query([ 'order' => $column['key'] ]);
 
             if ($thisColumnOrdered && ! $orderedDesc) {
-                $url->query([ $this->getRequestAttributeName('orderDesc') => 1 ]);
+                $url->query([ 'orderDesc' => 1 ]);
             }
         }
 
@@ -197,7 +197,7 @@ class PanelListDecorator
 
         if ($action = value(array_get($cell, 'column.action'))) {
             $action = $action === true ? $defaultAction : $action;
-            $url    = $this->allows($action, $model) ? urlbuilder($this->getUrl())->append([
+            $url    = $this->allows($action, $model) ? urlbuilder($this->url())->append([
                 $action,
                 $model->id
             ])->compile() : null;
