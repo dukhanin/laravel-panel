@@ -45,9 +45,9 @@
                         @endif
 
                         {!! html_tag('button.btn', $button, [
-                            'attributes.type' => array_get($button, 'type'),
-                            'attributes.name' => array_get($button, 'name'),
-                            'attributes.value' => 1
+                            'type' => array_get($button, 'type'),
+                            'name' => array_get($button, 'name'),
+                            'value' => 1
                         ] ) !!}
                     @endforeach
                 </div>

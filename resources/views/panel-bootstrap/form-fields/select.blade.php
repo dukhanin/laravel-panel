@@ -19,7 +19,7 @@ $nullTitleSelected = in_array($form->inputValue($field['key']), array( NULL, '' 
         {!! html_tag_open(
             'select.form-control',
             array_except($field, ['key', 'type', 'label', 'nullTitle']),
-            ['attributes.name' => $form->htmlInputName($field['key'])]
+            ['name' => $form->htmlInputName($field['key'])]
         ) !!}
 
         @if($nullTitle !== false)

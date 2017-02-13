@@ -17,8 +17,8 @@ $file = \App\File\File::find($value);
             'input#' . $id,
             array_except($field, ['key', 'type', 'label']),
             [
-                'attributes.type' => 'file',
-                'attributes.name' => $form->htmlInputName($field['key']),
+                'type' => 'file',
+                'name' => $form->htmlInputName($field['key']),
             ]
         ) !!}
 

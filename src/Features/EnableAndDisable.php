@@ -67,7 +67,7 @@ trait EnableAndDisable
         $model->{$this->enabledKey()} = false;
         $model->save();
 
-        abort(301, '', [ 'Location' => $this->url() ]);
+        return redirect()->to($this->url());
     }
 
 
@@ -82,7 +82,7 @@ trait EnableAndDisable
             $model->save();
         }
 
-        abort(301, '', [ 'Location' => $this->url() ]);
+        return redirect()->to($this->url());
     }
 
 
@@ -97,14 +97,14 @@ trait EnableAndDisable
             $model->save();
         }
 
-        abort(301, '', [ 'Location' => $this->url() ]);
+        return redirect()->to($this->url());
     }
 
 
     public function applyEachRowDisabled(&$row)
     {
         if ( ! $row['model']->{$this->enabledKey()}) {
-            array_set($row, 'attributes.class', 'inactive');
+            html_tag_add_class($row, 'inactive');
         }
     }
 }

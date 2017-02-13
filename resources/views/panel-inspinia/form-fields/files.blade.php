@@ -23,9 +23,9 @@ $resizes = isset( $resizes ) ? (array) $resizes : [ ];
             'input#' . $id,
             array_except($field, ['key', 'type', 'label']),
             [
-                'attributes.type' => 'file',
-                'attributes.multiple' => true,
-                'attributes.name' => $form->htmlInputName($field['key']) . '[]',
+                'type' => 'file',
+                'multiple' => true,
+                'name' => $form->htmlInputName($field['key']) . '[]',
             ]
         ) !!}
 

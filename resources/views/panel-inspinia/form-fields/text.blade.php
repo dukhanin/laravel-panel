@@ -11,9 +11,9 @@ $errors = $form->fieldErrors($field['key']);
             'input.form-control',
             array_except($field, ['key', 'type', 'label']),
             [
-                'attributes.type' => 'text',
-                'attributes.name' => $form->htmlInputName($field['key']),
-                'attributes.value' => $form->inputValue($field['key'])
+                'type' => 'text',
+                'name' => $form->htmlInputName($field['key']),
+                'value' => $form->inputValue($field['key'])
             ]
         ) !!}
 

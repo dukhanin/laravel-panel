@@ -104,7 +104,7 @@ trait DisableAndEnable
     public function applyEachRowDisabled(&$row)
     {
         if ($row['model']->{$this->disabledKey()}) {
-            array_set($row, 'attributes.class', 'inactive');
+            html_tag_add_class($row, 'inactive');
         }
     }
 }

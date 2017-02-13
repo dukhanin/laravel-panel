@@ -23,7 +23,7 @@ class PanelListDecorator
 
         foreach ($this->items() as $model) {
             $row = &$this->rows[$model->getKey()];
-            $row = [ 'model' => $model, 'cells' => [ ], 'class' => [ ] ];
+            $row = [ 'model' => $model, 'cells' => [ ] ];
 
             foreach ($this->columns() as $columnKey => $column) {
                 $cell            = &$row['cells'][$columnKey];
@@ -32,7 +32,7 @@ class PanelListDecorator
             }
             unset( $cell );
 
-            $this->eachRow($row);
+            $this->panel->eachRow($row);
         }
 
         unset( $row );

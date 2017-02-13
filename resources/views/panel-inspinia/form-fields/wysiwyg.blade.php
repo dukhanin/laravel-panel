@@ -17,8 +17,8 @@ $config['filemanager_subfolder'] = $form->getUploadDirectory();
             'textarea.form-control#' . $id,
             array_except($field, ['key', 'type', 'label']),
             [
-                'attributes.name' => $form->htmlInputName($field['key']),
-                'attributes.style' => 'height: 400px',
+                'name' => $form->htmlInputName($field['key']),
+                'style' => 'height: 400px',
                 'content' => e($form->inputValue($field['key']))
             ]
         ) !!}

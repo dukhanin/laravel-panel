@@ -81,52 +81,44 @@ return [
             ];
         },
         'group-enable'  => [
-            'class'      => 'btn btn-default btn-sm',
-            'label'      => 'panel.actions.group-enable',
-            'icon'       => 'fa fa-eye',
-            'icon-only'  => true,
-            'attributes' => [ ]
+            'class'     => 'btn btn-default btn-sm',
+            'label'     => 'panel.actions.group-enable',
+            'icon'      => 'fa fa-eye',
+            'icon-only' => true,
         ],
         'group-disable' => [
-            'class'      => 'btn btn-default btn-sm',
-            'label'      => 'panel.actions.group-disable',
-            'icon'       => 'fa fa-eye-slash',
-            'icon-only'  => true,
-            'attributes' => [ ]
+            'class'     => 'btn btn-default btn-sm',
+            'label'     => 'panel.actions.group-disable',
+            'icon'      => 'fa fa-eye-slash',
+            'icon-only' => true,
         ],
         'group-delete'  => [
-            'class'      => 'btn btn-default btn-sm',
-            'label'      => 'panel.actions.group-delete',
-            'icon'       => 'fa fa-trash-o',
-            'icon-only'  => true,
-            'confirm'    => 'panel.confirm.group-delete',
-            'attributes' => [ ]
+            'class'     => 'btn btn-default btn-sm',
+            'label'     => 'panel.actions.group-delete',
+            'icon'      => 'fa fa-trash-o',
+            'icon-only' => true,
+            'confirm'   => 'panel.confirm.group-delete',
         ]
     ],
     'buttons' => [
         'submit'  => [
-            'class'      => 'btn-primary',
-            'type'       => 'submit',
-            'label'      => 'panel.buttons.submit',
-            'icon'       => 'submit',
-            'attributes' => [ ]
+            'class' => 'btn-primary',
+            'type'  => 'submit',
+            'label' => 'panel.buttons.submit',
+            'icon'  => 'submit',
         ],
         'apply'   => [
-            'class'      => 'btn-primary',
-            'type'       => 'submit',
-            'name'       => '_apply',
-            'label'      => 'panel.buttons.apply',
-            'icon'       => 'apply',
-            'attributes' => [
-                'name' => 'apply'
-            ]
+            'class' => 'btn-primary',
+            'type'  => 'submit',
+            'name'  => '_apply',
+            'label' => 'panel.buttons.apply',
+            'icon'  => 'apply',
         ],
         'cancel'  => [
-            'class'      => 'btn-default',
-            'type'       => 'button',
-            'label'      => 'panel.buttons.cancel',
-            'icon'       => 'cancel',
-            'attributes' => [ ]
+            'class' => 'btn-default',
+            'type'  => 'button',
+            'label' => 'panel.buttons.cancel',
+            'icon'  => 'cancel',
         ],
         'default' => [
 

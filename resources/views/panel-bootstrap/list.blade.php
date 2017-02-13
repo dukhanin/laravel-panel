@@ -31,7 +31,7 @@
                         @endforeach
 
                         @foreach ($panel->groupActions() as $actionKey => $action)
-                            {!! $panel->renderGroupAction($action, 'button.panel-list-group-action', [ 'attributes.type' => 'submit' ]) !!}
+                            {!! $panel->renderGroupAction($action, 'button.panel-list-group-action', [ 'type' => 'submit' ]) !!}
                         @endforeach
 
                         @if( count($panel->moveToOptions()) > 0 )
