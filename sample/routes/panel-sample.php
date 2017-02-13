@@ -1,9 +1,14 @@
 <?php
 
 Route::any('panel-sample', function(){
-    return redirect()->route('panel-sample.products');
+    return redirect()->action('PanelSampleProductsController@showList');
 });
 
-Route::any('panel-sample/products/{path?}', 'PanelSampleController@products')->where('path', '^.*')->name('panel-sample.products');
+Route::group(['prefix' => 'panel-sample/products'], function(){
+    \App\Http\Controllers\PanelSampleProductsController::routes();
+});
 
-Route::any('panel-sample/sections/{path?}', 'PanelSampleController@sections')->where('path', '^.*')->name('panel-sample.sections');
+Route::group(['prefix' => 'panel-sample/sections'], function(){
+    \App\Http\Controllers\PanelSampleSectionsController::routes();
+});
+
