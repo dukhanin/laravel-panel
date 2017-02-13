@@ -35,9 +35,9 @@ trait CreateAndEdit
     {
         $this->form->configSet(null, $this->config());
 
-        $this->form->addButton('cancel', [ 'url' => $this->url() ]);
-        $this->form->addButton('submit');
-        $this->form->addButton('apply');
+        $this->form->buttons()->put('cancel', [ 'url' => $this->url() ]);
+        $this->form->buttons()->put('submit');
+        $this->form->buttons()->put('apply');
 
         $this->redirectToFormAfterApply();
 

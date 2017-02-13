@@ -2,13 +2,13 @@
 
 namespace Dukhanin\Panel;
 
+use Dukhanin\Panel\Collections\ButtonsCollection;
+use Dukhanin\Panel\Collections\FieldsCollection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Model;
 use Dukhanin\Support\Traits\DispatchesEvents;
 use ErrorException;
-
-// сделать списки валидации Collection + validate
 
 class PanelForm
 {
@@ -40,11 +40,13 @@ class PanelForm
     protected $url;
 
 
-    public function __construct($viewFile = null)
+    public function __construct()
     {
-        if ($viewFile !== null) {
-            $this->viewFile = $viewFile;
-        }
+        $this->buttons = new ButtonsCollection;
+        $this->buttons->setPanel($this);
+
+        $this->fields = new FieldsCollection;
+        $this->fields->setPanel($this);
     }
 
 
@@ -120,7 +122,7 @@ class PanelForm
 
     public function initButtons()
     {
-        $this->addSubmitButton();
+        $this->buttons->put('submit');
     }
 
 
@@ -231,20 +233,20 @@ class PanelForm
 
     public function fields()
     {
-        if (is_null($this->fields)) {
+        if ( ! $this->fields->touched()) {
             $this->initFields();
         }
 
-        return (array) $this->fields;
+        return $this->fields;
     }
 
 
     public function fieldView($field)
     {
         $options = [
-            $this->view()->getName() . '.' . $field['type'],
-            $this->config('views') . '.form-fields.' . $field['type'],
-            $this->config('views') . '.form-fields.text'
+            "{$this->view()->getName()}.{$field['type']}",
+            "{$this->config('views')}.form-fields.{$field['type']}",
+            "{$this->config('views')}.form-fields.text"
         ];
 
         foreach ($options as $viewFile) {
@@ -315,8 +317,8 @@ class PanelForm
             return null;
         }
 
-        if (array_has($this->fields, $name . '.value')) {
-            return $this->fields[$name]['value'];
+        if ($this->fields->has("{$name}.value")) {
+            return $this->fields->get("{$name}.value");
         }
 
         return $this->data($name);
@@ -335,18 +337,11 @@ class PanelForm
 
     public function buttons()
     {
-        if (is_null($this->buttons)) {
+        if ( ! $this->buttons->touched()) {
             $this->initButtons();
         }
 
-        $buttons = [ ];
-
-        foreach ($this->buttons as $key => $button) {
-            $button                  = $this->validateButton($key, $button);
-            $buttons[$button['key']] = $button;
-        }
-
-        return $buttons;
+        return $this->buttons;
 
     }
 
@@ -415,72 +410,6 @@ class PanelForm
     }
 
 
-    public function addField($key = null, $settings = [ 'type' => 'text' ])
-    {
-        $field = $this->validateField($key, $settings);
-
-        if ( ! empty( $field['key'] ) && isset( $this->fields[$field['key']] )) {
-            unset( $this->fields[$field['key']] );
-        }
-
-        if (isset( $settings['before'] )) {
-            array_before($this->fields, $field['key'], $field, $field['before']);
-        } elseif (isset( $settings['after'] )) {
-            array_after($this->fields, $field['key'], $field, $field['after']);
-        } elseif ( ! is_null($field['key'])) {
-            $this->fields[$field['key']] = $field;
-        } else {
-            $this->fields[] = $field;
-
-            end($this->fields);
-            $key = key($this->fields);
-            reset($this->fields);
-
-            $this->fields[$key]['key'] = $key;
-        }
-
-        return $this;
-    }
-
-
-    public function removeField($key)
-    {
-        $key = strval($key);
-
-        if (isset( $this->fields[$key] )) {
-            unset( $this->fields[$key] );
-        }
-
-        return $this;
-    }
-
-
-    public function addButton($key, $button = [ ])
-    {
-        $button = $this->validateButton($key, $button);
-
-        $this->buttons[$button['key']] = $button;
-
-        return $this;
-    }
-
-
-    public function removeButton($button)
-    {
-        if (is_array($button) && isset( $button['key'] )) {
-            $key = $button['key'];
-        } else {
-            $key = strval($button);
-        }
-
-        if (isset( $this->buttons[$key] )) {
-            unset( $this->buttons[$key] );
-        }
-
-        return $this;
-    }
-
-
     public function isFailure()
     {
         $validator = $this->validator();
@@ -544,11 +473,9 @@ class PanelForm
     public function __call($method, $arguments)
     {
         if (preg_match('/^(add)(.*?)?$/i', $method, $pock)) {
-            $field         = $this->validateField(isset( $arguments[0] ) ? $arguments[0] : null,
-                isset( $arguments[1] ) ? $arguments[1] : null);
-            $field['type'] = strtolower($pock[2]);
+            $field = $this->fields->resolveItem(array_get($arguments, 0), array_get($arguments, 1));
 
-            return $this->addField($field['key'], $field);
+            return $this->fields->put($field['key'], [ 'type' => strtolower($pock[2]) ] + $field);
         }
 
         throw new ErrorException('Call to undefined method ' . get_class($this) . '::' . $method . '()');
@@ -598,76 +525,10 @@ class PanelForm
     public function execute()
     {
         $this->init();
+
         $this->handle();
 
         return $this->view();
-    }
-
-
-    protected function validateButton($key, $button)
-    {
-        if (is_callable($button)) {
-            $button = call_user_func($button, $this);
-        }
-
-        $_button = array_merge($this->config('buttons.default', [ ]), $this->config("buttons.{$key}", [ ]),
-            (array) $button, [ 'key' => $key ]);
-
-        if (empty( $_button['label'] )) {
-            $_button['label'] = $key;
-        }
-
-        if (isset( $button['url'] )) {
-            $_button['url'] = $button['url'];
-        } else {
-            $_button['url'] = $this->submitUrl();
-        }
-
-        if (isset( $button['type'] )) {
-            $_button['type'] = $button['type'];
-        } elseif ( ! isset( $_button['type'] )) {
-            $_button['type'] = $key === 'submit' ? 'submit' : 'button';
-        }
-
-        $_button['label'] = trans($_button['label']);
-
-        return $_button;
-    }
-
-
-    protected function validateField($key = null, $settings = null)
-    {
-        if ( ! is_null($key)) {
-            $key = strval($key);
-        }
-
-        if ( ! is_array($settings)) {
-            $settings = [ 'label' => strval($settings ? $settings : $key) ];
-        }
-
-        if (empty( $settings['type'] )) {
-            $settings['type'] = 'text';
-        }
-
-        if (empty( $settings['label'] )) {
-            $settings['label'] = $key;
-        }
-
-        if (isset( $settings['before'] )) {
-            $settings['before'] = strval($settings['before']);
-        }
-
-        if (isset( $settings['after'] )) {
-            $settings['after'] = strval($settings['after']);
-        }
-
-        if ( ! isset( $settings['label'] )) {
-            $settings['label'] = $key;
-        } else {
-            $settings['label'] = trans($settings['label']);
-        }
-
-        return $settings + [ 'key' => $key ];
     }
 
 

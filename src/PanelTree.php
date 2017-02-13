@@ -30,7 +30,7 @@ class PanelTree extends PanelList
 
     public function initModelActions()
     {
-        $this->modelActions = [ $this->config('actions.append') ];
+        $this->modelActions->push($this->config('actions.append'));
     }
 
 

@@ -39,7 +39,7 @@ trait Order
 
     protected function applyQueryOrder($select)
     {
-        $columns = $this->columns();
+        $columns = $this->columns()->resolved();
 
         if (empty( $columns[$this->order()]['order'] )) {
             return;
@@ -47,7 +47,9 @@ trait Order
 
         $select->getQuery()->orders = null;
 
-        $order = $columns[$this->order()]['order'];
+        if (is_bool($order = $columns[$this->order()]['order'])) {
+            $order = $this->order();
+        }
 
         if (is_callable($order)) {
             call_user_func($order, $select, $this);

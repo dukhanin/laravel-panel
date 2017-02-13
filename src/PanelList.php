@@ -2,11 +2,11 @@
 
 namespace Dukhanin\Panel;
 
-use Dukhanin\Support\Traits\HasUrl;
+use Dukhanin\Panel\Collections\ActionsCollection;
+use Dukhanin\Panel\Collections\ColumnsCollection;
 use InvalidArgumentException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class PanelList
@@ -39,6 +39,22 @@ class PanelList
     protected $config;
 
 
+    public function __construct()
+    {
+        $this->actions = new ActionsCollection;
+        $this->actions->setPanel($this);
+
+        $this->modelActions = new ActionsCollection;
+        $this->modelActions->setPanel($this);
+
+        $this->groupActions = new ActionsCollection;
+        $this->groupActions->setPanel($this);
+
+        $this->columns = new ColumnsCollection;
+        $this->columns->setPanel($this);
+    }
+
+
     public function callAction($action, $parameters)
     {
         $this->init();
@@ -66,8 +82,11 @@ class PanelList
     public function init()
     {
         $this->initActions();
+
         $this->initModelActions();
+
         $this->initGroupActions();
+
         $this->initColumns();
 
         $this->initFeatures();
@@ -118,11 +137,7 @@ class PanelList
 
     public function initPolicy()
     {
-        try {
-            $this->policy = Gate::policyFor($this->model());
-        } catch (InvalidArgumentException $e) {
-
-        }
+        $this->policy = Gate::getPolicyFor($this->model());
     }
 
 
@@ -140,34 +155,29 @@ class PanelList
 
     public function initColumns()
     {
-        $this->columns = [
-            'name' => [
-                'label'   => trans('panel.labels.name'),
-                'order'   => true,
-                'action'  => true,
-                'handler' => function ($model, &$cell, &$row) {
-                    return $model->name;
-                }
-            ],
-        ];
+        $this->columns->put('name', [
+            'label'   => trans('panel.labels.name'),
+            'order'   => true,
+            'action'  => true,
+            'handler' => function ($model, &$cell, &$row) {
+                return $model->name;
+            }
+        ]);
     }
 
 
     public function initActions()
     {
-        $this->actions = [ ];
     }
 
 
     public function initModelActions()
     {
-        $this->modelActions = [ ];
     }
 
 
     public function initGroupActions()
     {
-        $this->groupActions = [ ];
     }
 
 
@@ -275,70 +285,45 @@ class PanelList
 
     public function columns()
     {
-        if (is_null($this->columns)) {
+        if ( ! $this->columns->touched()) {
             $this->initColumns();
         }
 
-        $columns = [ ];
-
-        foreach ($this->columns as $columnKey => $column) {
-            $column                  = $this->validateColumn($columnKey, $column);
-            $columns[$column['key']] = $column;
-        }
-
-        return $columns;
+        return $this->columns;
     }
 
 
     public function actions()
     {
-        $actions = [ ];
-
-        foreach ($this->actions as $actionKey => $action) {
-            $action = $this->validateAction($actionKey, $action);
-
-            if ($this->allows($action['key'])) {
-                $actions[$action['key']] = $action;
-            }
+        if ( ! $this->actions->touched()) {
+            $this->initActions();
         }
 
-        return $actions;
+        return $this->actions;
     }
 
 
     public function modelActions($model = null)
     {
-        $actions = [ ];
-
-        foreach ($this->modelActions as $actionKey => $action) {
-            $action = $this->validateAction($actionKey, $action, $model);
-
-            if ($this->allows($action['key'], $model)) {
-                $actions[$action['key']] = $action;
-            } else {
-                $actions[$action['key']] = null;
-            }
+        if ( ! $this->modelActions->touched()) {
+            $this->initModelActions();
         }
 
-        return $actions;
+        if ( ! is_null($model)) {
+            return $this->modelActions->resolved($model);
+        }
 
+        return $this->modelActions;
     }
 
 
     public function groupActions()
     {
-        $actions = [ ];
-
-        foreach ($this->groupActions as $actionKey => $action) {
-            $action = $this->validateAction($actionKey, $action);
-
-            if ($this->allows($action['key'])) {
-                $actions[$action['key']] = $action;
-            }
+        if ( ! $this->groupActions->touched()) {
+            $this->initGroupActions();
         }
 
-        return $actions;
-
+        return $this->groupActions;
     }
 
 
@@ -416,7 +401,7 @@ class PanelList
             $arguments = [ $arguments ];
         }
 
-        return method_exists($policy, $ability) && $policy->$ability(Auth::user(), ...$arguments);
+        return method_exists($policy, $ability) && $policy->$ability(app('auth')->user(), ...$arguments);
     }
 
 
@@ -465,85 +450,6 @@ class PanelList
         $model = clone $this->model();
 
         return $model;
-    }
-
-
-    protected function validateColumn($columnKey, $column)
-    {
-        $valid = [
-            'key'              => strval($columnKey),
-            'label'            => strval($columnKey),
-            'order'            => false,
-            'handler'          => null,
-            'attributes.width' => null
-        ];
-
-        if (is_string($column)) {
-            $valid['label'] = $column;
-        } elseif (isset( $column['label'] )) {
-            $valid['label'] = strval($column['label']);
-        }
-
-        if (isset( $column['order'] )) {
-            $valid['order'] = $column['order'] === true ? $valid['key'] : $column['order'];
-        }
-
-        if (isset( $column['handler'] )) {
-            $valid['handler'] = $column['handler'];
-        }
-
-        if (isset( $column['width'] )) {
-            $valid['attributes.width'] = $column['width'];
-        }
-
-        $valid['label'] = trans($valid['label']);
-
-        $valid = array_merge($valid, array_except($column, [ 'label', 'order', 'handler', 'width', 'key' ]));
-
-        return $valid;
-    }
-
-
-    protected function validateAction($actionKey, $action, $model = null)
-    {
-        $defaults = [
-            'key'       => strval($actionKey),
-            'label'     => strval($actionKey),
-            'global'    => false,
-            'class'     => '',
-            'url'       => urlbuilder($this->url())->append([
-                camel_case($actionKey),
-                $model ? $model->id : ''
-            ])->compile(),
-            'icon'      => null,
-            'icon-only' => false
-        ];
-
-        $action = $this->resolveAction($actionKey, $action, $model);
-
-        $action = array_merge($defaults, $action);
-
-        $action['label'] = trans($action['label']);
-
-        if ( ! empty( $action['confirm'] )) {
-            $action['confirm'] = trans($action['confirm']);
-        }
-
-        return $action;
-    }
-
-
-    protected function resolveAction($actionKey, $action, $model = null)
-    {
-        if (is_callable($action)) {
-            $action = call_user_func($action, $this, $model);
-        }
-
-        if ( ! is_array($action)) {
-            $action = [ ];
-        }
-
-        return $action;
     }
 
 
