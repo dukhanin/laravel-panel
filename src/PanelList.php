@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Gate;
 class PanelList
 {
 
-    use HasUrl;
+    protected $url;
 
     protected $model;
 
@@ -92,6 +92,12 @@ class PanelList
     }
 
 
+    public function initUrl()
+    {
+        $this->url = url()->to('/');
+    }
+
+
     public function initModel()
     {
 
@@ -162,6 +168,12 @@ class PanelList
     public function initGroupActions()
     {
         $this->groupActions = [ ];
+    }
+
+
+    public function setUrl($url)
+    {
+        $this->url = $url;
     }
 
 
