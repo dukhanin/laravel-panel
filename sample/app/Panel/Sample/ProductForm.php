@@ -3,6 +3,7 @@
 namespace App\Panel\Sample;
 
 use Dukhanin\Panel\PanelForm;
+use Illuminate\Support\Facades\Validator;
 
 class ProductForm extends PanelForm
 {
@@ -15,6 +16,7 @@ class ProductForm extends PanelForm
 
     public function initFields()
     {
+
         $this->addSelect('section_id', [
             'label'   => 'Section',
             'options' => Section::options()
@@ -33,5 +35,13 @@ class ProductForm extends PanelForm
         $this->addCheckbox('important', 'Important');*/
 
         $this->addCheckbox('enabled', 'Enabled');
+    }
+
+
+    public function initValidator()
+    {
+        $this->validator = Validator::make([],[
+            'name' => 'required'
+        ]);
     }
 }

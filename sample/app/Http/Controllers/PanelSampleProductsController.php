@@ -1,20 +1,55 @@
 <?php
 
-namespace App\Panel\Sample;
+namespace App\Http\Controllers;
 
+use App\Panel\Sample\Product;
+use App\Panel\Sample\ProductForm;
+use App\Panel\Sample\Section;
 use Dukhanin\Panel\Features\Categories;
 use Dukhanin\Panel\Features\CreateAndEdit;
 use Dukhanin\Panel\Features\Delete;
 use Dukhanin\Panel\Features\EnableAndDisable;
 use Dukhanin\Panel\Features\MoveTo;
+use Dukhanin\Panel\Features\Order;
 use Dukhanin\Panel\Features\Pages;
 use Dukhanin\Panel\Features\Sort;
 use Dukhanin\Panel\PanelList;
 
-class ProductPanel extends PanelList
+class PanelSampleProductsController extends PanelList
 {
 
-    use Sort, Pages, EnableAndDisable, CreateAndEdit, Delete, Categories, MoveTo;
+    use Sort, Order, Pages, EnableAndDisable, CreateAndEdit, Delete, Categories, MoveTo;
+
+
+    public function before()
+    {
+        view()->share('header', 'Panel Sample');
+
+        if ($inspinia = request()->query('inspinia')) {
+            $this->setUrl(urlbuilder($this->url())->query([ 'inspinia' => 1 ])->compile());
+
+            $this->configSet('views', 'panel-inspinia');
+            $this->configSet('layout', 'panel-inspinia.layout');
+        } else {
+            $this->configSet('views', 'panel-bootstrap');
+            $this->configSet('layout', 'panel-bootstrap.layout');
+        }
+    }
+
+
+    public function initUrl()
+    {
+        $this->url = action('PanelSampleProductsController@showList');
+    }
+
+
+    public function initColumns()
+    {
+        $this->columns->put('name', [
+            'name'  => 'Название',
+            'order' => 'name'
+        ]);
+    }
 
 
     /*
@@ -42,10 +77,6 @@ class ProductPanel extends PanelList
     public function initForm()
     {
         $this->form = new ProductForm;
-
-        $this->form->addCancelButton([ 'url' => $this->getUrl() ]);
-        $this->form->addSubmitButton([ 'url' => $this->getUrl() ]);
-        $this->form->addApplyButton();
     }
 
 
@@ -75,7 +106,7 @@ class ProductPanel extends PanelList
 
     public function initCategories()
     {
-        $this->categories = Section::options()->prepend('(All Sections)');
+        $this->categories = Section::options()->prepend('(All Sections)', '');
     }
 
 
