@@ -124,7 +124,7 @@
 
 
                         @foreach ($panel->columns() as $column)
-                            {!! html_tag('td.panel-list-data-cell', $column, array_get($row, "cells.{$column['key']}")) !!}
+                            {!! html_tag('td.panel-list-data-cell', array_except($column, 'label'), array_get($row, "cells.{$column['key']}")) !!}
                         @endforeach
 
                         @foreach ($panel->modelActions($row['model']) as $action)

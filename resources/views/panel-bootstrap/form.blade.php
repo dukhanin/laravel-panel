@@ -21,7 +21,6 @@
                 </div>
             @endif
 
-
             @foreach ($form->fields() as $field)
                 @include($form->fieldView($field), array_merge([
                     'form'  => $form,
