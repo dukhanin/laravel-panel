@@ -37,8 +37,8 @@
 
                         @if( count($panel->moveToOptions()) > 0 )
                             <select class="panel-list-move-to-select input-sm form-control"
-                                    data-confirm=""
-                                    data-url="{{ urlbuilder($panel->url())->append('groupMoveTo/dummyMoveTo') }}">
+                                    confirm=""
+                                    url="{{ urlbuilder($panel->url())->append('groupMoveTo/dummyMoveTo') }}">
 
                                 <option value="">@lang( $panel->config('labels.move-to') )</option>
 
@@ -52,7 +52,7 @@
                     @if( count($panel->categories()) > 0 )
                         <div class="col-sm-3">
                             <select class="panel-list-categories-select input-sm form-control input-s-sm inline"
-                                    data-url="{{ urlbuilder($panel->url(['!pages', '!categories']))->query([
+                                    url="{{ urlbuilder($panel->url(['!pages', '!categories']))->query([
                                                     'category' => 'dummyCategory'
                                                 ]) }}">
                                 @foreach($panel->categories() as $categoryKey=>$category)
