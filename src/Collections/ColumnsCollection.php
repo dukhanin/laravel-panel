@@ -2,9 +2,9 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\Collection;
+use Dukhanin\Support\ResolvedCollection;
 
-class ColumnsCollection extends Collection
+class ColumnsCollection extends ResolvedCollection
 {
 
     protected $panel;
@@ -16,13 +16,7 @@ class ColumnsCollection extends Collection
     }
 
 
-    public function resolveItem($key, $column)
-    {
-        return $column;
-    }
-
-
-    public function resolve($key, $column)
+    public function resolveItemOnGet($key, $column)
     {
         $valid = [
             'key'              => strval($key),
@@ -55,23 +49,5 @@ class ColumnsCollection extends Collection
         $valid = array_merge($valid, array_except($column, [ 'label', 'order', 'handler', 'width', 'key' ]));
 
         return $valid;
-    }
-
-
-    public function resolved($model = null)
-    {
-        $columns = collect();
-
-        $this->each(function ($column, $key) use ($columns) {
-            $columns->put($key, $this->resolve($key, $column));
-        });
-
-        return $columns;
-    }
-
-
-    public function getIterator()
-    {
-        return $this->resolved()->getIterator();
     }
 }

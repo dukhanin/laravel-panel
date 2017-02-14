@@ -31,6 +31,7 @@
                 <div class="panel-list-tools mail-tools m-t-md">
                     <div class="row">
                         <div class="col-sm-9 m-b-xs">
+
                             @foreach ($panel->actions() as $action)
                                 {!! $panel->renderAction($action, '.panel-list-action') !!}
                             @endforeach
@@ -56,7 +57,7 @@
                         @if( count($panel->categories()) > 0 )
                             <div class="col-sm-3">
                                 <select class="panel-list-categories-select input-sm form-control input-s-sm inline"
-                                        data-url="{{ urlbuilder($panel->url(['!pages', '!categories']))->query([
+                                        url="{{ urlbuilder($panel->url(['!pages', '!categories']))->query([
                                                         'category' => 'dummyCategory'
                                                     ]) }}">
                                     @foreach($panel->categories() as $categoryKey=>$category)
@@ -112,8 +113,8 @@
                         </tr>
                         </thead>
                         <tbody>
-                        @foreach ($panel->rows() as $rowKey => $row)
-                            {!! html_tag_open('tr', array_except($row, ['cells', 'model']), ['key' => $rowKey]) !!}
+                        @foreach ($panel->rows() as $row)
+                            {!! html_tag_open('tr', array_except($row, ['cells', 'model']), ['key' => $row['model']->getKey()]) !!}
 
                             @if($panel->isSortEnabled())
                                 <td class="panel-list-sort-handler">
@@ -124,7 +125,7 @@
                             @if(count($panel->groupActions()) > 0 || count($panel->moveToOptions()) > 0)
                                 <td class="check-mail panel-list-checkbox">
                                     <div class="checkbox">
-                                        <input type="checkbox" name="group[]" value="{{$rowKey}}"/>
+                                        <input type="checkbox" name="group[]" value="{{$row['model']->getKey()}}"/>
                                         <label></label>
                                     </div>
                                 </td>
@@ -152,7 +153,7 @@
                                 {!! html_tag('td.mail-subject.panel-list-data-cell', array_except($column, 'label'), [ 'label' => false ], array_get($row, "cells.{$column['key']}")) !!}
                             @endforeach
 
-                            @foreach ($panel->modelActions($row['model']) as $action)
+                            @foreach ($panel->modelActions()->resolvedForModel($row['model']) as $action)
                                 <td class="panel-list-model-action">
                                     {!! $panel->renderModelAction($action, $row['model']) !!}
                                 </td>

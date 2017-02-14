@@ -7,10 +7,10 @@ use Illuminate\Support\Facades\Request;
 trait Delete
 {
 
-    public static function routesFeatureDelete($className)
+    protected static function routesFeatureDelete(array $options = null)
     {
-        app('router')->get('delete/{id}', "{$className}@delete");
-        app('router')->post('groupDelete', "{$className}@groupDelete");
+        app('router')->get('delete/{id}', "{$options['class']}@delete")->name($options['as'] ? "{$options['as']}.delete" : null);
+        app('router')->post('groupDelete', "{$options['class']}@groupDelete")->name($options['as'] ? "{$options['as']}.groupDelete" : null);
     }
 
 

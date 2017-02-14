@@ -2,9 +2,9 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\Collection;
+use Dukhanin\Support\ResolvedCollection;
 
-class ButtonsCollection extends Collection
+class ButtonsCollection extends ResolvedCollection
 {
 
     protected $panel;
@@ -16,7 +16,7 @@ class ButtonsCollection extends Collection
     }
 
 
-    public function resolveItem($key, $button)
+    public function resolveItemOnSet($key, $button)
     {
         if (is_callable($button)) {
             $button = call_user_func($button, $this->panel);

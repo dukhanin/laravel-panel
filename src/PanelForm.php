@@ -473,9 +473,13 @@ class PanelForm
     public function __call($method, $arguments)
     {
         if (preg_match('/^(add)(.*?)?$/i', $method, $pock)) {
-            $field = $this->fields->resolveItem(array_get($arguments, 0), array_get($arguments, 1));
+            $key = array_get($arguments, 0);
 
-            return $this->fields->put($field['key'], [ 'type' => strtolower($pock[2]) ] + $field);
+            if ( ! is_array($field = array_get($arguments, 1))) {
+                $field = [ 'label' => $field ];
+            };
+
+            return $this->fields->put($key, [ 'type' => strtolower($pock[2]) ] + $field);
         }
 
         throw new ErrorException('Call to undefined method ' . get_class($this) . '::' . $method . '()');

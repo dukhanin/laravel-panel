@@ -8,12 +8,12 @@ trait EnableAndDisable
     protected $enabledKey;
 
 
-    public static function routesFeatureEnableAndDisable($className)
+    protected static function routesFeatureEnableAndDisable(array $options = null)
     {
-        app('router')->get('enable/{id}', "{$className}@enable");
-        app('router')->get('disable/{id}', "{$className}@disable");
-        app('router')->post('groupEnable', "{$className}@groupEnable");
-        app('router')->post('groupDisable', "{$className}@groupDisable");
+        app('router')->get('enable/{id}', "{$options['class']}@enable")->name($options['as'] ? "{$options['as']}.enable" : null);
+        app('router')->get('disable/{id}', "{$options['class']}@disable")->name($options['as'] ? "{$options['as']}.disable" : null);
+        app('router')->post('groupEnable', "{$options['class']}@groupEnable")->name($options['as'] ? "{$options['as']}.groupEnable" : null);
+        app('router')->post('groupDisable', "{$options['class']}@groupDisable")->name($options['as'] ? "{$options['as']}.groupDisable" : null);
     }
 
 

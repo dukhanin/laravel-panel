@@ -8,9 +8,10 @@ trait MoveTo
     protected $moveToOptions;
 
 
-    public static function routesFeatureMoveTo($className)
+    protected static function routesFeatureMoveTo(array $options = null)
     {
-        app('router')->post('groupMoveTo/{id}', "{$className}@groupMoveTo");
+        app('router')->post('groupMoveTo/{id}',
+            "{$options['class']}@groupMoveTo")->name($options['as'] ? "{$options['as']}.groupMoveTo" : null);
     }
 
 
@@ -34,6 +35,7 @@ trait MoveTo
 
     public function groupMoveTo($location)
     {
+
         $group = $this->findModelsOrFail($this->input('group'));
 
         $this->authorize('group-move-to', $group);

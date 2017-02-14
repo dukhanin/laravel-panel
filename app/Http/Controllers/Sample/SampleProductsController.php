@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Sample;
 
-use App\Panel\Sample\Product;
-use App\Panel\Sample\ProductForm;
-use App\Panel\Sample\Section;
+use App\Sample\Product;
+use App\Sample\ProductForm;
+use App\Sample\Section;
 use Dukhanin\Panel\Features\Categories;
 use Dukhanin\Panel\Features\CreateAndEdit;
 use Dukhanin\Panel\Features\Delete;
@@ -13,9 +13,9 @@ use Dukhanin\Panel\Features\MoveTo;
 use Dukhanin\Panel\Features\Order;
 use Dukhanin\Panel\Features\Pages;
 use Dukhanin\Panel\Features\Sort;
-use Dukhanin\Panel\PanelList;
+use Dukhanin\Panel\Controllers\PanelListController;
 
-class PanelSampleProductsController extends PanelList
+class SampleProductsController extends PanelListController
 {
 
     use Sort, Order, Pages, EnableAndDisable, CreateAndEdit, Delete, Categories, MoveTo;
@@ -26,8 +26,6 @@ class PanelSampleProductsController extends PanelList
         view()->share('header', 'Panel Sample');
 
         if ($inspinia = request()->query('inspinia')) {
-            $this->setUrl(urlbuilder($this->url())->query([ 'inspinia' => 1 ])->compile());
-
             $this->configSet('views', 'panel-inspinia');
             $this->configSet('layout', 'panel-inspinia.layout');
         } else {
@@ -39,22 +37,14 @@ class PanelSampleProductsController extends PanelList
 
     public function initUrl()
     {
-        $this->url = action('PanelSampleProductsController@showList');
+        $this->url = action('Sample\SampleProductsController@showList');
+
+        if (request()->query('inspinia')) {
+            $this->url = urlbuilder($this->url)->query([ 'inspinia' => 1 ])->compile();
+        }
     }
 
 
-    public function initColumns()
-    {
-        $this->columns->put('name', [
-            'name'  => 'Название',
-            'order' => 'name'
-        ]);
-    }
-
-
-    /*
-     * Base Panel settings
-     */
 
     public function initLabel()
     {
@@ -90,19 +80,11 @@ class PanelSampleProductsController extends PanelList
     }
 
 
-    /**
-     * Sort
-     */
-
     public function isSortEnabled()
     {
         return ! empty( $this->category ) && Section::byParent($this->category)->count() == 0;
     }
 
-
-    /**
-     * Categories
-     */
 
     public function initCategories()
     {
@@ -118,10 +100,6 @@ class PanelSampleProductsController extends PanelList
     }
 
 
-    /**
-     * MoveTo
-     */
-
     public function initMoveToOptions()
     {
         $this->moveToOptions = Section::options();
@@ -134,6 +112,18 @@ class PanelSampleProductsController extends PanelList
 
         $model->section_id = $section->getKey();
         $model->save();
+    }
+
+
+    public function newModel()
+    {
+        $model = parent::newModel();
+
+        if ($this->category) {
+            $model->section_id = $this->category;
+        }
+
+        return $model;
     }
 
 }

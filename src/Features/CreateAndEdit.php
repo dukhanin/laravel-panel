@@ -10,10 +10,10 @@ trait CreateAndEdit
     protected $form;
 
 
-    public static function routesFeatureCreateAndEdit($className)
+    protected static function routesFeatureCreateAndEdit(array $options = null)
     {
-        app('router')->match(['get', 'post'], 'create', "{$className}@create");
-        app('router')->match(['get', 'post'], 'edit/{id}', "{$className}@edit");
+        app('router')->match(['get', 'post'], 'create', "{$options['class']}@create")->name($options['as'] ? "{$options['as']}.create" : null);
+        app('router')->match(['get', 'post'], 'edit/{id}', "{$options['class']}@edit")->name($options['as'] ? "{$options['as']}.edit" : null);
     }
 
 

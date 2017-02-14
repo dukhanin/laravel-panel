@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Panel\Sample;
+namespace App\Sample;
 
 use Dukhanin\Support\Traits\HasSettings;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model as EloquentModel;
 class Product extends EloquentModel
 {
 
-    protected $table = 'panel_sample_products';
+    protected $table = 'sample_products';
 
     use HasSettings;
 
@@ -21,7 +21,8 @@ class Product extends EloquentModel
         'description',
         'settings',
         'important',
-        'enabled'
+        'enabled',
+        'section_id'
     ];
 
 

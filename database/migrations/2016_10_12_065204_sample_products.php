@@ -9,7 +9,7 @@ class PanelSampleProducts extends Migration
 
     public function up()
     {
-        Schema::create('panel_sample_products', function (Blueprint $table) {
+        Schema::create('sample_products', function (Blueprint $table) {
             $table->increments('id');
             $table->string('name')->nullable();
             $table->text('description')->nullable();
@@ -25,6 +25,6 @@ class PanelSampleProducts extends Migration
 
     public function down()
     {
-        Schema::drop('panel_sample_products');
+        Schema::drop('sample_products');
     }
 }

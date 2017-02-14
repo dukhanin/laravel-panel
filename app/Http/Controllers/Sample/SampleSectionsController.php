@@ -1,18 +1,16 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Sample;
 
-use App\Panel\Sample\Product;
-use App\Panel\Sample\ProductForm;
-use App\Panel\Sample\Section;
-use App\Panel\Sample\SectionForm;
+use App\Sample\Section;
+use App\Sample\SectionForm;
 use Dukhanin\Panel\Features\CreateAndEdit;
 use Dukhanin\Panel\Features\Delete;
 use Dukhanin\Panel\Features\EnableAndDisable;
 use Dukhanin\Panel\Features\Order;
-use Dukhanin\Panel\PanelTree;
+use Dukhanin\Panel\Controllers\PanelTreeController;
 
-class PanelSampleSectionsController extends PanelTree
+class SampleSectionsController extends PanelTreeController
 {
 
     use Order, EnableAndDisable, CreateAndEdit, Delete;
@@ -23,8 +21,6 @@ class PanelSampleSectionsController extends PanelTree
         view()->share('header', 'Panel Sample');
 
         if ($inspinia = request()->query('inspinia')) {
-            $this->setUrl(urlbuilder($this->url())->query([ 'inspinia' => 1 ])->compile());
-
             $this->configSet('views', 'panel-inspinia');
             $this->configSet('layout', 'panel-inspinia.layout');
         } else {
@@ -36,13 +32,13 @@ class PanelSampleSectionsController extends PanelTree
 
     public function initUrl()
     {
-        $this->url = action('PanelSampleSectionsController@showList');
+        $this->url = action('Sample\SampleSectionsController@showList');
+
+        if (request()->query('inspinia')) {
+            $this->url = urlbuilder($this->url)->query([ 'inspinia' => 1 ])->compile();
+        }
     }
 
-
-    /*
-     * Base Panel settings
-     */
 
     public function initLabel()
     {
@@ -65,5 +61,13 @@ class PanelSampleSectionsController extends PanelTree
     public function initForm()
     {
         $this->form = new SectionForm;
+    }
+
+
+    public function newModel()
+    {
+        $model = parent::newModel();
+
+        return $model;
     }
 }

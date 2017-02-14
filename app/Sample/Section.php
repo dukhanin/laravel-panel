@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Panel\Sample;
+namespace App\Sample;
 
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 use Illuminate\Support\Collection;
@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\DB;
 class Section extends EloquentModel
 {
 
-    protected $table = 'panel_sample_sections';
+    protected $table = 'sample_sections';
 
     protected $fillable = [
         'name',
@@ -109,5 +109,7 @@ class Section extends EloquentModel
         foreach ($counts as $sectionId => $count) {
             $collection[$sectionId]->productsCount = $count;
         }
+
+
     }
 }

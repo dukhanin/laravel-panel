@@ -6,7 +6,7 @@ class PanelTreeDecorator extends PanelListDecorator
 
     public function initRows()
     {
-        $this->rows = [ ];
+        $this->rows = collect();
 
         $this->initRowsRecursive();
     }
@@ -19,7 +19,6 @@ class PanelTreeDecorator extends PanelListDecorator
         }
 
         foreach ($this->queryBranch($parentKeyValue)->get() as $model) {
-            $row = &$this->rows[$model->getKey()];
             $row = [ 'model' => $model, 'cells' => [ ], 'class' => 'depth-' . $depth ];
 
             foreach ($this->columns() as $columnKey => $column) {
@@ -30,6 +29,8 @@ class PanelTreeDecorator extends PanelListDecorator
             unset( $cell );
 
             $this->panel->eachRow($row);
+
+            $this->rows->push($row, $model->getKey());
 
             $this->initRowsRecursive($model->getKey(), $depth + 1);
         }

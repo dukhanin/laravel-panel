@@ -11,18 +11,17 @@ class PanelListDecorator
     protected $cache = [ ];
 
 
-    public function __construct(PanelList $list)
+    public function __construct($panel)
     {
-        $this->panel = $list;
+        $this->panel = $panel;
     }
 
 
     public function initRows()
     {
-        $this->rows = [ ];
+        $this->rows = collect();
 
         foreach ($this->items() as $model) {
-            $row = &$this->rows[$model->getKey()];
             $row = [ 'model' => $model, 'cells' => [ ] ];
 
             foreach ($this->columns() as $columnKey => $column) {
@@ -33,6 +32,8 @@ class PanelListDecorator
             unset( $cell );
 
             $this->panel->eachRow($row);
+
+            $this->rows->push($row, $model->getKey());
         }
 
         unset( $row );
@@ -87,6 +88,16 @@ class PanelListDecorator
     }
 
 
+    public function modelActions()
+    {
+        if ( ! isset( $this->cache['modelActions'] )) {
+            $this->cache['modelActions'] = $this->panel->modelActions();
+        }
+
+        return $this->cache['modelActions'];
+    }
+
+
     public function groupActions()
     {
         if ( ! isset( $this->cache['groupActions'] )) {
@@ -105,16 +116,12 @@ class PanelListDecorator
 
     public function isEmpty()
     {
-        return empty( $this->rows() );
+        return $this->rows()->isEmpty();
     }
 
 
     public function renderAction($action, ...$overwrites)
     {
-        if (is_callable($action)) {
-            $action = $action($this->panel);
-        }
-
         html_tag_add_class($action, $action['key']);
 
         return html_tag($action, ...$overwrites);
@@ -123,10 +130,6 @@ class PanelListDecorator
 
     public function renderModelAction($action, $model = null, ...$overwrites)
     {
-        if (is_callable($action)) {
-            $action = $action($model, $this->panel);
-        }
-
         $action = html_tag_add_class($action, $action['key']);
 
         return html_tag($action, ...$overwrites);
@@ -135,10 +138,6 @@ class PanelListDecorator
 
     public function renderGroupAction($action, ...$overwrites)
     {
-        if (is_callable($action)) {
-            $action = $action($this->panel);
-        }
-
         $action = html_tag_add_class($action, $action['key']);
 
         return html_tag($action, ...$overwrites);
@@ -173,7 +172,7 @@ class PanelListDecorator
         $resetAnyOrder     = $thisColumnOrdered && $orderedDesc;
 
         $url = urlbuilder($this->url([ '!order', '!orderDesc', '!pages' ]));
-        $tag = array_only($column, [ 'label', 'width', 'order', 'class', 'attributes' ]);
+        $tag = $column;
 
         if ( ! $resetAnyOrder) {
             $url->query([ 'order' => $column['key'] ]);
@@ -210,8 +209,8 @@ class PanelListDecorator
         }
 
         return html_tag('a', [
-            'content'         => $content,
-            'attributes.href' => $url
+            'content' => $content,
+            'href'    => $url
         ]);
     }
 

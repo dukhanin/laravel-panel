@@ -40,7 +40,8 @@ class PanelServiceProvider extends ServiceProvider
     protected function publishAssets()
     {
         $this->publishes([
-            $this->path('public/assets/') => public_path('assets/'),
+            $this->path('public/assets/panel-bootstrap') => public_path('assets/panel-bootstrap'),
+            $this->path('public/assets/panel-inspinia')  => public_path('assets/panel-inspinia')
         ], 'public');
     }
 
@@ -64,7 +65,8 @@ class PanelServiceProvider extends ServiceProvider
     protected function publishViews()
     {
         $this->publishes([
-            $this->path('resources/views/') => resource_path('views/'),
+            $this->path('resources/views/panel-bootstrap') => resource_path('views/panel-bootstrap'),
+            $this->path('resources/views/panel-inspinia')  => resource_path('views/panel-inspinia')
         ], 'views');
     }
 
@@ -79,10 +81,11 @@ class PanelServiceProvider extends ServiceProvider
         }
 
         $this->publishes([
-            $this->path('sample/app/')      => app_path('/'),
-            $this->path('sample/database/') => database_path('/'),
-            $this->path('sample/routes/')   => base_path('routes/'),
-            $this->path('sample/public/assets/')   => public_path('assets/'),
+            $this->path('app/Http/Controllers/Sample/') => app_path('Http/Controllers/Sample/'),
+            $this->path('app/Sample')                   => app_path('Sample/'),
+            $this->path('database/')                    => database_path('/'),
+            $this->path('routes/')                      => base_path('routes/'),
+            $this->path('public/assets/inspinia/')       => public_path('assets/inspinia/'),
         ], 'sample');
     }
 

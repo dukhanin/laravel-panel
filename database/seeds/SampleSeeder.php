@@ -2,10 +2,10 @@
 
 use Illuminate\Database\Seeder;
 
-use App\Panel\Sample\Section;
-use App\Panel\Sample\Product;
+use App\Sample\Section;
+use App\Sample\Product;
 
-class PanelSampleSeeder extends Seeder
+class SampleSeeder extends Seeder
 {
 
     protected $plants;

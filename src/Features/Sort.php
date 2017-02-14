@@ -17,9 +17,11 @@ trait Sort
     protected $sortNewModelToTop;
 
 
-    public static function routesFeatureSort($className)
+    protected static function routesFeatureSort(array $options = null)
     {
-        app('router')->post('groupMoveTo', "{$className}@groupMoveTo");
+        app('router')->get('sortUp', "{$options['class']}@sortUp")->name($options['as'] ? "{$options['as']}.sortUp" : null);
+        app('router')->get('sortDown', "{$options['class']}@sortDown")->name($options['as'] ? "{$options['as']}.sortDown" : null);
+        app('router')->post('sortSlice', "{$options['class']}@sortSlice")->name($options['as'] ? "{$options['as']}.sortSlice" : null);
     }
 
 

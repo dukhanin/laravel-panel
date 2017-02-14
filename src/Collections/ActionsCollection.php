@@ -2,9 +2,9 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\Collection;
+use Dukhanin\Support\ResolvedCollection;
 
-class ActionsCollection extends Collection
+class ActionsCollection extends ResolvedCollection
 {
 
     protected $panel;
@@ -16,18 +16,48 @@ class ActionsCollection extends Collection
     }
 
 
-    public function resolveItem($key, $action)
+    public function resolveItemOnGet($key, $action)
     {
+        if (is_callable($action)) {
+            return $action;
+        }
+
+        return $this->validAction($key, $action);
+    }
+
+
+    public function resolveItemOnIteration($key, $action)
+    {
+        if (is_callable($action)) {
+            $action = call_user_func($action, $this->panel);
+
+            return $this->validAction($key, $action);
+        }
+
         return $action;
     }
 
 
-    public function resolve($key, $action, $model = null)
+    public function resolvedForModel($model)
     {
-        if (is_callable($action)) {
-            $action = call_user_func($action, $this->panel, $model);
-        }
+        return $this->raw()->map(function (&$action, $key) use ($model) {
+            if (is_callable($action)) {
+                $action = call_user_func($action, $this->panel, $model);
+            }
 
+            return $this->validAction($key, $action, $model);
+        });
+    }
+
+
+    public function put($key, $value = null)
+    {
+        return parent::put($key, $value);
+    }
+
+
+    protected function validAction($key, $action, $model = null)
+    {
         if ( ! is_array($action)) {
             $action = [ ];
         }
@@ -55,29 +85,5 @@ class ActionsCollection extends Collection
         }
 
         return $action;
-    }
-
-
-    public function put($key, $value = null)
-    {
-        return parent::put($key, $value);
-    }
-
-
-    public function resolved($model = null)
-    {
-        $actions = collect();
-
-        $this->each(function ($action, $key) use ($actions, $model) {
-            $actions->put($key, $this->resolve($key, $action, $model));
-        });
-
-        return $actions;
-    }
-
-
-    public function getIterator()
-    {
-        return $this->resolved()->getIterator();
     }
 }

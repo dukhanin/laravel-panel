@@ -97,12 +97,12 @@
                     </tr>
                     </thead>
                     <tbody>
-                    @foreach ($panel->rows() as $rowKey => $row)
+                    @foreach ($panel->rows() as $row)
                         {!! html_tag_open('tr', $row) !!}
 
                         @if(count($panel->groupActions()) > 0 || count($panel->moveToOptions()) > 0)
                             <td class="panel-list-checkbox">
-                                <input type="checkbox" name="group[]" value="{{$rowKey}}" />
+                                <input type="checkbox" name="group[]" value="{{$row['model']->getKey()}}" />
                             </td>
                         @endif
 
@@ -128,7 +128,7 @@
                             {!! html_tag('td.panel-list-data-cell', array_except($column, 'label'), array_get($row, "cells.{$column['key']}")) !!}
                         @endforeach
 
-                        @foreach ($panel->modelActions($row['model']) as $action)
+                        @foreach ($panel->modelActions()->resolvedForModel($row['model']) as $action)
                             <td class="panel-list-model-action">
                                 {!! $panel->renderModelAction($action, $row['model']) !!}
                             </td>

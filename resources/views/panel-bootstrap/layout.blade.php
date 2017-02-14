@@ -32,12 +32,12 @@
     @show
 
     <ul class="nav nav-tabs" role="tablist">
-        <li @if(str_contains(app('router')->currentRouteAction(), 'PanelSampleProductsController'))class="active"@endif>
-            <a href="{{ action('PanelSampleProductsController@showList') }}">Products</a>
+        <li @if(str_is('products.*', app('router')->currentRouteName()))class="active"@endif>
+            <a href="{{ route('products.showList') }}">Products</a>
         </li>
 
-        <li @if(str_contains(app('router')->currentRouteAction(), 'PanelSampleSectionsController'))class="active"@endif>
-            <a href="{{ action('PanelSampleSectionsController@showList') }}">Sections</a>
+        <li @if(str_is('sections.*', app('router')->currentRouteName()))class="active"@endif>
+            <a href="{{ route('sections.showList') }}">Sections</a>
         </li>
         <li class="pull-right">
             <select onchange="document.location=this.value;">

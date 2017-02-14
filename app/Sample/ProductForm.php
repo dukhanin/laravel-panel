@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Panel\Sample;
+namespace App\Sample;
 
 use Dukhanin\Panel\PanelForm;
 use Illuminate\Support\Facades\Validator;
