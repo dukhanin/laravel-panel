@@ -14,6 +14,8 @@
 
     <script>
         $(function () {
+            panel.labels = {!! json_encode( trans('panel') ) !!};
+
             var panelList = new panel.list('#{{ $panelId = str_random() }}');
             panelList.init();
         });

@@ -233,7 +233,7 @@ panel.list.prototype.initSortable = function () {
                 checkbox.prop('checked', true).trigger('state-changed');
             }
 
-            if (this.rows.filter('.panel-list-selected').size() > 1) {
+            if (this.rows.filter('.panel-list-selected').length > 1) {
                 this.rows.filter('.panel-list-selected').hide();
                 // @todo unstable ordering in multiply mode
             }
@@ -270,7 +270,7 @@ panel.list.prototype.initSortable = function () {
 };
 
 panel.list.prototype.updateCheckboxesCheckAll = function () {
-    var checked = this.checkboxes.size() > 0 && this.checkboxes.size() == this.checkboxes.filter(':checked').size();
+    var checked = this.checkboxes.length > 0 && this.checkboxes.length == this.checkboxes.filter(':checked').length;
 
     this.checkboxesCheckAll.prop('checked', checked);
     this.checkboxesCheckAll.parent().toggleClass('checked', checked);

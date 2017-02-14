@@ -5,6 +5,14 @@
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.form.css') }}"/>
 @endpush
 
+@push
+<script>
+    $(function(){
+        panel.labels = {!! json_encode( trans('panel') ) !!};
+    });
+</script>
+@endpush
+
 @section('content')
     <div class="ibox float-e-margins panel-form">
         @if ( $form->label() )

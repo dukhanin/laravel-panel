@@ -5,6 +5,14 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.form.css') }}"/>
 @endpush
 
+@push
+<script>
+    $(function(){
+        panel.labels = {!! json_encode( trans('panel') ) !!};
+    });
+</script>
+@endpush
+
 @section('content')
     <div class="panel panel-form">
         @if($form->label())
