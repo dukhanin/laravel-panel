@@ -14,9 +14,9 @@ return [
     ],
     'confirm'   => [
         'default'      => 'panel.confirm.default',
-        'move-to'      => 'panel.confirm.default',
-        'delete'       => 'panel.confirm.default',
-        'group-delete' => 'panel.confirm.default',
+        'move-to'      => 'panel.confirm.move-to',
+        'delete'       => 'panel.confirm.delete',
+        'group-delete' => 'panel.confirm.group-delete',
     ],
     'responses' => [
         'success' => 'panel.responses.success',
