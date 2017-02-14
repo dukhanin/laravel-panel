@@ -10,7 +10,8 @@
     padding: 20px 10px 0;
 }
 
-.wrapper-tabs + .wrapper-panel .mail-box-header {
+.wrapper-tabs + .wrapper-panel .mail-box-header,
+.wrapper-tabs + .wrapper-panel .ibox-title {
     border-top: 1px solid #ffffff;
 }
 
