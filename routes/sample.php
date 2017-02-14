@@ -11,6 +11,6 @@ Route::group([ 'prefix' => 'sample/sections' ], function () {
     SampleSectionsController::routes([ 'as' => 'sections' ]);
 });
 
-Route::any('panel-sample', function () {
+Route::any('sample', function () {
     return redirect()->action('Sample\SampleProductsController@showList');
 });
