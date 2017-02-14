@@ -20,6 +20,7 @@ return [
     ],
     'confirm'   => [
         'default'      => 'Confirm action',
+        'move-to'      => 'Move selected items?',
         'delete'       => 'Delete item?',
         'group-delete' => 'Delete items?',
     ],
