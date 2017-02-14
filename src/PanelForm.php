@@ -7,13 +7,11 @@ use Dukhanin\Panel\Collections\FieldsCollection;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Model;
-use Dukhanin\Support\Traits\DispatchesEvents;
+use Illuminate\Events\Dispatcher;
 use ErrorException;
 
 class PanelForm
 {
-
-    use DispatchesEvents;
 
     protected $config;
 
@@ -38,6 +36,8 @@ class PanelForm
     protected $validator;
 
     protected $url;
+
+    protected $eventDispatcher;
 
 
     public function __construct()
@@ -154,28 +154,37 @@ class PanelForm
     }
 
 
+    public function initEventDispatcher()
+    {
+        $this->eventDispatcher = new Dispatcher();
+    }
+
+
     public function onSuccess()
     {
-        $this->fireEvent('success');
+        $this->eventDispatcher()->fire('success', $this);
 
         $this->fillModel();
+
         $this->saveModel();
 
-        $this->fireEvent('succeed');
+        $this->eventDispatcher()->fire('succeed', $this);
     }
 
 
     public function onSubmit()
     {
-        $this->fireEvent('submit');
-        $this->fireEvent('submited');
+        $this->eventDispatcher()->fire('submit', $this);
+
+        $this->eventDispatcher()->fire('submited', $this);
     }
 
 
     public function onFailure()
     {
-        $this->fireEvent('failure');
-        $this->fireEvent('failed');
+        $this->eventDispatcher()->fire('failure', $this);
+
+        $this->eventDispatcher()->fire('failed', $this);
     }
 
 
@@ -216,6 +225,16 @@ class PanelForm
         }
 
         return $this->url;
+    }
+
+
+    public function eventDispatcher()
+    {
+        if (is_null($this->eventDispatcher)) {
+            $this->initEventDispatcher();
+        }
+
+        return $this->eventDispatcher;
     }
 
 
@@ -436,37 +455,37 @@ class PanelForm
 
     public function submit($callback, $priority = 0)
     {
-        $this->registerEvent('submit', $callback, $priority);
+        $this->eventDispatcher()->listen('submit', $callback, $priority);
     }
 
 
     public function submited($callback, $priority = 0)
     {
-        $this->registerEvent('submited', $callback, $priority);
+        $this->eventDispatcher()->listen('submited', $callback, $priority);
     }
 
 
     public function success($callback, $priority = 0)
     {
-        $this->registerEvent('success', $callback, $priority);
+        $this->eventDispatcher()->listen('success', $callback, $priority);
     }
 
 
     public function succeed($callback, $priority = 0)
     {
-        $this->registerEvent('succeed', $callback, $priority);
+        $this->eventDispatcher()->listen('succeed', $callback, $priority);
     }
 
 
     public function failure($callback, $priority = 0)
     {
-        $this->registerEvent('failure    ', $callback, $priority);
+        $this->eventDispatcher()->listen('failure    ', $callback, $priority);
     }
 
 
     public function failed($callback, $priority = 0)
     {
-        $this->registerEvent('failed    ', $callback, $priority);
+        $this->eventDispatcher()->listen('failed    ', $callback, $priority);
     }
 
 

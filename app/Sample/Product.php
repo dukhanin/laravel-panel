@@ -2,15 +2,12 @@
 
 namespace App\Sample;
 
-use Dukhanin\Support\Traits\HasSettings;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
 
 class Product extends EloquentModel
 {
 
     protected $table = 'sample_products';
-
-    use HasSettings;
 
     protected $casts = [
         'settings' => 'array',
