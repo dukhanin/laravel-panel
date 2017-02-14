@@ -1,16 +1,28 @@
 <?php
 
 return [
-    'views'   => 'panel-bootstrap',
-    'layout'  => 'layouts.app',
-    'labels'  => [
+    'views'     => 'panel-bootstrap',
+    'layout'    => 'layouts.app',
+    'labels'    => [
         'list-empty'        => 'panel.labels.list-empty',
         'move-to'           => 'panel.labels.move-to',
         'sort-up'           => 'panel.labels.sort-up',
         'sort-down'         => 'panel.labels.sort-down',
         'validation-failed' => 'panel.labels.validation-failed',
+        'choose'            => 'panel.labels.choose',
+        'name'              => 'panel.labels.name'
     ],
-    'actions' => [
+    'confirm'   => [
+        'default'      => 'panel.confirm.default',
+        'move-to'      => 'panel.confirm.default',
+        'delete'       => 'panel.confirm.default',
+        'group-delete' => 'panel.confirm.default',
+    ],
+    'responses' => [
+        'success' => 'panel.responses.success',
+        'error'   => 'panel.responses.error'
+    ],
+    'actions'   => [
         'create'        => [
             'class' => 'btn btn-default btn-sm',
             'label' => 'panel.actions.create',
@@ -81,44 +93,44 @@ return [
             ];
         },
         'group-enable'  => [
-            'class'      => 'btn btn-default btn-sm',
-            'label'      => 'panel.actions.group-enable',
-            'icon'       => 'fa fa-eye',
-            'icon-only'  => true
+            'class'     => 'btn btn-default btn-sm',
+            'label'     => 'panel.actions.group-enable',
+            'icon'      => 'fa fa-eye',
+            'icon-only' => true
         ],
         'group-disable' => [
-            'class'      => 'btn btn-default btn-sm',
-            'label'      => 'panel.actions.group-disable',
-            'icon'       => 'fa fa-eye-slash',
-            'icon-only'  => true
+            'class'     => 'btn btn-default btn-sm',
+            'label'     => 'panel.actions.group-disable',
+            'icon'      => 'fa fa-eye-slash',
+            'icon-only' => true
         ],
         'group-delete'  => [
-            'class'      => 'btn btn-default btn-sm',
-            'label'      => 'panel.actions.group-delete',
-            'icon'       => 'fa fa-trash-o',
-            'icon-only'  => true,
-            'confirm'    => 'panel.confirm.group-delete'
+            'class'     => 'btn btn-default btn-sm',
+            'label'     => 'panel.actions.group-delete',
+            'icon'      => 'fa fa-trash-o',
+            'icon-only' => true,
+            'confirm'   => 'panel.confirm.group-delete'
         ]
     ],
-    'buttons' => [
+    'buttons'   => [
         'submit'  => [
-            'class'      => 'btn-primary',
-            'type'       => 'submit',
-            'label'      => 'panel.buttons.submit',
-            'icon'       => 'submit'
+            'class' => 'btn-primary',
+            'type'  => 'submit',
+            'label' => 'panel.buttons.submit',
+            'icon'  => 'submit'
         ],
         'apply'   => [
-            'class'      => 'btn-primary',
-            'type'       => 'submit',
-            'name'       => '_apply',
-            'label'      => 'panel.buttons.apply',
-            'icon'       => 'apply',
+            'class' => 'btn-primary',
+            'type'  => 'submit',
+            'name'  => '_apply',
+            'label' => 'panel.buttons.apply',
+            'icon'  => 'apply',
         ],
         'cancel'  => [
-            'class'      => 'btn-default',
-            'type'       => 'button',
-            'label'      => 'panel.buttons.cancel',
-            'icon'       => 'cancel'
+            'class' => 'btn-default',
+            'type'  => 'button',
+            'label' => 'panel.buttons.cancel',
+            'icon'  => 'cancel'
         ],
         'default' => [
 

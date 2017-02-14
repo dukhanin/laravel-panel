@@ -37,7 +37,7 @@
 
                         @if( count($panel->moveToOptions()) > 0 )
                             <select class="panel-list-move-to-select input-sm form-control"
-                                    confirm=""
+                                    confirm="@lang( $panel->config('confirm.move-to') )"
                                     url="{{ urlbuilder($panel->url())->append('groupMoveTo/dummyMoveTo') }}">
 
                                 <option value="">@lang( $panel->config('labels.move-to') )</option>
