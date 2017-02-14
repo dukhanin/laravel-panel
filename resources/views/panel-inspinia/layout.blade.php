@@ -105,8 +105,7 @@
             @endif
         @show
 
-        <div class="wrapper wrapper-content animated fadeInRight">
-
+        <div class="wrapper wrapper-tabs animated fadeInRight">
             <div class="tabs-container">
                 <ul class="nav nav-tabs">
                     <li @if(str_is('products.*', app('router')->currentRouteName()))class="active"@endif>
@@ -124,8 +123,10 @@
                     </li>
                 </ul>
             </div>
+        </div>
 
-            @section('content')
+        @section('content')
+            <div class="wrapper wrapper-content animated fadeInRight">
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="text-center m-t-lg">
@@ -147,9 +148,8 @@
                         </div>
                     </div>
                 </div>
-            @show
-
-        </div>
+            </div>
+        @show
     </div>
 </div>
 

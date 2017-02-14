@@ -5,3 +5,15 @@
 .panel-list .inactive img, .panel-tree .inactive img, .panel-form .inactive img {
     opacity: 0.4;
 }
+
+.wrapper-tabs {
+    padding: 20px 10px 0;
+}
+
+.wrapper-tabs + .wrapper-panel .mail-box-header {
+    border-top: 1px solid #ffffff;
+}
+
+.wrapper-tabs + .wrapper-panel {
+    padding-top: 0;
+}

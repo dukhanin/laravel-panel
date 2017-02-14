@@ -8,8 +8,8 @@
 @push
 <script>
     $(function(){
-        panel.labels = {!! json_encode( trans('panel') ) !!};
-    });
+
+    })
 </script>
 @endpush
 

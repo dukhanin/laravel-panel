@@ -14,7 +14,8 @@
 @endpush
 
 @section('content')
-    <div class="ibox float-e-margins panel-form">
+    <div class="wrapper wrapper-content wrapper-panel animated fadeInRight">
+        <div class="ibox float-e-margins panel-form">
         @if ( $form->label() )
             <div class="ibox-title">
                 <h5>{{ $form->label() }}</h5>
@@ -71,5 +72,6 @@
 
             </form>
         </div>
+    </div>
     </div>
 @endsection
