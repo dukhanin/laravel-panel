@@ -19,14 +19,12 @@ class SampleSectionsController extends PanelTreeController
     public function before()
     {
         view()->share('header', 'Panel Sample');
+    }
 
-        if ($inspinia = request()->query('inspinia')) {
-            $this->configSet('views', 'panel-inspinia');
-            $this->configSet('layout', 'panel-inspinia.layout');
-        } else {
-            $this->configSet('views', 'panel-bootstrap');
-            $this->configSet('layout', 'panel-bootstrap.layout');
-        }
+
+    public function initConfig()
+    {
+        $this->config = config(request()->query('inspinia') ? 'panel-inspinia' : 'panel-bootstrap');
     }
 
 

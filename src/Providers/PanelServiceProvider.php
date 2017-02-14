@@ -3,7 +3,6 @@
 namespace Dukhanin\Panel\Providers;
 
 use Illuminate\Support\ServiceProvider;
-
 use Symfony\Component\Console\Input\ArgvInput;
 
 class PanelServiceProvider extends ServiceProvider
@@ -49,7 +48,7 @@ class PanelServiceProvider extends ServiceProvider
     protected function publishConfig()
     {
         $this->publishes([
-            $this->path('config/') => config_path('/'),
+            $this->path('config/panel.php') => config_path('/panel.php'),
         ], 'config');
     }
 
@@ -83,9 +82,11 @@ class PanelServiceProvider extends ServiceProvider
         $this->publishes([
             $this->path('app/Http/Controllers/Sample/') => app_path('Http/Controllers/Sample/'),
             $this->path('app/Sample')                   => app_path('Sample/'),
+            $this->path('public/assets/inspinia/')      => public_path('assets/inspinia/'),
+            $this->path('config/panel-inspinia.php')    => config_path('panel-inspinia.php'),
+            $this->path('config/panel-bootstrap.php')   => config_path('panel-bootstrap.php'),
             $this->path('database/')                    => database_path('/'),
             $this->path('routes/')                      => base_path('routes/'),
-            $this->path('public/assets/inspinia/')       => public_path('assets/inspinia/'),
         ], 'sample');
     }
 
