@@ -99,24 +99,8 @@ h2 + .panel-list-tools {
     background-color: #fcf8e3
 }
 
-
-.table-hover>tbody>tr.panel-list-selected:focus, .table-hover>tbody>tr.panel-list-selected:hover {
+.table-hover > tbody > tr.panel-list-selected:focus, .table-hover > tbody > tr.panel-list-selected:hover {
     background-color: rgba(252, 241, 187, 0.75)
-}
-
-.panel-list-table > thead > tr > td.inactive,
-.panel-list-table > tbody > tr > td.inactive,
-.panel-list-table > tfoot > tr > td.inactive,
-.panel-list-table > thead > tr > th.inactive,
-.panel-list-table > tbody > tr > th.inactive,
-.panel-list-table > tfoot > tr > th.inactive,
-.panel-list-table > thead > tr.inactive > td:not(.panel-list-model-action),
-.panel-list-table > tbody > tr.inactive > td:not(.panel-list-model-action),
-.panel-list-table > tfoot > tr.inactive > td:not(.panel-list-model-action),
-.panel-list-table > thead > tr.inactive > th,
-.panel-list-table > tbody > tr.inactive > th,
-.panel-list-table > tfoot > tr.inactive > th {
-    color: #bbb;
 }
 
 .panel-list .inactive img {

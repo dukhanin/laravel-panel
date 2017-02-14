@@ -50,3 +50,27 @@ td.panel-list-model-action:last-child {
 .panel-list-selected:focus, .panel-list-selected:hover {
     background-color: #f7ecb5
 }
+
+.panel-list-data-cell a {
+    color: inherit;
+    text-decoration: underline;
+}
+
+.panel-list-table > thead > tr > td.inactive,
+.panel-list-table > tbody > tr > td.inactive,
+.panel-list-table > tfoot > tr > td.inactive,
+.panel-list-table > thead > tr > th.inactive,
+.panel-list-table > tbody > tr > th.inactive,
+.panel-list-table > tfoot > tr > th.inactive,
+.panel-list-table > thead > tr.inactive > td:not(.panel-list-model-action),
+.panel-list-table > tbody > tr.inactive > td:not(.panel-list-model-action),
+.panel-list-table > tfoot > tr.inactive > td:not(.panel-list-model-action),
+.panel-list-table > thead > tr.inactive > th,
+.panel-list-table > tbody > tr.inactive > th,
+.panel-list-table > tfoot > tr.inactive > th {
+    color: #bbb;
+}
+
+.panel-list .inactive img {
+    opacity: 0.4;
+}

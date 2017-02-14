@@ -43,8 +43,8 @@ panel.list.prototype.initActions = function () {
 panel.list.prototype.initGroupActions = function () {
     this.groupActionsButtons.click(function (e) {
         var button   = $(this),
-            confirm  = button.data('confirm'),
-            url      = button.data('url'),
+            confirm  = button.attr('confirm'),
+            url      = button.attr('url'),
             form     = button.closest('form'),
             callback = function () {
                 form.attr('action', url);
@@ -68,7 +68,7 @@ panel.list.prototype.initGroupActions = function () {
 panel.list.prototype.initModelActions = function () {
     this.modelActionsButtons.click(function (e) {
         var button   = $(this),
-            confirm  = button.data('confirm'),
+            confirm  = button.attr('confirm'),
             url      = button.attr('href'),
             callback = function () {
                 panel.go(url);
@@ -93,11 +93,11 @@ panel.list.prototype.initActionsOnHover = function () {
         .on('focusin focusout mouseenter mouseleave', function (e) {
                 var node        = $(this),
                     icon        = node.find('i'),
-                    iconDefault = node.data('icon'),
-                    iconOnHover = node.data('icon-on-hover');
+                    iconDefault = node.attr('icon'),
+                    iconOnHover = node.attr('icon-on-hover');
 
                 if (undefined === iconDefault) {
-                    node.data('icon', icon.attr('class'));
+                    node.attr('icon', icon.attr('class'));
                 }
 
                 icon.removeClass().addClass(e.type === 'focusin' || e.type === 'mouseenter' ? iconOnHover : iconDefault);
@@ -107,7 +107,7 @@ panel.list.prototype.initActionsOnHover = function () {
 panel.list.prototype.initCategories = function () {
     this.categoriesSelect.change(function (e) {
         var select = $(this),
-            url    = select.data('url');
+            url    = select.attr('url');
 
         panel.go(url.replace('dummyCategory', select.val()));
 
@@ -120,8 +120,8 @@ panel.list.prototype.initMoveTo = function () {
         var select = $(this);
 
         if (select.val()) {
-            var url      = select.data('url'),
-                confirm  = select.data('confirm'),
+            var url      = select.attr('url'),
+                confirm  = select.attr('confirm'),
                 form     = select.closest('form'),
                 callback = function () {
                     form.attr('action', url.replace('dummyMoveTo', select.val()));
