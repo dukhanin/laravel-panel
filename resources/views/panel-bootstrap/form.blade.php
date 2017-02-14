@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.form.css') }}"/>
 @endpush
 
-@push
+@push('scripts')
 <script>
     $(function(){
 
