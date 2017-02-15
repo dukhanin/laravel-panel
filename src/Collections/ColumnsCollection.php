@@ -42,7 +42,7 @@ class ColumnsCollection extends ResolvedCollection
 
         $valid['label'] = trans($valid['label']);
 
-        $valid = array_merge($valid, array_except($column, [ 'label', 'order', 'handler', 'width', 'key' ]));
+        $valid = array_merge($valid, array_except($column, [ 'label', 'order', 'handler', 'key' ]));
 
         return $valid;
     }

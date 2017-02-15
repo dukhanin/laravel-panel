@@ -175,31 +175,32 @@ class PanelListDecorator
 
     public function renderColumnHead($column, ...$overwrites)
     {
-        if ( ! is_callable([ $this->panel, 'order' ]) || empty( $column['order'] )) {
-            return $column['label'];
-        }
-
-        $thisColumnOrdered = $this->order() == $column['key'];
-        $orderedDesc       = $this->orderDesc();
-        $resetAnyOrder     = $thisColumnOrdered && $orderedDesc;
-
-        $query = [ ];
         $tag   = $column;
+        $query = [ ];
 
-        if ( ! $resetAnyOrder) {
-            $query += [ 'order' => $column['key'] ];
+        if (is_callable([ $this->panel, 'order' ]) && ! empty( $column['order'] )) {
+            $thisColumnOrdered = $this->order() == $column['key'];
+            $orderedDesc       = $this->orderDesc();
+            $resetAnyOrder     = $thisColumnOrdered && $orderedDesc;
 
-            if ($thisColumnOrdered && ! $orderedDesc) {
-                $query += [ 'orderDesc' => 1 ];
+            if ( ! $resetAnyOrder) {
+                $query += [ 'order' => $column['key'] ];
+
+                if ($thisColumnOrdered && ! $orderedDesc) {
+                    $query += [ 'orderDesc' => 1 ];
+                }
+            }
+
+            if ($thisColumnOrdered) {
+                $tag['icon'] = $orderedDesc ? 'fa fa-chevron-up' : 'fa fa-chevron-down';
             }
         }
 
-        if ($thisColumnOrdered) {
-            $tag['icon'] = $orderedDesc ? 'fa fa-chevron-up' : 'fa fa-chevron-down';
-        }
-
-        return html_tag($tag, [ 'url' => $this->url([ '!order', '!orderDesc', '!page' ] + $query), 'title' => false ],
-            ...$overwrites);
+        return html_tag($tag, [
+            'url'   => $this->url([ '!order', '!orderDesc', '!page' ] + $query),
+            'title' => false,
+            'width' => false
+        ], ...$overwrites);
     }
 
 

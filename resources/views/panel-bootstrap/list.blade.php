@@ -86,8 +86,8 @@
                             <th></th>
                         @endif
 
-                        @foreach ($panel->columns() as $column)
-                            <th>
+                        @foreach ($panel->columns() as $key => $column)
+                            <th {!! html_tag_attr( array_only($column, ['width', 'class', 'style'])) !!}>
                                 {!! $panel->renderColumnHead($column) !!}
                             </th>
                         @endforeach
