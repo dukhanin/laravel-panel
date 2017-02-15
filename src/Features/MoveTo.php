@@ -10,7 +10,7 @@ trait MoveTo
 
     protected static function routesForMoveTo(array $options = null)
     {
-        static::routesMeta()->post('group-move-to/{id}', 'groupMoveTo');
+        static::routesMeta()->post('group-move-to/{location}', 'groupMoveTo');
     }
 
 
@@ -32,15 +32,14 @@ trait MoveTo
     }
 
 
-    public function groupMoveTo($location)
+    public function groupMoveTo()
     {
-
         $group = $this->findModelsOrFail($this->input('group'));
 
         $this->authorize('group-move-to', $group);
 
         foreach ($group as $model) {
-            $this->moveTo($model, $location);
+            $this->moveTo($model, $this->route('location'));
         }
 
         return redirect()->to($this->url());

@@ -38,7 +38,7 @@ trait Pages
         $this->paginator = new LengthAwarePaginator($this->perPage(), $this->total(), $this->perPage(), $this->page());
         $this->paginator->setPageName('page');
 
-        $url = urlbuilder($this->url([ '!pages' ]));
+        $url = urlbuilder($this->url([ '!page' ]));
 
         $this->paginator->appends($url->query());
         $this->paginator->setPath($url->query(false)->compile());
@@ -75,7 +75,7 @@ trait Pages
     }
 
 
-    protected function applyQueryPages($select)
+    protected function applyQueryPage($select)
     {
         if ( ! empty( $this->perPage )) {
             $select->forPage($this->page, $this->perPage);
@@ -84,7 +84,7 @@ trait Pages
     }
 
 
-    protected function applyUrlPages(&$url)
+    protected function applyUrlPage(&$url)
     {
         $url->query([ 'page' => $this->page ]);
     }

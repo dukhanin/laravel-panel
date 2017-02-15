@@ -46,7 +46,7 @@
                                 @if( count($panel->moveToOptions()) > 0 )
                                     <select class="panel-list-move-to-select input-sm form-control"
                                             confirm="@lang( $panel->config('confirm.move-to') )"
-                                            url="{{ urlbuilder($panel->getUrl())->append('groupMoveTo/dummyMoveTo') }}">
+                                            url="{!! $panel->urlTo('groupMoveTo', 'dummyMoveTo') !!}">
 
                                         <option value="">@lang( $panel->config('labels.move-to') )</option>
 
@@ -60,9 +60,7 @@
                             @if( count($panel->categories()) > 0 )
                                 <div class="col-sm-3">
                                     <select class="panel-list-categories-select input-sm form-control input-s-sm inline"
-                                            url="{{ urlbuilder($panel->url(['!pages', '!categories']))->query([
-                                                            'category' => 'dummyCategory'
-                                                        ]) }}">
+                                            url="{!! $panel->urlTo('showList', [], ['!page', '!category', 'category' => 'dummyCategory']) !!}">
                                         @foreach($panel->getCategories() as $categoryKey=>$category)
                                             <option value="{{$categoryKey}}"
                                                     @if($categoryKey == $panel->category) selected @endif>{{$category}}</option>
@@ -137,12 +135,12 @@
                                 @if($panel->isSortEnabled())
                                     <td class="panel-list-sort">
                                         <div class="btn-group">
-                                            <a href="{!! urlbuilder($panel->getUrl())->append(['sortUp', $row['model']->getKey()]) !!}"
+                                            <a href="{!! $panel->urlTo('sortUp', $row['model']) !!}"
                                                class="btn btn-xs btn-white"
                                                data-toggle="tooltip"
                                                data-placement="auto"
                                                title="@lang( $panel->config('labels.sort-up') )"><i class="fa fa-angle-up"></i></a>
-                                            <a href="{!! urlbuilder($panel->getUrl())->append(['sortDown', $row['model']->getKey()]) !!}"
+                                            <a href="{!! $panel->urlTo('sortDown', $row['model']) !!}"
                                                class="btn btn-xs btn-white"
                                                data-toggle="tooltip"
                                                data-placement="auto"

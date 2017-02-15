@@ -182,14 +182,33 @@ trait PanelListTrait
         }
 
         $url = urlbuilder($this->url);
-        $this->apply($url, $apply, 'applyUrl');
 
-        return $url->compile();
+        $this->apply($url, $apply, 'applyUrl');;
+
+        foreach ($apply as $key => $value) {
+            if (is_integer($key)) {
+                unset( $apply[$key] );
+            }
+        }
+
+        return $url->query($apply)->compile();
     }
 
 
     public function urlTo($action, $params = null, array $apply = [ '*' ])
     {
+        $query = [];
+        foreach($apply as $key => $value) {
+            foreach ($apply as $key => $value) {
+                if (is_integer($key)) {
+                    continue;
+                }
+
+                $query[$key] = $value;
+                unset( $apply[$key] );
+            }
+        }
+
         if (str_contains($action, '@')) {
             $url = urlbuilder(action($action, $params));
         } elseif ($this instanceof Controller) {
@@ -200,7 +219,7 @@ trait PanelListTrait
 
         $this->apply($url, $apply, 'applyUrl');
 
-        return $url->compile();
+        return $url->query($query)->compile();
     }
 
 
@@ -246,7 +265,7 @@ trait PanelListTrait
 
     public function total(array $apply = [ ])
     {
-        $apply[] = '!pages';
+        $apply[] = '!page';
 
         $builder = $this->query($apply);
 
@@ -341,7 +360,7 @@ trait PanelListTrait
 
     public function findModel($primaryKey)
     {
-        return $this->query([ '!pages', '!order' ])->find($primaryKey);
+        return $this->query([ '!page', '!order' ])->find($primaryKey);
     }
 
 
@@ -357,7 +376,7 @@ trait PanelListTrait
 
     public function findModels($primaryKeys)
     {
-        return $this->query([ '!pages' ])->findMany($primaryKeys);
+        return $this->query([ '!page' ])->findMany($primaryKeys);
     }
 
 
@@ -469,7 +488,11 @@ trait PanelListTrait
         $handlers        = array_map('strtolower', $list);
         $handlersExclude = [ ];
 
-        foreach ($handlers as $name) {
+        foreach ($handlers as $key => $name) {
+            if ( ! is_integer($key)) {
+                continue;
+            }
+
             if ($name[0] == '!') {
                 $handlersExclude[] = trim($name, '!');
             }

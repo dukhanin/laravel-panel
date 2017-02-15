@@ -3,6 +3,7 @@
 namespace Dukhanin\Panel\Features;
 
 use Dukhanin\Panel\PanelForm;
+use Dukhanin\Panel\Traits\PanelTreeTrait;
 
 trait CreateAndEdit
 {
@@ -12,7 +13,11 @@ trait CreateAndEdit
 
     protected static function routesForCreateAndEdit(array $options = null)
     {
-        static::routesMeta()->match([ 'get', 'post' ], 'create', 'create');
+        if (class_uses(static::class, PanelTreeTrait::class)) {
+            static::routesMeta()->match([ 'get', 'post' ], 'create/{into?}', 'create');
+        } else {
+            static::routesMeta()->match([ 'get', 'post' ], 'create', 'create');
+        }
 
         static::routesMeta()->match([ 'get', 'post' ], 'edit/{id}', 'edit');
     }

@@ -183,14 +183,14 @@ class PanelListDecorator
         $orderedDesc       = $this->orderDesc();
         $resetAnyOrder     = $thisColumnOrdered && $orderedDesc;
 
-        $url = urlbuilder($this->url([ '!order', '!orderDesc', '!pages' ]));
-        $tag = $column;
+        $query = [ ];
+        $tag   = $column;
 
         if ( ! $resetAnyOrder) {
-            $url->query([ 'order' => $column['key'] ]);
+            $query += [ 'order' => $column['key'] ];
 
             if ($thisColumnOrdered && ! $orderedDesc) {
-                $url->query([ 'orderDesc' => 1 ]);
+                $query += [ 'orderDesc' => 1 ];
             }
         }
 
@@ -198,7 +198,8 @@ class PanelListDecorator
             $tag['icon'] = $orderedDesc ? 'fa fa-chevron-up' : 'fa fa-chevron-down';
         }
 
-        return html_tag($tag, [ 'url' => $url->compile(), 'title' => false ], ...$overwrites);
+        return html_tag($tag, [ 'url' => $this->url([ '!order', '!orderDesc', '!page' ] + $query), 'title' => false ],
+            ...$overwrites);
     }
 
 

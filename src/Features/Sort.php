@@ -19,9 +19,9 @@ trait Sort
 
     protected static function routesForSort(array $options = null)
     {
-        static::routesMeta()->get('sort-up', 'sortUp');
+        static::routesMeta()->get('sort-up/{id}', 'sortUp');
 
-        static::routesMeta()->get('sort-down', 'sortDown');
+        static::routesMeta()->get('sort-down/{id}', 'sortDown');
 
         static::routesMeta()->post('sort-slice', 'sortSlice');
     }
@@ -177,10 +177,10 @@ trait Sort
     protected function sortQuery()
     {
         if ($this instanceof PanelTree) {
-            return $this->queryBranch($this->modelToSort->{$this->parentKey()}, [ '!order', '!pages' ]);
+            return $this->queryBranch($this->modelToSort->{$this->parentKey()}, [ '!order', '!page' ]);
         }
 
-        return $this->query([ '!order', '!pages' ]);
+        return $this->query([ '!order', '!page' ]);
     }
 
 }

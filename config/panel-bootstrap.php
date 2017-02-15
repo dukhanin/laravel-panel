@@ -86,15 +86,13 @@ return [
                 ];
             }
         },
-        'append'        => function ($panel, $model) {
-            return [
-                'class'     => 'btn btn-default btn-xs',
-                'label'     => 'panel.actions.append',
-                'icon'      => 'fa fa-plus',
-                'icon-only' => true,
-                'action'    => 'create'
-            ];
-        },
+        'append'        => [
+            'class'     => 'btn btn-default btn-xs',
+            'label'     => 'panel.actions.append',
+            'icon'      => 'fa fa-plus',
+            'icon-only' => true,
+            'action'    => 'create'
+        ],
         'group-enable'  => [
             'class'     => 'btn btn-default btn-sm',
             'label'     => 'panel.actions.group-enable',
