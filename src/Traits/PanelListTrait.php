@@ -195,7 +195,7 @@ trait PanelListTrait
         } elseif ($this instanceof Controller) {
             $url = urlbuilder(action('\\' . get_called_class() . '@' . $action, $params));
         } else {
-            $url = urlbuilder($this->panel->url())->append([ $params instanceof UrlRoutable ? $params->getRouteKey() : $params ]);
+            $url = urlbuilder($this->url())->append([ $params instanceof UrlRoutable ? $params->getRouteKey() : $params ]);
         }
 
         $this->apply($url, $apply, 'applyUrl');
@@ -495,8 +495,12 @@ trait PanelListTrait
             }
         } else {
             foreach ($handlers as $arg) {
-                $method = $methodPrefix . $arg;
-                $this->{$method}($object);
+                $method = 'apply' . $methodPrefix . $arg;
+
+                if (is_callable([ $this, $method ])) {
+                    $this->{$method}($object);
+                }
+
             }
         }
     }
