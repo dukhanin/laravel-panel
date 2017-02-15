@@ -36,10 +36,6 @@ class SampleProductsController extends PanelListController
     public function initUrl()
     {
         $this->url = action('Sample\SampleProductsController@showList');
-
-        if (request()->query('inspinia')) {
-            $this->url = urlbuilder($this->url)->query([ 'inspinia' => 1 ])->compile();
-        }
     }
 
 
@@ -67,16 +63,6 @@ class SampleProductsController extends PanelListController
     }
 
 
-    protected function applyQueryDefaultOrder($select)
-    {
-        if ($this->isSortEnabled()) {
-            $select->ordered();
-        } else {
-            $select->orderBy('id', 'asc');
-        }
-    }
-
-
     public function isSortEnabled()
     {
         return ! empty( $this->category ) && Section::byParent($this->category)->count() == 0;
@@ -86,14 +72,6 @@ class SampleProductsController extends PanelListController
     public function initCategories()
     {
         $this->categories = Section::options()->prepend('(All Sections)', '');
-    }
-
-
-    public function applyQueryCategory($query)
-    {
-        if ( ! empty( $this->category )) {
-            $query->bySectionRecursive($this->category);
-        }
     }
 
 
@@ -123,4 +101,29 @@ class SampleProductsController extends PanelListController
         return $model;
     }
 
+
+    protected function applyUrlTheme($url)
+    {
+        if (request()->query('inspinia')) {
+            $url->query([ 'inspinia' => 1 ]);
+        }
+    }
+
+
+    protected function applyQueryDefaultOrder($select)
+    {
+        if ($this->isSortEnabled()) {
+            $select->ordered();
+        } else {
+            $select->orderBy('id', 'asc');
+        }
+    }
+
+
+    protected function applyQueryCategory($query)
+    {
+        if ( ! empty( $this->category )) {
+            $query->bySectionRecursive($this->category);
+        }
+    }
 }

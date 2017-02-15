@@ -68,4 +68,12 @@ class SampleSectionsController extends PanelTreeController
 
         return $model;
     }
+
+
+    protected function applyUrlTheme($url)
+    {
+        if (request()->query('inspinia')) {
+            $url->query([ 'inspinia' => 1 ]);
+        }
+    }
 }
