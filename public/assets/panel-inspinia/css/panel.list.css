@@ -99,8 +99,18 @@ h2 + .panel-list-tools {
     background-color: #fcf8e3
 }
 
-.table-hover > tbody > tr.panel-list-selected:focus, .table-hover > tbody > tr.panel-list-selected:hover {
+.table-hover > tbody > tr.panel-list-selected:focus,
+.table-hover > tbody > tr.panel-list-selected:hover {
     background-color: rgba(252, 241, 187, 0.75)
+}
+
+.table-hover > tbody > tr.panel-list-selected.bg-danger {
+    background-color: #F8DEE0;
+}
+
+.table-hover > tbody > tr.panel-list-selected.bg-danger:focus,
+.table-hover > tbody > tr.panel-list-selected.bg-danger:hover {
+    background-color: #f8d2cb;
 }
 
 .panel-list .inactive img {
