@@ -64,6 +64,8 @@ trait CreateAndEdit
 
     public function edit()
     {
+
+
         $model = $this->findModelOrFail($this->route('id'));
 
         $this->authorize('edit', $model);
@@ -85,7 +87,7 @@ trait CreateAndEdit
     private function redirectToFormAfterApply()
     {
         $this->form()->succeed(function ($form) {
-            if ( ! $form->data('_apply')) {
+            if ( ! request()->input('_apply')) {
                 return;
             }
 
