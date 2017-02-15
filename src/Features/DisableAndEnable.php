@@ -8,12 +8,15 @@ trait DisableAndEnable
     protected $disabledKey;
 
 
-    protected static function routesFeatureDisableAndEnable(array $options = null)
+    protected static function routesForDisableAndEnable(array $options = null)
     {
-        app('router')->get('enable/{id}', "{$options['class']}@enable")->name($options['as'] ? "{$options['as']}.enable" : null);
-        app('router')->get('disable/{id}', "{$options['class']}@disable")->name($options['as'] ? "{$options['as']}.disable" : null);
-        app('router')->post('groupEnable', "{$options['class']}@groupEnable")->name($options['as'] ? "{$options['as']}.groupEnable" : null);
-        app('router')->post('groupDisable', "{$options['class']}@groupDisable")->name($options['as'] ? "{$options['as']}.groupDisable" : null);
+        static::routesMeta()->get('enable/{id}', 'enable');
+
+        static::routesMeta()->get('disable/{id}', 'disable');
+
+        static::routesMeta()->post('group-enable', 'groupEnable');
+
+        static::routesMeta()->post('group-disable', 'groupDisable');
     }
 
 
@@ -45,9 +48,9 @@ trait DisableAndEnable
     }
 
 
-    public function enable($primaryKey)
+    public function enable()
     {
-        $model = $this->findModelOrFail($primaryKey);
+        $model = $this->findModelOrFail($this->route('id'));
 
         $this->authorize('enable', $model);
 
@@ -58,9 +61,9 @@ trait DisableAndEnable
     }
 
 
-    public function disable($primaryKey)
+    public function disable()
     {
-        $model = $this->findModelOrFail($primaryKey);
+        $model = $this->findModelOrFail($this->route('id'));
 
         $this->authorize('disable', $model);
 

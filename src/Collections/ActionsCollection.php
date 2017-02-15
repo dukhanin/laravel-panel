@@ -78,10 +78,7 @@ class ActionsCollection extends ResolvedCollection
         }
 
         if ( ! isset( $action['url'] )) {
-            $action['url'] = urlbuilder($this->panel->url())->append([
-                camel_case($key),
-                $model ? $model->id : ''
-            ])->compile();
+            $action['url'] = isset( $action['action'] ) ? $this->panel->urlTo($action['action'], $model) : '#' . $key;
         }
 
         return $action;

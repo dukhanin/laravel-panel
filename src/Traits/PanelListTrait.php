@@ -4,9 +4,12 @@ namespace Dukhanin\Panel\Traits;
 
 use Dukhanin\Panel\Collections\ActionsCollection;
 use Dukhanin\Panel\Collections\ColumnsCollection;
+use Dukhanin\Panel\Collections\RoutesMetaCollection;
 use Dukhanin\Panel\PanelListDecorator;
+use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Routing\Controller;
 use Illuminate\Support\Facades\Gate;
 
 trait PanelListTrait
@@ -38,6 +41,8 @@ trait PanelListTrait
 
     protected $config;
 
+    protected static $routesMeta = [ ];
+
 
     public function __construct()
     {
@@ -52,31 +57,6 @@ trait PanelListTrait
 
         $this->columns = new ColumnsCollection;
         $this->columns->setPanel($this);
-    }
-
-
-    /*
-        public function __invoke(Request $request)
-        {
-            return $this->showList();
-        }
-
-    */
-    public function callAction($action, $parameters)
-    {
-        $this->init();
-
-        if (method_exists($this, 'before')) {
-            $this->before();
-        }
-
-        $res = call_user_func_array([ $this, $action ], $parameters);
-
-        if (method_exists($this, 'after')) {
-            $this->after();
-        }
-
-        return $res;
     }
 
 
@@ -202,6 +182,22 @@ trait PanelListTrait
         }
 
         $url = urlbuilder($this->url);
+        $this->apply($url, $apply, 'applyUrl');
+
+        return $url->compile();
+    }
+
+
+    public function urlTo($action, $params = null, array $apply = [ '*' ])
+    {
+        if (str_contains($action, '@')) {
+            $url = urlbuilder(action($action, $params));
+        } elseif ($this instanceof Controller) {
+            $url = urlbuilder(action('\\' . get_called_class() . '@' . $action, $params));
+        } else {
+            $url = urlbuilder($this->panel->url())->append([ $params instanceof UrlRoutable ? $params->getRouteKey() : $params ]);
+        }
+
         $this->apply($url, $apply, 'applyUrl');
 
         return $url->compile();
@@ -337,6 +333,12 @@ trait PanelListTrait
     }
 
 
+    public function route($key = null)
+    {
+        return array_get(request()->route()->parameters(), $key);
+    }
+
+
     public function findModel($primaryKey)
     {
         return $this->query([ '!pages', '!order' ])->find($primaryKey);
@@ -405,7 +407,7 @@ trait PanelListTrait
             $arguments = [ $arguments ];
         }
 
-        return method_exists($policy, $ability) && $policy->$ability(app('auth')->user(), ...$arguments);
+        return is_callable([ $policy, $ability ]) && $policy->$ability(app('auth')->user(), ...$arguments);
     }
 
 
@@ -439,7 +441,7 @@ trait PanelListTrait
     }
 
 
-    public function configSet($key, $value)
+    public function setConfig($key, $value)
     {
         if (is_null($this->config)) {
             $this->initConfig();
@@ -500,29 +502,44 @@ trait PanelListTrait
     }
 
 
-    static public function routes(array $options = null)
+    static public function routesMeta()
+    {
+        if ( ! isset( static::$routesMeta[$class = '\\' . get_called_class()] )) {
+            static::$routesMeta[$class] = new RoutesMetaCollection();
+
+            static::$routesMeta[$class]->setClass($class);
+        }
+
+        return static::$routesMeta[$class];
+    }
+
+
+    static public function addRoutes(array $options = null)
     {
         $options = static::routeOptions($options);
+        $router  = app('router');
 
-        $class = '\\' . get_called_class();
+        $router->group(array_except($options, [ 'prefix', 'as' ]), function () use ($router, $options) {
 
-        app('router')->get('', "{$options['class']}@showList")->name($options['as'] ? "{$options['as']}.showList" : null);
+            static::routes($options);
 
-        foreach (class_uses($class) as $trait) {
-            $method = 'routesFeature' . class_basename($trait);
+            static::featuresRoutes($options);
 
-            if (is_callable([ $class, $method ])) {
-                $class::$method($options);
+            foreach (static::routesMeta()->resolvedFor($options) as $meta) {
+                $router->match($meta['methods'], $meta['uri'],
+                    $meta['action'])->name($meta['name'])->middleware($meta['middleware']);
             }
-        }
+        });
     }
 
 
     static protected function routeOptions(array $options = null)
     {
         $validOptions = [
-            'as'    => null,
-            'class' => '\\' . get_called_class()
+            'as'         => null,
+            'prefix'     => null,
+            'middleware' => [ ],
+            'class'      => '\\' . get_called_class()
         ];
 
         if ( ! is_null($options)) {
@@ -530,5 +547,21 @@ trait PanelListTrait
         }
 
         return $validOptions;
+    }
+
+
+    static protected function featuresRoutes()
+    {
+        foreach (class_uses($class = get_called_class()) as $trait) {
+            if (is_callable([ $class, $method = 'routesFor' . class_basename($trait) ])) {
+                $class::$method();
+            }
+        }
+    }
+
+
+    static protected function routes()
+    {
+        static::routesMeta()->get('', 'showList');
     }
 }

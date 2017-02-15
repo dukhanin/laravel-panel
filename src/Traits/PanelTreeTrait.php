@@ -81,7 +81,7 @@ trait PanelTreeTrait
     {
         $model = clone $this->model();
 
-        $parentKeyValue = request()->input('appendTo');
+        $parentKeyValue = $this->input('appendTo');
 
         if ($parentKeyValue) {
             $parent = $this->findModel($parentKeyValue);

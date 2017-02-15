@@ -19,11 +19,11 @@ class ColumnsCollection extends ResolvedCollection
     public function resolveItemOnGet($key, $column)
     {
         $valid = [
-            'key'              => strval($key),
-            'label'            => strval($key),
-            'order'            => false,
-            'handler'          => null,
-            'attributes.width' => null
+            'key'     => strval($key),
+            'label'   => strval($key),
+            'order'   => false,
+            'handler' => null,
+            'width'   => null
         ];
 
         if (is_string($column)) {
@@ -38,10 +38,6 @@ class ColumnsCollection extends ResolvedCollection
 
         if (isset( $column['handler'] )) {
             $valid['handler'] = $column['handler'];
-        }
-
-        if (isset( $column['width'] )) {
-            $valid['attributes.width'] = $column['width'];
         }
 
         $valid['label'] = trans($valid['label']);

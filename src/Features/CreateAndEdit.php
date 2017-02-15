@@ -10,10 +10,11 @@ trait CreateAndEdit
     protected $form;
 
 
-    protected static function routesFeatureCreateAndEdit(array $options = null)
+    protected static function routesForCreateAndEdit(array $options = null)
     {
-        app('router')->match(['get', 'post'], 'create', "{$options['class']}@create")->name($options['as'] ? "{$options['as']}.create" : null);
-        app('router')->match(['get', 'post'], 'edit/{id}', "{$options['class']}@edit")->name($options['as'] ? "{$options['as']}.edit" : null);
+        static::routesMeta()->match([ 'get', 'post' ], 'create', 'create');
+
+        static::routesMeta()->match([ 'get', 'post' ], 'edit/{id}', 'edit');
     }
 
 
@@ -33,7 +34,7 @@ trait CreateAndEdit
 
     public function setupForm()
     {
-        $this->form->configSet(null, $this->config());
+        $this->form->setConfig(null, $this->config());
 
         $this->form->buttons()->put('cancel', [ 'url' => $this->url() ]);
         $this->form->buttons()->put('submit');
@@ -56,9 +57,9 @@ trait CreateAndEdit
     }
 
 
-    public function edit($primaryKey)
+    public function edit()
     {
-        $model = $this->findModelOrFail($primaryKey);
+        $model = $this->findModelOrFail($this->route('id'));
 
         $this->authorize('edit', $model);
 
@@ -78,18 +79,15 @@ trait CreateAndEdit
 
     private function redirectToFormAfterApply()
     {
-        $this->form()->succeed(function () {
-            if ( ! $this->input('_apply')) {
+        $this->form()->succeed(function ($form) {
+            if ( ! $form->data('_apply')) {
                 return;
             }
 
             $url = request()->fullUrl();
 
-            if ($this->form()->model()->wasRecentlyCreated) {
-                $url = urlbuilder($url)->pop('/create')->append([
-                    'edit',
-                    $this->form()->model()->getKey()
-                ])->compile();
+            if ($form->model()->wasRecentlyCreated) {
+                $url = $this->urlTo('edit', $form->model());
             }
 
             abort(301, '', [ 'Location' => $url ]);

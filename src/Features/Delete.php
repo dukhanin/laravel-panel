@@ -2,15 +2,14 @@
 
 namespace Dukhanin\Panel\Features;
 
-use Illuminate\Support\Facades\Request;
-
 trait Delete
 {
 
-    protected static function routesFeatureDelete(array $options = null)
+    protected static function routesForDelete(array $options = null)
     {
-        app('router')->get('delete/{id}', "{$options['class']}@delete")->name($options['as'] ? "{$options['as']}.delete" : null);
-        app('router')->post('groupDelete', "{$options['class']}@groupDelete")->name($options['as'] ? "{$options['as']}.groupDelete" : null);
+        static::routesMeta()->get('delete/{id}', 'delete');
+
+        static::routesMeta()->post('group-delete', 'groupDelete');
     }
 
 
@@ -22,9 +21,9 @@ trait Delete
     }
 
 
-    public function delete($primaryKey)
+    public function delete()
     {
-        $model = $this->findModelOrFail($primaryKey);
+        $model = $this->findModelOrFail($this->route('id'));
 
         $this->authorize('delete', $model);
 
@@ -36,7 +35,7 @@ trait Delete
 
     public function groupDelete()
     {
-        $group = $this->findModelsOrFail(Request::input('group'));
+        $group = $this->findModelsOrFail($this->input('group'));
 
         $this->authorize('group-delete', $group);
 

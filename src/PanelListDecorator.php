@@ -122,6 +122,10 @@ class PanelListDecorator
 
     public function renderAction($action, ...$overwrites)
     {
+        if ($this->denies($action['key'])) {
+            return '';
+        }
+
         html_tag_add_class($action, $action['key']);
 
         return html_tag($action, ...$overwrites);
@@ -130,6 +134,10 @@ class PanelListDecorator
 
     public function renderModelAction($action, $model = null, ...$overwrites)
     {
+        if ($this->denies($action['key'], $model)) {
+            return '';
+        }
+
         $action = html_tag_add_class($action, $action['key']);
 
         return html_tag($action, ...$overwrites);
@@ -138,6 +146,10 @@ class PanelListDecorator
 
     public function renderGroupAction($action, ...$overwrites)
     {
+        if ($this->denies($action['key'])) {
+            return '';
+        }
+
         $action = html_tag_add_class($action, $action['key']);
 
         return html_tag($action, ...$overwrites);
@@ -192,14 +204,10 @@ class PanelListDecorator
 
     public function linkCell(&$cell, &$row, $content, $defaultAction = 'edit')
     {
-        $model = $cell['model'];
-
         if ($action = value(array_get($cell, 'column.action'))) {
             $action = $action === true ? $defaultAction : $action;
-            $url    = $this->allows($action, $model) ? urlbuilder($this->url())->append([
-                $action,
-                $model->id
-            ])->compile() : null;
+
+            $url = $this->urlTo($action, $row['model']);
         } else {
             $url = value(array_get($cell, 'column.url'));
         }

@@ -565,7 +565,7 @@ class PanelForm
     }
 
 
-    public function configSet($key, $value)
+    public function setConfig($key, $value)
     {
         if (is_null($this->config)) {
             $this->initConfig();

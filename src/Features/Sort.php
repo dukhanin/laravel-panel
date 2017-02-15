@@ -17,11 +17,13 @@ trait Sort
     protected $sortNewModelToTop;
 
 
-    protected static function routesFeatureSort(array $options = null)
+    protected static function routesForSort(array $options = null)
     {
-        app('router')->get('sortUp', "{$options['class']}@sortUp")->name($options['as'] ? "{$options['as']}.sortUp" : null);
-        app('router')->get('sortDown', "{$options['class']}@sortDown")->name($options['as'] ? "{$options['as']}.sortDown" : null);
-        app('router')->post('sortSlice', "{$options['class']}@sortSlice")->name($options['as'] ? "{$options['as']}.sortSlice" : null);
+        static::routesMeta()->get('sort-up', 'sortUp');
+
+        static::routesMeta()->get('sort-down', 'sortDown');
+
+        static::routesMeta()->post('sort-slice', 'sortSlice');
     }
 
 
@@ -35,15 +37,15 @@ trait Sort
     }
 
 
-    public function sortUp($primaryKey)
+    public function sortUp()
     {
-        return $this->sort($primaryKey, 'up');
+        return $this->sort($this->route('id'), 'up');
     }
 
 
-    public function sortDown($primaryKey)
+    public function sortDown()
     {
-        return $this->sort($primaryKey, 'down');
+        return $this->sort($this->route('id'), 'down');
     }
 
 

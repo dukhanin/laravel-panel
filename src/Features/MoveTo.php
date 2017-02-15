@@ -8,10 +8,9 @@ trait MoveTo
     protected $moveToOptions;
 
 
-    protected static function routesFeatureMoveTo(array $options = null)
+    protected static function routesForMoveTo(array $options = null)
     {
-        app('router')->post('groupMoveTo/{id}',
-            "{$options['class']}@groupMoveTo")->name($options['as'] ? "{$options['as']}.groupMoveTo" : null);
+        static::routesMeta()->post('group-move-to/{id}', 'groupMoveTo');
     }
 
 
