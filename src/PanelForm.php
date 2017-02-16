@@ -31,8 +31,6 @@ class PanelForm
 
     protected $view;
 
-    protected $layout;
-
     protected $validator;
 
     protected $url;
@@ -70,6 +68,16 @@ class PanelForm
     public function initLabel()
     {
         $this->label = '';
+    }
+
+
+    public function initUploadDirectory()
+    {
+        $this->uploadDirectory = 'public/' . date('Y-m') . '/' . date('d');
+
+        if ( ! Storage::exists($this->uploadDirectory)) {
+            Storage::makeDirectory($this->uploadDirectory);
+        }
     }
 
 
@@ -132,25 +140,9 @@ class PanelForm
     }
 
 
-    public function initLayout()
-    {
-        $this->layout = $this->config('layout');
-    }
-
-
     public function initInputName()
     {
         $this->inputName = 'model';
-    }
-
-
-    public function initUploadDirectory()
-    {
-        $this->uploadDirectory = 'public/' . date('Y-m') . '/' . date('d');
-
-        if ( ! Storage::exists($this->uploadDirectory)) {
-            Storage::makeDirectory($this->uploadDirectory);
-        }
     }
 
 
