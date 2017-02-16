@@ -53,20 +53,20 @@ Run sample migrations and seeders
 
 ```shell
 php artisan migrate
-php artisan db:seed --class=PanelSampleSeeder
+php artisan db:seed --class=SampleSeeder
 ```
 
 Require routes/panel-sample.php from your routes/web.php
 
 ```php
-require 'panel-sample.php';
+require 'sample.php';
 ```
 
-Go and check out */panel-sample* url in your app for sample panels
+Go and check out */sample* url in your app for sample panels
 
 Sample classes are located in your app directory:
 
 ```shell
-app/Http/Controllers/PanelSampleController.php
-app/Panel/Sample/
+app/Http/Controllers/SampleController.php
+app/Sample/
 ```
