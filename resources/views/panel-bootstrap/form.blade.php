@@ -6,11 +6,13 @@
 @endpush
 
 @push('scripts')
-<script>
-    $(function(){
+    <script src="{{ URL::asset('assets/panel-bootstrap/js/panel.js') }}"></script>
 
-    })
-</script>
+    <script>
+        $(function(){
+            panel.labels = {!! json_encode( trans('panel') ) !!};
+        });
+    </script>
 @endpush
 
 @section('content')

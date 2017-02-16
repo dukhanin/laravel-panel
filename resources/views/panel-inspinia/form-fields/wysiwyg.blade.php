@@ -3,8 +3,8 @@ $errors = $form->fieldErrors($field['key']);
 $id     = 'wysiwyg-' . mt_rand(1, 1000);
 
 $config = config('wysiwyg.default');
-$config['images_upload_url'] = urlbuilder($config['images_upload_url'])->query([ 'directory' => $form->getUploadDirectory() ])->compile();
-$config['filemanager_subfolder'] = $form->getUploadDirectory();
+$config['images_upload_url'] = urlbuilder($config['images_upload_url'])->query([ 'directory' => $form->uploadDirectory() ])->compile();
+$config['filemanager_subfolder'] = $form->uploadDirectory();
 ?>
 
 <div class="form-group @if( ! empty($errors) )  has-error @endif">

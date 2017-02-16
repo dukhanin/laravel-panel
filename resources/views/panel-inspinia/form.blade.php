@@ -1,16 +1,18 @@
 @extends($form->config('layout'))
 
 @push('styles')
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.css') }}"/>
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.form.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.css') }}"/>
+    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.form.css') }}"/>
 @endpush
 
 @push('scripts')
-<script>
-    $(function(){
-        panel.labels = {!! json_encode( trans('panel') ) !!};
-    });
-</script>
+    <script src="{{ URL::asset('assets/panel-inspinia/js/panel.js') }}"></script>
+
+    <script>
+        $(function(){
+            panel.labels = {!! json_encode( trans('panel') ) !!};
+        });
+    </script>
 @endpush
 
 @section('content')
