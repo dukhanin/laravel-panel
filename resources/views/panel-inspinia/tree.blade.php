@@ -164,14 +164,13 @@
                             </tbody>
                         @endif
                     </table>
-
-                    @if($panel->paginator())
-                        <div class="pull-right">
-                            {!! $panel->paginator()->render() !!}
-                        </div>
-                    @endif
-
                 </div>
+
+                @if($panel->paginator())
+                    <div class="text-right">
+                        {!! $panel->paginator()->render() !!}
+                    </div>
+                @endif
 
                 {{ csrf_field() }}
             </form>
