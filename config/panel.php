@@ -1,8 +1,8 @@
 <?php
 
 return [
-    'views'     => 'panel-bootstrap',
-    'layout'    => 'layouts.app',
+    'views'     => 'panel-inspinia',
+    'layout'    => 'panel-inspinia.layout',
     'labels'    => [
         'list-empty'        => 'panel.labels.list-empty',
         'move-to'           => 'panel.labels.move-to',
@@ -26,22 +26,22 @@ return [
         'create'        => [
             'class'  => 'btn btn-default btn-sm',
             'label'  => 'panel.actions.create',
-            'icon'   => 'fa fa-file-o',
             'action' => 'create',
+            'icon'   => 'fa fa-file-o'
         ],
         'edit'          => [
             'class'     => 'btn btn-default btn-xs',
             'label'     => 'panel.actions.edit',
+            'action'    => 'edit',
             'icon'      => 'fa fa-edit',
-            'icon-only' => true,
-            'action'    => 'edit'
+            'icon-only' => true
         ],
         'delete'        => [
             'class'     => 'btn btn-danger btn-xs',
             'label'     => 'panel.actions.delete',
+            'action'    => 'delete',
             'icon'      => 'fa fa-trash-o',
             'icon-only' => true,
-            'action'    => 'delete',
             'confirm'   => 'panel.confirm.delete'
         ],
         'enable'        => function ($panel, $model) {
@@ -51,17 +51,17 @@ return [
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.disable',
+                    'action'    => 'disable',
                     'icon'      => 'fa fa-eye',
-                    'icon-only' => true,
-                    'action'    => 'disable'
+                    'icon-only' => true
                 ];
             } else {
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.enable',
+                    'action'    => 'enable',
                     'icon'      => 'fa fa-eye-slash',
-                    'icon-only' => true,
-                    'action'    => 'enable'
+                    'icon-only' => true
                 ];
             }
         },
@@ -72,48 +72,50 @@ return [
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.enable',
-                    'icon'      => 'fa fa-eye-slash',
-                    'icon-only' => true,
                     'action'    => 'enable',
+                    'icon'      => 'fa fa-eye-slash',
+                    'icon-only' => true
                 ];
             } else {
                 return [
                     'class'     => 'btn btn-default btn-xs',
                     'label'     => 'panel.actions.disable',
-                    'icon'      => 'fa fa-eye',
-                    'icon-only' => true,
                     'action'    => 'disable',
+                    'icon'      => 'fa fa-eye',
+                    'icon-only' => true
                 ];
             }
         },
-        'append'        => [
-            'class'     => 'btn btn-default btn-xs',
-            'label'     => 'panel.actions.append',
-            'icon'      => 'fa fa-plus',
-            'icon-only' => true,
-            'action'    => 'create'
-        ],
+        'append'        => function ($panel, $model) {
+            return [
+                'class'     => 'btn btn-default btn-xs',
+                'label'     => 'panel.actions.append',
+                'action'    => 'create',
+                'icon'      => 'fa fa-plus',
+                'icon-only' => true
+            ];
+        },
         'group-enable'  => [
             'class'     => 'btn btn-default btn-sm',
             'label'     => 'panel.actions.group-enable',
+            'action'    => 'groupEnable',
             'icon'      => 'fa fa-eye',
-            'icon-only' => true,
-            'action'    => 'groupEnable'
+            'icon-only' => true
         ],
         'group-disable' => [
             'class'     => 'btn btn-default btn-sm',
             'label'     => 'panel.actions.group-disable',
+            'action'    => 'groupDisable',
             'icon'      => 'fa fa-eye-slash',
-            'icon-only' => true,
-            'action'    => 'groupDisable'
+            'icon-only' => true
         ],
         'group-delete'  => [
             'class'     => 'btn btn-default btn-sm',
             'label'     => 'panel.actions.group-delete',
+            'action'    => 'groupDelete',
             'icon'      => 'fa fa-trash-o',
             'icon-only' => true,
-            'confirm'   => 'panel.confirm.group-delete',
-            'action'    => 'groupDelete'
+            'confirm'   => 'panel.confirm.group-delete'
         ]
     ],
     'buttons'   => [
@@ -121,7 +123,7 @@ return [
             'class' => 'btn-primary',
             'type'  => 'submit',
             'label' => 'panel.buttons.submit',
-            'icon'  => 'submit',
+            'icon'  => 'submit'
         ],
         'apply'   => [
             'class' => 'btn-primary',

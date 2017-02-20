@@ -212,7 +212,8 @@ trait PanelListTrait
         if (str_contains($action, '@')) {
             $url = urlbuilder(action($action, $params));
         } elseif ($this instanceof Controller) {
-            $url = urlbuilder(method_exists($this, $action) ? action('\\' . get_called_class() . '@' . $action, $params) : "#{$action}");
+            $url = urlbuilder(method_exists($this, $action) ? action('\\' . get_called_class() . '@' . $action,
+                $params) : "{$action}");
         } else {
             $url = urlbuilder($this->url())->append([ $params instanceof UrlRoutable ? $params->getRouteKey() : $params ]);
         }
