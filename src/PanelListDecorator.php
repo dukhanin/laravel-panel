@@ -178,7 +178,7 @@ class PanelListDecorator
         $tag   = $column;
         $query = [ ];
 
-        if (is_callable([ $this->panel, 'order' ]) && ! empty( $column['order'] )) {
+        if (method_exists($this->panel, 'order') && ! empty( $column['order'] )) {
             $thisColumnOrdered = $this->order() == $column['key'];
             $orderedDesc       = $this->orderDesc();
             $resetAnyOrder     = $thisColumnOrdered && $orderedDesc;

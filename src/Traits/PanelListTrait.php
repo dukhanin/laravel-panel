@@ -197,8 +197,8 @@ trait PanelListTrait
 
     public function urlTo($action, $params = null, array $apply = [ '*' ])
     {
-        $query = [];
-        foreach($apply as $key => $value) {
+        $query = [ ];
+        foreach ($apply as $key => $value) {
             foreach ($apply as $key => $value) {
                 if (is_integer($key)) {
                     continue;
@@ -212,7 +212,7 @@ trait PanelListTrait
         if (str_contains($action, '@')) {
             $url = urlbuilder(action($action, $params));
         } elseif ($this instanceof Controller) {
-            $url = urlbuilder(action('\\' . get_called_class() . '@' . $action, $params));
+            $url = urlbuilder(method_exists($this, $action) ? action('\\' . get_called_class() . '@' . $action, $params) : "#{$action}");
         } else {
             $url = urlbuilder($this->url())->append([ $params instanceof UrlRoutable ? $params->getRouteKey() : $params ]);
         }
