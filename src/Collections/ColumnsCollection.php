@@ -2,9 +2,9 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\ResolvedCollection;
+use Dukhanin\Support\ExtendedCollection;
 
-class ColumnsCollection extends ResolvedCollection
+class ColumnsCollection extends ExtendedCollection
 {
 
     protected $panel;
@@ -16,7 +16,7 @@ class ColumnsCollection extends ResolvedCollection
     }
 
 
-    public function resolveItemOnGet($key, $column)
+    public function resolve($column, $key)
     {
         $valid = [
             'key'     => strval($key),

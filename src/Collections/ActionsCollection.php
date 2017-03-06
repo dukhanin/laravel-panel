@@ -2,9 +2,9 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\ResolvedCollection;
+use Dukhanin\Support\ExtendedCollection;
 
-class ActionsCollection extends ResolvedCollection
+class ActionsCollection extends ExtendedCollection
 {
 
     protected $panel;
@@ -16,25 +16,13 @@ class ActionsCollection extends ResolvedCollection
     }
 
 
-    public function resolveItemOnGet($key, $action)
+    public function resolve($action, $key)
     {
         if (is_callable($action)) {
             return $action;
         }
 
         return $this->validAction($key, $action);
-    }
-
-
-    public function resolveItemOnIteration($key, $action)
-    {
-        if (is_callable($action)) {
-            $action = call_user_func($action, $this->panel);
-
-            return $this->validAction($key, $action);
-        }
-
-        return $action;
     }
 
 
@@ -59,7 +47,7 @@ class ActionsCollection extends ResolvedCollection
     protected function validAction($key, $action, $model = null)
     {
         if ( ! is_array($action)) {
-            $action = [ ];
+            $action = [];
         }
 
         $action = array_merge([
@@ -73,12 +61,12 @@ class ActionsCollection extends ResolvedCollection
 
         $action['label'] = trans($action['label']);
 
-        if ( ! empty( $action['confirm'] )) {
+        if ( ! empty($action['confirm'])) {
             $action['confirm'] = trans($action['confirm']);
         }
 
-        if ( ! isset( $action['url'] )) {
-            $action['url'] = isset( $action['action'] ) ? $this->panel->urlTo($action['action'], $model) : '#' . $key;
+        if ( ! isset($action['url'])) {
+            $action['url'] = isset($action['action']) ? $this->panel->urlTo($action['action'], $model) : '#' . $key;
         }
 
         return $action;

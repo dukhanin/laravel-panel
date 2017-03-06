@@ -2,9 +2,9 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\ResolvedCollection;
+use Dukhanin\Support\ExtendedCollection;
 
-class FieldsCollection extends ResolvedCollection
+class FieldsCollection extends ExtendedCollection
 {
 
     protected $panel;
@@ -16,7 +16,7 @@ class FieldsCollection extends ResolvedCollection
     }
 
 
-    public function resolveItemOnSet($key, $field)
+    public function resolve($field, $key)
     {
         if ( ! is_null($key)) {
             $key = strval($key);

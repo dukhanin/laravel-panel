@@ -2,10 +2,13 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\ResolvedCollection;
+use Dukhanin\Support\Traits\ResolvedCollection;
+use Illuminate\Support\Collection;
 
-class RoutesMetaCollection extends ResolvedCollection
+class RoutesMetaCollection extends Collection
 {
+
+    use ResolvedCollection;
 
     protected $class;
 
@@ -15,6 +18,26 @@ class RoutesMetaCollection extends ResolvedCollection
     public function setClass($class)
     {
         $this->class = $class;
+    }
+
+
+    public function resolve($meta, $key)
+    {
+        if (is_callable($meta)) {
+            return $meta;
+        }
+
+        if ( ! is_array($meta)) {
+            $meta = [];
+        }
+
+        $meta = array_merge([
+            'methods' => [],
+            'uri'     => null,
+            'action'  => null,
+        ], $meta);
+
+        return $meta;
     }
 
 
@@ -34,26 +57,6 @@ class RoutesMetaCollection extends ResolvedCollection
 
             return array_except($options, [ 'as', 'prefix' ]) + $meta;
         });
-    }
-
-
-    public function resolveItemOnSet($key, $meta)
-    {
-        if (is_callable($meta)) {
-            return $meta;
-        }
-
-        if ( ! is_array($meta)) {
-            $meta = [ ];
-        }
-
-        $meta = array_merge([
-            'methods' => [ ],
-            'uri'     => null,
-            'action'  => null,
-        ], $meta);
-
-        return $meta;
     }
 
 
