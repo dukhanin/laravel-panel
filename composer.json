@@ -2,7 +2,7 @@
     "name": "dukhanin/laravel-panel",
     "description": "Laravel 5 panel constructor",
     "keywords": ["laravel", "panel", "form", "admin", "lists", "list"],
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "authors": [
         {
             "name": "Anton Dukhanin",
@@ -11,8 +11,8 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "laravel/framework": "~5.3",
-        "dukhanin/laravel-support": "1.4.x-dev"
+        "laravel/framework": "~5.4",
+        "dukhanin/laravel-support": "~1.4"
     },
     "autoload": {
         "psr-4": {
