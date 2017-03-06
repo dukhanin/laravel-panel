@@ -12,14 +12,13 @@
     "require": {
         "php": ">=5.5.9",
         "laravel/framework": "~5.3",
-        "dukhanin/laravel-support": "dev-master"
+        "dukhanin/laravel-support": "1.4.x-dev"
     },
     "autoload": {
         "psr-4": {
             "Dukhanin\\Panel\\": "src/"
         }
-    },
-    "minimum-stability": "stable"
+    }
 }
 
 
