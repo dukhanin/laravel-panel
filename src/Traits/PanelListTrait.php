@@ -612,8 +612,7 @@ trait PanelListTrait
 
     static protected function featuresRoutes()
     {
-
-        foreach (class_uses_recursive($class = get_called_class() as $trait) {
+        foreach (class_uses_recursive($class = get_called_class()) as $trait) {
             if (is_callable([ $class, $method = 'routesFor' . class_basename($trait) ])) {
                 $class::$method();
             }
