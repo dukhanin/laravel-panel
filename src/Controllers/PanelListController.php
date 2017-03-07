@@ -52,6 +52,13 @@ abstract class PanelListController extends Controller
         }
 
         return in_array(strtolower($methodName), array_map('strtolower', (array) $checkActions));
-
     }
+
+
+    protected function urlBuilderToLocalAction($action, $params = null)
+    {
+        return urlbuilder(method_exists($this, $action) ? action('\\' . get_called_class() . '@' . $action,
+            $params) : $action);
+    }
+
 }

@@ -64,9 +64,7 @@ trait CreateAndEdit
 
     public function edit()
     {
-
-
-        $model = $this->findModelOrFail($this->route('id'));
+        $model = $this->findModelOrFail($this->parameter('id'));
 
         $this->authorize('edit', $model);
 

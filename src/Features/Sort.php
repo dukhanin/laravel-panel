@@ -39,13 +39,13 @@ trait Sort
 
     public function sortUp()
     {
-        return $this->sort($this->route('id'), 'up');
+        return $this->sort($this->parameter('id'), 'up');
     }
 
 
     public function sortDown()
     {
-        return $this->sort($this->route('id'), 'down');
+        return $this->sort($this->parameter('id'), 'down');
     }
 
 

@@ -50,7 +50,7 @@ trait DisableAndEnable
 
     public function enable()
     {
-        $model = $this->findModelOrFail($this->route('id'));
+        $model = $this->findModelOrFail($this->parameter('id'));
 
         $this->authorize('enable', $model);
 
@@ -63,7 +63,7 @@ trait DisableAndEnable
 
     public function disable()
     {
-        $model = $this->findModelOrFail($this->route('id'));
+        $model = $this->findModelOrFail($this->parameter('id'));
 
         $this->authorize('disable', $model);
 
