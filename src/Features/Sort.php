@@ -55,7 +55,7 @@ trait Sort
 
         $models = $this->findModelsOrFail($group);
 
-        $this->authorize('group-enable', $group);
+        $this->authorize('group-enable', $models);
 
         $primaryKeyName = $this->model()->getKeyName();
         $index          = intval($models->min('index'));

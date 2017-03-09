@@ -260,7 +260,7 @@ panel.list.prototype.initSortable = function () {
                 var url = this.url.split('?');
 
                 panel.ajax({
-                    url:    url[0] + '/sortSlice' + (url.length > 1 ? '?' + url[1] : ''),
+                    url:    url[0] + '/sort-slice' + (url.length > 1 ? '?' + url[1] : ''),
                     method: 'post',
                     data:   {group: orderedList}
                 });
