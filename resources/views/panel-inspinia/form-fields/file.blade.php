@@ -13,7 +13,7 @@ $file = \App\File\File::find($value);
     </label>
 
     <div class="col-lg-10 fileupload-container">
-        {!! HTML::renderTag(
+        {!! html_tag(
             'input#' . $id,
             array_except($field, ['key', 'type', 'label']),
             [
