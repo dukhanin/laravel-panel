@@ -1,35 +1,31 @@
-body .panel-list .depth-1 .panel-list-data-cell {
+body .panel-list .depth-1 .panel-list-depth-cell {
     padding-left: 6%;
 }
 
-body .panel-list .depth-2 .panel-list-data-cell {
+body .panel-list .depth-2 .panel-list-depth-cell {
     padding-left: 12%;
 }
 
-body .panel-list .depth-3 .panel-list-data-cell {
+body .panel-list .depth-3 .panel-list-depth-cell {
     padding-left: 18%;
 }
 
-body .panel-list .depth-4 .panel-list-data-cell {
+body .panel-list .depth-4 .panel-list-depth-cell {
     padding-left: 24%;
 }
 
-body .panel-list .depth-5 .panel-list-data-cell {
+body .panel-list .depth-5 .panel-list-depth-cell {
     padding-left: 30%;
 }
 
-body .panel-list .depth-6 .panel-list-data-cell {
+body .panel-list .depth-6 .panel-list-depth-cell {
     padding-left: 36%;
 }
 
-body .panel-list .depth-7 .panel-list-data-cell {
+body .panel-list .depth-7 .panel-list-depth-cell {
     padding-left: 42%;
 }
 
-body .panel-list .depth-8 .panel-list-data-cell {
+body .panel-list .depth-8 .panel-list-depth-cell {
     padding-left: 48%;
-}
-
-body .panel-list tr .panel-list-data-cell ~ .panel-list-data-cell {
-    padding-left: 12px;
 }
