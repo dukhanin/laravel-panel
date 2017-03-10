@@ -51,6 +51,7 @@ class PanelServiceProvider extends ServiceProvider
         $this->publishes([
             $this->path('config/panel.php')  => config_path('/panel.php'),
             $this->path('config/upload.php') => config_path('/upload.php'),
+            $this->path('config/files.php') => config_path('/files.php'),
         ], 'config');
     }
 
