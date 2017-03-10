@@ -5,6 +5,8 @@ namespace Dukhanin\Panel\Traits;
 use Dukhanin\Panel\Collections\ActionsCollection;
 use Dukhanin\Panel\Collections\ColumnsCollection;
 use Dukhanin\Panel\Collections\RoutesMetaCollection;
+use Dukhanin\Panel\Controllers\PanelListController;
+use Dukhanin\Panel\Controllers\PanelTreeController;
 use Dukhanin\Panel\PanelListDecorator;
 use Illuminate\Contracts\Routing\UrlRoutable;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -41,7 +43,7 @@ trait PanelListTrait
 
     protected $config;
 
-    protected static $routesMeta = [ ];
+    protected static $routesMeta = [];
 
 
     public function __construct()
@@ -177,7 +179,7 @@ trait PanelListTrait
     public function url(array $apply = [ '*' ])
     {
 
-        if (empty( $this->url )) {
+        if (empty($this->url)) {
             $this->initUrl();
         }
 
@@ -187,7 +189,7 @@ trait PanelListTrait
 
         foreach ($apply as $key => $value) {
             if (is_integer($key)) {
-                unset( $apply[$key] );
+                unset($apply[$key]);
             }
         }
 
@@ -197,30 +199,55 @@ trait PanelListTrait
 
     public function urlTo($action, $params = null, array $apply = [ '*' ])
     {
-        $query = [ ];
-        foreach ($apply as $key => $value) {
-            foreach ($apply as $key => $value) {
-                if (is_integer($key)) {
-                    continue;
-                }
-
-                $query[$key] = $value;
-                unset( $apply[$key] );
-            }
-        }
+        list($query, $apply) = $this->splitUrlModifiersToQueryAndApply($apply);
 
         if (str_contains($action, '@')) {
             $url = urlbuilder(action($action, $params));
-        } elseif ($this instanceof Controller) {
-            $url = urlbuilder(method_exists($this, $action) ? action('\\' . get_called_class() . '@' . $action,
-                $params) : "{$action}");
         } else {
-            $url = urlbuilder($this->url())->append([ $params instanceof UrlRoutable ? $params->getRouteKey() : $params ]);
+            $url = $this->urlBuilderToLocalAction($action, $params);
         }
 
         $this->apply($url, $apply, 'applyUrl');
 
         return $url->query($query)->compile();
+    }
+
+
+    protected function splitUrlModifiersToQueryAndApply(array $apply)
+    {
+        $query = [];
+
+        foreach ($apply as $key => $value) {
+            if (is_integer($key)) {
+                continue;
+            }
+
+            $query[$key] = $value;
+
+            unset($apply[$key]);
+        }
+
+        return [ $query, $apply ];
+    }
+
+
+    protected function urlBuilderToLocalAction($action, &$params = null)
+    {
+        $url = urlbuilder($this->url());
+
+        $meta = call_user_func([ get_called_class(), 'routesMeta' ])->where('action', $action)->first();
+
+        if ( ! $meta) {
+            return $url;
+        }
+
+        $params = $params instanceof UrlRoutable ? [ 'id' => $params->getRouteKey() ] : $params;
+
+        $uri = preg_replace_callback('#{([a-z0-9_-]+).*?}#', function ($matches) use ($params) {
+            return isset($params[$matches[1]]) ? $params[$matches[1]] : '';
+        }, $meta['uri']);
+
+        return $url->append($uri);
     }
 
 
@@ -264,14 +291,14 @@ trait PanelListTrait
     }
 
 
-    public function total(array $apply = [ ])
+    public function total(array $apply = [])
     {
         $apply[] = '!page';
 
         $builder = $this->query($apply);
 
-        $builder->getQuery()->orders      = [ ];
-        $builder->getQuery()->unionOrders = [ ];
+        $builder->getQuery()->orders      = [];
+        $builder->getQuery()->unionOrders = [];
 
         return $builder->count();
     }
@@ -353,9 +380,15 @@ trait PanelListTrait
     }
 
 
-    public function route($key = null)
+    public function parameter($key, $default = null)
     {
-        return array_get(request()->route()->parameters(), $key);
+        return request()->route()->parameter($key, $default);
+    }
+
+
+    public function parameters()
+    {
+        return request()->route()->parameters();
     }
 
 
@@ -383,7 +416,7 @@ trait PanelListTrait
 
     public function findModelsOrFail($primaryKeys)
     {
-        if (empty( $collection = $this->findModels($primaryKeys) )) {
+        if (empty($collection = $this->findModels($primaryKeys))) {
             throw new ModelNotFoundException;
         }
 
@@ -391,7 +424,7 @@ trait PanelListTrait
     }
 
 
-    public function allows($ability, $arguments = [ ])
+    public function allows($ability, $arguments = [])
     {
         $policy = $this->policy();
 
@@ -403,14 +436,14 @@ trait PanelListTrait
             return $policy;
         }
 
-        if (empty( $arguments )) {
+        if (empty($arguments)) {
             $arguments = [ $this->model() ];
         }
 
         if (starts_with($ability, 'group-')) {
             $ability = preg_replace('/^group-/', '', $ability);
 
-            if (empty( $arguments )) {
+            if (empty($arguments)) {
                 $arguments = [ $this->model() ];
             }
 
@@ -431,13 +464,13 @@ trait PanelListTrait
     }
 
 
-    public function denies($ability, $arguments = [ ])
+    public function denies($ability, $arguments = [])
     {
         return ! $this->allows($ability, $arguments);
     }
 
 
-    public function authorize($ability, $arguments = [ ])
+    public function authorize($ability, $arguments = [])
     {
         if ($this->denies($ability, $arguments)) {
             throw new AuthorizationException('This action is unauthorized.');
@@ -487,7 +520,7 @@ trait PanelListTrait
 
         $methodPrefix    = preg_replace('/^apply/i', '', $methodPrefix);
         $handlers        = array_map('strtolower', $list);
-        $handlersExclude = [ ];
+        $handlersExclude = [];
 
         foreach ($handlers as $key => $name) {
             if ( ! is_integer($key)) {
@@ -532,10 +565,14 @@ trait PanelListTrait
 
     static public function routesMeta()
     {
-        if ( ! isset( static::$routesMeta[$class = '\\' . get_called_class()] )) {
+        if ( ! isset(static::$routesMeta[$class = '\\' . get_called_class()])) {
             static::$routesMeta[$class] = new RoutesMetaCollection();
 
             static::$routesMeta[$class]->setClass($class);
+
+            static::routes();
+
+            static::featuresRoutes();
         }
 
         return static::$routesMeta[$class];
@@ -548,11 +585,6 @@ trait PanelListTrait
         $router  = app('router');
 
         $router->group(array_except($options, [ 'prefix', 'as' ]), function () use ($router, $options) {
-
-            static::routes($options);
-
-            static::featuresRoutes($options);
-
             foreach (static::routesMeta()->resolvedFor($options) as $meta) {
                 $router->match($meta['methods'], $meta['uri'],
                     $meta['action'])->name($meta['name'])->middleware($meta['middleware']);
@@ -566,7 +598,7 @@ trait PanelListTrait
         $validOptions = [
             'as'         => null,
             'prefix'     => null,
-            'middleware' => [ ],
+            'middleware' => [],
             'class'      => '\\' . get_called_class()
         ];
 
@@ -580,7 +612,7 @@ trait PanelListTrait
 
     static protected function featuresRoutes()
     {
-        foreach (class_uses($class = get_called_class()) as $trait) {
+        foreach (class_uses_recursive($class = get_called_class()) as $trait) {
             if (is_callable([ $class, $method = 'routesFor' . class_basename($trait) ])) {
                 $class::$method();
             }

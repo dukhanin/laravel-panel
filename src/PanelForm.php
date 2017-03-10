@@ -90,7 +90,7 @@ class PanelForm
     {
         if ($this->isSubmit()) {
             $this->initDataFromRequest();
-        } elseif ( ! empty( $this->model )) {
+        } elseif ( ! empty($this->model)) {
             $this->initDataFromModel();
         } else {
             $this->initDataDefault();
@@ -112,13 +112,13 @@ class PanelForm
 
     public function initDataDefault()
     {
-        $this->data = [ ];
+        $this->data = [];
     }
 
 
     public function initValidator()
     {
-        $this->validator = Validator::make([ ], [ ]);
+        $this->validator = Validator::make([], []);
     }
 
 
@@ -202,7 +202,7 @@ class PanelForm
 
     public function validator()
     {
-        if (empty( $this->validator )) {
+        if (empty($this->validator)) {
             $this->initValidator();
         }
 
@@ -252,6 +252,14 @@ class PanelForm
     }
 
 
+    public function addField($key, $field)
+    {
+        $this->fields->put($key, $field);
+
+        return $this;
+    }
+
+
     public function fieldView($field)
     {
         $options = [
@@ -280,7 +288,7 @@ class PanelForm
             return $this->inputName;
         }
 
-        $inputName = [ ];
+        $inputName = [];
         if ($this->inputName) {
             $inputName[] = trim($this->inputName, '.');
         }
@@ -299,7 +307,7 @@ class PanelForm
 
         $first = array_shift($inputName);
 
-        if (empty( $name )) {
+        if (empty($name)) {
             return $first;
         }
 
@@ -315,7 +323,7 @@ class PanelForm
     public function fieldErrors($name)
     {
         if ( ! $this->isSubmit()) {
-            return [ ];
+            return [];
         }
 
         return $this->validator()->errors()->get($name);
@@ -369,7 +377,7 @@ class PanelForm
 
     public function dataFromRequest($name = null, $default = null)
     {
-        return request()->input($this->inputName($name), [ ]);
+        return request()->input($this->inputName($name), []);
     }
 
 
@@ -385,7 +393,7 @@ class PanelForm
 
     public function dataDefault()
     {
-        return [ ];
+        return [];
     }
 
 

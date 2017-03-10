@@ -21,18 +21,25 @@ class ProductForm extends PanelForm
             'label'   => 'Section',
             'options' => Section::options()
         ]);
-        $this->addText('name', 'Name');
-        $this->addTextarea('description', 'Description');
 
-        /* $this->addFile('image', 'Name');
-        $this->addFiles('gallery', 'Name');
-        $this->addText('settings.one', 'Some extra setting one');
-        $this->addSelect('settings.two', [
-            'label'   => 'Some extra setting two',
-            'options' => Section::options()
+        $this->addText('name', 'Name');
+
+        $this->addFiles('images', [
+            'label'   => 'Image',
+            'directory' => 'products',
+            'resizes' => [
+                [
+                    'label' => 'Preview 100x100',
+                    'size'  => '100x100'
+                ],
+                [
+                    'label' => 'Square 50x50',
+                    'size'  => '50xx50'
+                ]
+            ]
         ]);
-        $this->addCheckbox('settings.three', 'Some extra setting three');
-        $this->addCheckbox('important', 'Important');*/
+
+        $this->addTextarea('description', 'Description');
 
         $this->addCheckbox('enabled', 'Enabled');
     }
@@ -40,7 +47,7 @@ class ProductForm extends PanelForm
 
     public function initValidator()
     {
-        $this->validator = Validator::make([],[
+        $this->validator = Validator::make([], [
             'name' => 'required'
         ]);
     }

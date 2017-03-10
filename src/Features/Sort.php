@@ -39,13 +39,13 @@ trait Sort
 
     public function sortUp()
     {
-        return $this->sort($this->route('id'), 'up');
+        return $this->sort($this->parameter('id'), 'up');
     }
 
 
     public function sortDown()
     {
-        return $this->sort($this->route('id'), 'down');
+        return $this->sort($this->parameter('id'), 'down');
     }
 
 
@@ -55,12 +55,12 @@ trait Sort
 
         $models = $this->findModelsOrFail($group);
 
-        $this->authorize('group-enable', $group);
+        $this->authorize('group-enable', $models);
 
         $primaryKeyName = $this->model()->getKeyName();
         $index          = intval($models->min('index'));
 
-        $orderedList = [ ];
+        $orderedList = [];
 
         foreach ($group as $modelKey) {
             $model = $models->where($primaryKeyName, $modelKey)->first();
@@ -76,7 +76,7 @@ trait Sort
         return response()->json([
             'error'    => 0,
             'success'  => true,
-            'messages' => [ ],
+            'messages' => [],
             'data'     => [
                 'list' => $orderedList
             ]
@@ -90,13 +90,13 @@ trait Sort
             return false;
         }
 
-        if ( ! $this->order) {
+        if ( empty($this->order)) {
             return true;
         }
 
         $columns = $this->columns();
 
-        if ( ! isset( $columns[$this->order]['order'] )) {
+        if ( isset($this->order) && ! isset($columns[$this->order]['order'])) {
             return false;
         }
 
@@ -112,7 +112,7 @@ trait Sort
 
         $query = $this->sortQuery();
 
-        $query->getQuery()->orders = [ ];
+        $query->getQuery()->orders = [];
 
         $modelIndex = intval($this->modelToSort->{$this->sortKey});
 

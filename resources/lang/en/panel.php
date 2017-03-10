@@ -5,7 +5,8 @@ return [
         'submit'  => 'Save',
         'confirm' => 'Confirm',
         'apply'   => 'Apply',
-        'cancel'  => 'Cancel'
+        'cancel'  => 'Cancel',
+        'close'   => 'Close'
     ],
     'actions'   => [
         'create'        => 'Create New',

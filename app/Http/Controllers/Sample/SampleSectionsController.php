@@ -9,6 +9,7 @@ use Dukhanin\Panel\Features\Delete;
 use Dukhanin\Panel\Features\EnableAndDisable;
 use Dukhanin\Panel\Features\Order;
 use Dukhanin\Panel\Controllers\PanelTreeController;
+use Dukhanin\Panel\Files\File;
 
 class SampleSectionsController extends PanelTreeController
 {
@@ -19,6 +20,29 @@ class SampleSectionsController extends PanelTreeController
     public function before()
     {
         view()->share('header', 'Panel Sample');
+    }
+
+
+    public function initColumns()
+    {
+
+        $this->columns->put('image', [
+            'label'   => 'Image',
+            'width'   => 100,
+            'action'  => 'edit',
+            'handler' => function ($section) {
+                if ($file = File::find($section->image)) {
+                    return $file->getResize('50x50')->img();
+                }
+            }
+        ]);
+
+        $this->columns->put('name', [
+            'label' => 'Section Name',
+            'action' => 'edit',
+            'depth' => true,
+            'order' => true
+        ]);
     }
 
 

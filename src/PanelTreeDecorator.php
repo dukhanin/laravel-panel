@@ -19,14 +19,21 @@ class PanelTreeDecorator extends PanelListDecorator
         }
 
         foreach ($this->queryBranch($parentKeyValue)->get() as $model) {
-            $row = [ 'model' => $model, 'cells' => [ ], 'class' => 'depth-' . $depth ];
+            $row = [ 'model' => $model, 'cells' => [], 'class' => 'depth-' . $depth ];
+
+            $depthedColumnsKeys = $this->depthedColumnsKeys();
 
             foreach ($this->columns() as $columnKey => $column) {
-                $cell            = &$row['cells'][$columnKey];
-                $cell            = [ 'model' => $model, 'column' => $column, ];
+                $cell = &$row['cells'][$columnKey];
+                $cell = [ 'model' => $model, 'column' => $column, ];
+
+                if (in_array($columnKey, $depthedColumnsKeys)) {
+                    html_tag_add_class($cell, 'panel-list-depth-cell');
+                }
+
                 $cell['content'] = $this->renderCell($cell, $row);
             }
-            unset( $cell );
+            unset($cell);
 
             $this->panel->eachRow($row);
 
@@ -35,6 +42,25 @@ class PanelTreeDecorator extends PanelListDecorator
             $this->initRowsRecursive($model->getKey(), $depth + 1);
         }
 
-        unset( $row );
+        unset($row);
     }
+
+
+    protected function depthedColumnsKeys()
+    {
+        if ($keys = array_keys($this->columns()->where('depth', true)->all())) {
+            return $keys;
+        }
+
+        if ($keys = array_keys($this->columns()->whereIn('key', [ 'name', 'title' ])->all())) {
+            return $keys;
+        }
+
+        if ($keys = array_first(array_keys($this->columns()->whereNot('depth', false)->all()))) {
+            return $keys;
+        }
+
+        return [];
+    }
+
 }

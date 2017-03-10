@@ -39,7 +39,7 @@ trait MoveTo
         $this->authorize('group-move-to', $group);
 
         foreach ($group as $model) {
-            $this->moveTo($model, $this->route('location'));
+            $this->moveTo($model, $this->parameter('location'));
         }
 
         return redirect()->to($this->url());

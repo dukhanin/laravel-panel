@@ -1,0 +1,21 @@
+
+.image-editor-preview {
+    text-align: center;
+}
+
+.col-md-9 > .image-editor-preview {
+    display: inline-block;
+    margin: 0 auto;
+}
+
+.image-editor-preview img {
+    max-width: 100%;
+}
+
+.image-editor-resizes {
+    margin-top: 20px;
+}
+
+.image-editor .modal-body {
+    min-height: 400px;
+}

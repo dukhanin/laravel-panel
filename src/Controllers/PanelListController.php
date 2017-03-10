@@ -39,19 +39,10 @@ abstract class PanelListController extends Controller
     }
 
 
-    public function method($checkActions = null)
+    protected function urlBuilderToLocalAction($action, $params = null)
     {
-        if ( ! ( $route = app('router')->current() )) {
-            return false;
-        }
-
-        $methodName = Str::parseCallback($route->getActionName())[1];
-
-        if (is_null($checkActions)) {
-            return $methodName;
-        }
-
-        return in_array(strtolower($methodName), array_map('strtolower', (array) $checkActions));
-
+        return urlbuilder(method_exists($this, $action) ? action('\\' . get_called_class() . '@' . $action,
+            $params) : '\\' . $action);
     }
+
 }
