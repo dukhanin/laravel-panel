@@ -9,9 +9,8 @@ $file      = \Dukhanin\Panel\Files\File::find($value);
 $resizes   = isset($resizes) ? (array) $resizes : [];
 $directory = isset($directory) ? strval($directory) : null;
 ?>
-
-<div class="panel-file form-group @if( ! empty($errors) ) has-error @endif">
-    <label class="col-lg-10 control-label">
+<div class="form-group @if( ! empty($errors) ) has-error @endif">
+    <label class="col-lg-10">
         {{ $label }}
     </label>
 
@@ -28,7 +27,7 @@ $directory = isset($directory) ? strval($directory) : null;
         @if ( ! empty( $errors ) )
             <div class="error-text">
                 @foreach($errors as $error)
-                    <span class="help-block m-b-none">
+                    <span class="help-block">
                         {{ $error }}
                     </span>
                 @endforeach
@@ -38,17 +37,17 @@ $directory = isset($directory) ? strval($directory) : null;
 </div>
 
 @push('styles')
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.inputFiles.css') }}"/>
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.imageEditor.css') }}"/>
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/cropper.min.css') }}"/>
+<link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.inputFiles.css') }}"/>
+<link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.imageEditor.css') }}"/>
+<link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/cropper.min.css') }}"/>
 @endpush
 
 @push('scripts')
-<script src="{{ URL::asset('assets/panel-inspinia/js/jquery-ui.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/cropper.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/panel.file.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/panel.imageEditor.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/panel.inputFiles.js') }}"></script>
+<script src="{{ URL::asset('assets/panel-bootstrap/js/jquery-ui.min.js') }}"></script>
+<script src="{{ URL::asset('assets/panel-bootstrap/js/cropper.min.js') }}"></script>
+<script src="{{ URL::asset('assets/panel-bootstrap/js/panel.file.js') }}"></script>
+<script src="{{ URL::asset('assets/panel-bootstrap/js/panel.imageEditor.js') }}"></script>
+<script src="{{ URL::asset('assets/panel-bootstrap/js/panel.inputFiles.js') }}"></script>
 
 
 <script type="text/javascript">
