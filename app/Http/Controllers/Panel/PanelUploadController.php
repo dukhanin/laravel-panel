@@ -128,8 +128,11 @@ class PanelUploadController extends Controller
 
     protected function getUploadedFiles()
     {
-        return collect(request()->file('file'))->map(function ($file) {
-            return new File($file);
+        return collect(request()->file('file'))->map(function ($uploadedFile) {
+            $file = new File();
+            $file->setBaseFile($uploadedFile);
+
+            return $file;
         });
     }
 
