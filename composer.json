@@ -18,7 +18,10 @@
     "autoload": {
         "psr-4": {
             "Dukhanin\\Panel\\": "src/"
-        }
+        },
+        "files": [
+            "src/helpers.php"
+        ]
     }
 }
 
