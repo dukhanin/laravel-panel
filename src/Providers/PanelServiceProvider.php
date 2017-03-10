@@ -51,7 +51,7 @@ class PanelServiceProvider extends ServiceProvider
         $this->publishes([
             $this->path('config/panel.php')  => config_path('/panel.php'),
             $this->path('config/upload.php') => config_path('/upload.php'),
-            $this->path('config/files.php') => config_path('/files.php'),
+            $this->path('config/files.php')  => config_path('/files.php'),
         ], 'config');
     }
 
@@ -110,6 +110,7 @@ class PanelServiceProvider extends ServiceProvider
             $this->path('app/Http/Controllers/Sample/')                              => app_path('Http/Controllers/Sample/'),
             $this->path('app/Sample')                                                => app_path('Sample/'),
             $this->path('public/assets/inspinia/')                                   => public_path('assets/inspinia/'),
+            $this->path('public/upload/')                                            => public_path('upload'),
             $this->path('config/panel-inspinia.php')                                 => config_path('panel-inspinia.php'),
             $this->path('config/panel-bootstrap.php')                                => config_path('panel-bootstrap.php'),
             $this->path('database/migrations/2016_10_12_065204_sample_products.php') => database_path('migrations/2016_10_12_065204_sample_products.php'),
@@ -131,8 +132,6 @@ class PanelServiceProvider extends ServiceProvider
         $this->app->singleton('upload', function ($app) {
             return new \Dukhanin\Panel\Files\UploadHelper;
         });
-
-        require $this->path('src/helpers.php');
     }
 
 

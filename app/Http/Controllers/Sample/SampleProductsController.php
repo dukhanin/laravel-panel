@@ -14,6 +14,7 @@ use Dukhanin\Panel\Features\Order;
 use Dukhanin\Panel\Features\Pages;
 use Dukhanin\Panel\Features\Sort;
 use Dukhanin\Panel\Controllers\PanelListController;
+use Dukhanin\Panel\Files\File;
 
 class SampleProductsController extends PanelListController
 {
@@ -30,6 +31,27 @@ class SampleProductsController extends PanelListController
     public function initConfig()
     {
         $this->config = config(request()->query('inspinia') ? 'panel-inspinia' : 'panel-bootstrap');
+    }
+
+
+    public function initColumns()
+    {
+        $this->columns->put('image', [
+            'label'   => 'Image',
+            'width'   => 100,
+            'action'  => 'edit',
+            'handler' => function ($product) {
+                if ($file = File::find(array_first($product->images))) {
+                    return $file->getResize('50x50')->img();
+                }
+            }
+        ]);
+
+        $this->columns->put('name', [
+            'label'  => 'Product Name',
+            'action' => 'edit',
+            'order'  => true
+        ]);
     }
 
 

@@ -27,7 +27,7 @@ class File extends Model
     ];
 
 
-    public function __construct($file = null)
+    public function __construct(array $attributes = [])
     {
         $this->attributes = [
             'parent_id' => null,
@@ -41,9 +41,7 @@ class File extends Model
             'settings'  => null
         ];
 
-        if ( ! is_null($file)) {
-            $this->setBaseFile($file, false);
-        }
+        parent::__construct($attributes);
     }
 
 
