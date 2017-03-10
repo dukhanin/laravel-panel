@@ -13,7 +13,7 @@ class SampleProducts extends Migration
             $table->increments('id');
             $table->string('name')->nullable();
             $table->text('description')->nullable();
-            $table->integer('image')->nullable();
+            $table->text('images')->nullable();
             $table->text('settings')->nullable();
             $table->tinyInteger('enabled')->nullable();
             $table->integer('index')->nullable();

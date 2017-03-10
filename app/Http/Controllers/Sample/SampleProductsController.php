@@ -65,7 +65,7 @@ class SampleProductsController extends PanelListController
 
     public function isSortEnabled()
     {
-        return ! empty( $this->category ) && Section::byParent($this->category)->count() == 0;
+        return ! empty($this->category) && Section::byParent($this->category)->count() == 0;
     }
 
 
@@ -122,7 +122,7 @@ class SampleProductsController extends PanelListController
 
     protected function applyQueryCategory($query)
     {
-        if ( ! empty( $this->category )) {
+        if ( ! empty($this->category)) {
             $query->bySectionRecursive($this->category);
         }
     }

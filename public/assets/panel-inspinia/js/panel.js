@@ -20,7 +20,7 @@ panel = {
         }
 
         if ('undefined' === typeof message.title) {
-            message.title = this.labels.confirm.default;
+            message.title = this.trans.confirm.default;
         }
 
         if ('undefined' === typeof message.text) {
@@ -36,11 +36,11 @@ panel = {
         }
 
         if ('undefined' === typeof message.confirmButtonText) {
-            message.confirmButtonText = this.labels.buttons.confirm;
+            message.confirmButtonText = this.trans.buttons.confirm;
         }
 
         if ('undefined' === typeof message.cancelButtonText) {
-            message.cancelButtonText = this.labels.buttons.cancel;
+            message.cancelButtonText = this.trans.buttons.cancel;
         }
 
         if ('undefined' === typeof message.closeOnConfirm) {

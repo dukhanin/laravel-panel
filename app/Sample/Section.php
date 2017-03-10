@@ -13,6 +13,7 @@ class Section extends EloquentModel
 
     protected $fillable = [
         'name',
+        'image',
         'description',
         'enabled',
         'parent_id'

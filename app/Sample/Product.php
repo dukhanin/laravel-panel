@@ -11,10 +11,12 @@ class Product extends EloquentModel
 
     protected $casts = [
         'settings' => 'array',
+        'images' => 'array'
     ];
 
     protected $fillable = [
         'name',
+        'images',
         'description',
         'settings',
         'important',

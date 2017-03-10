@@ -10,7 +10,7 @@
 
     <script>
         $(function(){
-            panel.labels = {!! json_encode( trans('panel') ) !!};
+            panel.trans = {!! json_encode( trans('panel') ) !!};
         });
     </script>
 @endpush
