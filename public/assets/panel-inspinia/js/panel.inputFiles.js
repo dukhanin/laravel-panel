@@ -66,22 +66,22 @@ panel.inputFiles.prototype.initInputImmidiateUpload = function () {
         data.append('directory', inputFiles.directory);
 
         panel.ajax({
-                                url:         inputFiles.url,
-                                data:        data,
-                                cache:       false,
-                                contentType: false,
-                                processData: false,
-                                type:        'POST',
-                                success:     function (filesData) {
-                                    if (!inputFiles.multiple) {
-                                        inputFiles.deleteFiles();
-                                    }
+                       url:         inputFiles.url,
+                       data:        data,
+                       cache:       false,
+                       contentType: false,
+                       processData: false,
+                       type:        'POST',
+                       success:     function (filesData) {
+                           if (!inputFiles.multiple) {
+                               inputFiles.deleteFiles();
+                           }
 
-                                    $(filesData).each(function (index, fileData) {
-                                        inputFiles.addFile(new panel.file(fileData));
-                                    });
-                                }
-                            });
+                           $(filesData).each(function (index, fileData) {
+                               inputFiles.addFile(new panel.file(fileData));
+                           });
+                       }
+                   });
 
         $(inputFiles).val('');
     });
@@ -103,7 +103,7 @@ panel.inputFiles.prototype.supplyFileObject = function (file) {
     file.initHtmlNode = function () {
         this.htmlNode = $('<div class="file-item" id="file-item-' + this.data.id + '"></div>');
 
-        if(this.isImage()) {
+        if (this.isImage()) {
             this.htmlNode.addClass('file-item-image').append(this.createImageHtmlNode());
         } else {
             this.htmlNode.append(this.createLinkHtmlNode());
