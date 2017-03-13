@@ -13,7 +13,7 @@ panel.list.prototype.init = function () {
     this.initCategories();
     this.initMoveTo();
 
-    console.log('panel.list.init');
+    console.log('panel-list-init');
 };
 
 panel.list.prototype.initDomProperties = function () {
