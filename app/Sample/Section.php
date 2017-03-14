@@ -2,12 +2,13 @@
 
 namespace App\Sample;
 
+use Dukhanin\Panel\Traits\PanelModel;
 use Illuminate\Database\Eloquent\Model as EloquentModel;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\DB;
 
 class Section extends EloquentModel
 {
+
+    use PanelModel;
 
     protected $table = 'sample_sections';
 
@@ -20,97 +21,27 @@ class Section extends EloquentModel
     ];
 
 
-    public function scopeOrdered($query)
+    public function scopeOrderedDefault($query)
     {
         $query->orderBy('index', 'asc');
     }
+    /*
 
+        public static function initProductsCountForSections($collection)
+        {
+            $sectionsIds = $collection->pluck('id');
 
-    public function scopeByParent($query, $parentId = 0)
-    {
-        if ($parentId instanceof Section) {
-            $parentId = $parentId->getKey();
-        }
-
-        $query->where('parent_id', intval($parentId));
-    }
-
-
-    public function scopeByParentRecursive($query, $parentId = 0)
-    {
-        if ($parentId instanceof Section) {
-            $parentId = $parentId->getKey();
-        }
-
-        $sectionsIds = static::collectChildSections([ 'parent_id' => $parentId ])->pluck('id')->push($parentId);
-
-        $query->whereIn('parent_id', $sectionsIds);
-    }
-
-
-    public static function options(array $settings = [ ])
-    {
-        $sections = static::collectChildSections($settings);
-
-        static::initProductsCountForSections($sections);
-
-        return $sections->map(function ($section) {
-            $pading = str_repeat('&nbsp;', 4 * $section->depth);
-            $count  = ! empty( $section->productsCount ) ? ' (' . $section->productsCount . ')' : '';
-
-            return $pading . $section->name . $count;
-        });
-    }
-
-
-    public static function collectChildSections(array $settings = [ ], Collection $collection = null)
-    {
-        $settings = array_merge([
-            'parent_id' => 0,
-            'depth'     => 0,
-            'except'    => [ ]
-        ], $settings);
-
-        if (is_null($collection)) {
-            $collection = collect();
-        }
-
-        if ( ! is_array($settings['except'])) {
-            $settings['except'] = [ $settings['except'] ];
-        }
-
-        foreach (Section::ordered()->byParent($settings['parent_id'])->get() as $section) {
-            if (in_array($section->id, $settings['except'])) {
-                continue;
+            if ($sectionsIds->isEmpty()) {
+                return;
             }
 
-            $section->depth = $settings['depth'];
+            $counts = Product::select('section_id', DB::raw('count(*) as c'))->whereIn('section_id',
+                $sectionsIds)->groupBy('section_id')->get()->pluck('c', 'section_id');
 
-            $collection[$section->id] = $section;
-
-            static::collectChildSections(array_merge($settings,
-                [ 'parent_id' => $section->id, 'depth' => $settings['depth'] + 1 ]), $collection);
-        }
-
-        return $collection;
-    }
+            foreach ($counts as $sectionId => $count) {
+                $collection[$sectionId]->productsCount = $count;
+            }
 
 
-    public static function initProductsCountForSections($collection)
-    {
-        $sectionsIds = $collection->pluck('id');
-
-        if ($sectionsIds->isEmpty()) {
-            return;
-        }
-
-        $counts = Product::select('section_id', DB::raw('count(*) as c'))->whereIn('section_id',
-            $sectionsIds)->groupBy('section_id')->get()->pluck('c', 'section_id');
-
-        foreach ($counts as $sectionId => $count) {
-            $collection[$sectionId]->productsCount = $count;
-        }
-
-
-    }
+        }*/
 }

@@ -11,7 +11,7 @@ class Product extends EloquentModel
 
     protected $casts = [
         'settings' => 'array',
-        'images' => 'array'
+        'images'   => 'array'
     ];
 
     protected $fillable = [
@@ -47,7 +47,7 @@ class Product extends EloquentModel
             $sectionId = $sectionId->getKey();
         }
 
-        $sectionsIds = Section::collectChildSections([ 'parent_id' => $sectionId ])->pluck('id')->push($sectionId);
+        $sectionsIds = Section::find($sectionId)->nested()->get([ 'id' ])->pluck('id')->push($sectionId);
 
         $query->whereIn('section_id', $sectionsIds);
     }

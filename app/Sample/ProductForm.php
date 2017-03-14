@@ -16,10 +16,9 @@ class ProductForm extends PanelForm
 
     public function initFields()
     {
-
         $this->addSelect('section_id', [
             'label'   => 'Section',
-            'options' => Section::options()
+            'options' => Section::tree()->options('name')
         ]);
 
         $this->addText('name', 'Name');
