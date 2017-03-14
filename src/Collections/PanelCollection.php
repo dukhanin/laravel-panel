@@ -47,7 +47,7 @@ class PanelCollection extends Collection
         static $depth = 0;
 
         if (is_null($depthPrefix)) {
-            $depthPrefix = '   ';
+            $depthPrefix = '    ';
         }
 
         $options = collect();
@@ -89,6 +89,8 @@ class PanelCollection extends Collection
 
             $collection->put($key, $item);
 
+            $item->nestedDepth($depth);
+
             $item->nestedCollection()->isTree = true;
 
             $this->fillTreeCollectionRecursive($item->nestedCollection(), $index, $key, $depth + 1);
@@ -101,7 +103,11 @@ class PanelCollection extends Collection
         $index = [];
 
         foreach ($this->items as $item) {
-            $parentKey = array_get($item, $this->keyParentName);
+            $parentKey = intval(array_get($item, $this->keyParentName));
+
+            if ($parentKey !== 0 && ! $this->contains($this->keyName, $parentKey)) {
+                continue;
+            }
 
             if ( ! isset($index[$parentKey])) {
                 $index[$parentKey] = [];
