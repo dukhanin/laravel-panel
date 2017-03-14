@@ -3,22 +3,29 @@ namespace Dukhanin\Panel\Files;
 
 class UploadHelper
 {
+    protected $path;
+
+    protected $url;
 
     public function __construct()
     {
+        $this->path = config('upload.path', public_path('upload'));
+
+        $this->url = config('upload.url', '/upload');
+
         $this->makeDirectoryIfNotExists();
     }
 
 
     public function path($append = null)
     {
-        return config('upload.path') . $this->append($this->subdir()) . $this->append($append);
+        return $this->path . $this->append($this->subdir()) . $this->append($append);
     }
 
 
     public function url($append = null)
     {
-        return config('upload.url') . $this->append($this->subdir()) . $this->append($append);
+        return $this->url . $this->append($this->subdir()) . $this->append($append);
     }
 
 
@@ -43,7 +50,7 @@ class UploadHelper
         $directory = $this->path($append);
 
         if ( ! app('files')->exists($directory)) {
-            app('files')->makeDirectory($directory);
+            app('files')->makeDirectory($directory, 0755, true);
         }
     }
 }

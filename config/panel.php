@@ -2,7 +2,7 @@
 
 return [
     'views'     => 'panel-inspinia',
-    'layout'    => 'panel-inspinia.layout',
+    'layout'    => 'layouts.app',
     'labels'    => [
         'list-empty'        => 'panel.labels.list-empty',
         'move-to'           => 'panel.labels.move-to',

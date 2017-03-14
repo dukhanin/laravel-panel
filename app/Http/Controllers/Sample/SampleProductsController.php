@@ -87,19 +87,19 @@ class SampleProductsController extends PanelListController
 
     public function isSortEnabled()
     {
-        return ! empty($this->category) && Section::byParent($this->category)->count() == 0;
+        return ! empty($this->category) && Section::parent($this->category)->count() == 0;
     }
 
 
     public function initCategories()
     {
-        $this->categories = Section::options()->prepend('(All Sections)', '');
+        $this->categories = Section::tree()->options('name')->prepend('(All Sections)', '');
     }
 
 
     public function initMoveToOptions()
     {
-        $this->moveToOptions = Section::options();
+        $this->moveToOptions = Section::tree()->options('name');
     }
 
 

@@ -18,7 +18,7 @@ class SectionForm extends PanelForm
         $this->addSelect('parent_id', [
             'label'     => 'Parent Section',
             'nullTitle' => false,
-            'options'   => Section::options([ 'except' => $this->model->getKey(), 'depth' => 1 ])->prepend('(Root)', 0)
+            'options'   => Section::where('id', '!=', $this->model->getKey())->tree()->options('name')->prepend('(Root)', 0)
         ]);
 
         $this->addText('name', 'Name');

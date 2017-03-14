@@ -130,7 +130,7 @@ class File extends Model
             }
         } catch (Throwable $e) {
             if (App::environment('local', 'development')) {
-                $file = new File();
+                $file = new static();
 
                 $file->path   = config('files.types.image.fake'); // @todo add this value to config
                 $file->width  = $options['size']['width'];
@@ -351,7 +351,7 @@ class File extends Model
 
         $info = pathinfo($source->getPath());
 
-        $resize            = new File;
+        $resize            = new static;
         $resize->parent_id = $this->id;
         $resize->key       = $options['key'];
         $resize->path      = $info['dirname'] . '/' . $info['filename'] . '-' . $options['key'] . ( $info['extension'] ? '.' . $info['extension'] : '' );

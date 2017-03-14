@@ -30,7 +30,7 @@ $nullTitleSelected = in_array($form->inputValue($field['key']), array( NULL, '' 
             <option
                     value="{{ $optionKey }}"
                     @if(! $nullTitleSelected && $form->inputValue($field['key']) == $optionKey) selected @endif
-                    >{{ $optionLabel }}</option>
+                    >{{ preg_replace('/\s{2}/', '&nbsp;&nbsp;', $optionLabel) }}</option>
         @endforeach
         {!! html_tag_close('select') !!}
 
