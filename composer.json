@@ -2,7 +2,6 @@
     "name": "dukhanin/laravel-panel",
     "description": "Laravel 5 panel constructor",
     "keywords": ["laravel", "panel", "form", "admin", "lists", "list"],
-    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Anton Dukhanin",
