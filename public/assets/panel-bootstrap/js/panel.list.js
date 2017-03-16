@@ -1,5 +1,5 @@
 panel.list = function (node) {
-    this.node          = $(node);
+    this.node = $(node);
 };
 
 panel.list.prototype.init = function () {
@@ -10,6 +10,7 @@ panel.list.prototype.init = function () {
     this.initModelActions();
     this.initActionsOnHover();
     this.initCheckboxes();
+    this.initCheckboxesSelectionWithMouse();
     this.initCategories();
     this.initMoveTo();
 
@@ -17,23 +18,23 @@ panel.list.prototype.init = function () {
 };
 
 panel.list.prototype.initDomProperties = function () {
-    this.form                = this.node.find('.panel-list-form');
-    this.rows                = this.node.find('tbody:not(.panel-list-empty)>tr');
-    this.dataCells           = this.rows.find('.panel-list-data-cell');
-    this.checkboxes          = this.rows.find('.panel-list-checkbox input');
-    this.checkboxesCheckAll  = this.node.find('thead .panel-list-checkbox input');
-    this.actionsButtons      = this.node.find('.panel-list-action');
+    this.form = this.node.find('.panel-list-form');
+    this.rows = this.node.find('tbody:not(.panel-list-empty)>tr');
+    this.dataCells = this.rows.find('.panel-list-data-cell');
+    this.checkboxes = this.rows.find('.panel-list-checkbox input');
+    this.checkboxesCheckAll = this.node.find('thead .panel-list-checkbox input');
+    this.actionsButtons = this.node.find('.panel-list-action');
     this.groupActionsButtons = this.node.find('.panel-list-group-action');
     this.modelActionsButtons = this.node.find('.panel-list-model-action a, .panel-list-model-action button');
-    this.categoriesSelect    = this.node.find('.panel-list-categories-select');
-    this.moveToSelect        = this.node.find('.panel-list-move-to-select');
+    this.categoriesSelect = this.node.find('.panel-list-categories-select');
+    this.moveToSelect = this.node.find('.panel-list-move-to-select');
 };
 
 panel.list.prototype.initParams = function () {
-    this.url                        = this.form.attr('action');
-    this.lastClickedCheckbox        = null;
+    this.url = this.form.attr('action');
+    this.lastClickedCheckbox = null;
     this.lastClickedCheckboxChecked = null;
-    this.sortableInProgress         = false;
+    this.sortableInProgress = false;
 };
 
 panel.list.prototype.initActions = function () {
@@ -42,10 +43,10 @@ panel.list.prototype.initActions = function () {
 
 panel.list.prototype.initGroupActions = function () {
     this.groupActionsButtons.click(function (e) {
-        var button   = $(this),
-            confirm  = button.attr('confirm'),
-            url      = button.attr('url'),
-            form     = button.closest('form'),
+        var button = $(this),
+            confirm = button.attr('confirm'),
+            url = button.attr('url'),
+            form = button.closest('form'),
             callback = function () {
                 form.attr('action', url);
                 form.submit();
@@ -67,9 +68,9 @@ panel.list.prototype.initGroupActions = function () {
 
 panel.list.prototype.initModelActions = function () {
     this.modelActionsButtons.click(function (e) {
-        var button   = $(this),
-            confirm  = button.attr('confirm'),
-            url      = button.attr('href'),
+        var button = $(this),
+            confirm = button.attr('confirm'),
+            url = button.attr('href'),
             callback = function () {
                 panel.go(url);
             };
@@ -89,25 +90,25 @@ panel.list.prototype.initActionsOnHover = function () {
         .add(this.actionsButtons)
         .add(this.groupActionsButtons)
         .add(this.modelActionsButtons)
-        .filter('[data-icon-on-hover]')
+        .filter('[icon-on-hover]')
         .on('focusin focusout mouseenter mouseleave', function (e) {
-                var node        = $(this),
-                    icon        = node.find('i'),
-                    iconDefault = node.attr('icon'),
-                    iconOnHover = node.attr('icon-on-hover');
+            var node = $(this),
+                icon = node.find('i'),
+                iconDefault = node.attr('icon'),
+                iconOnHover = node.attr('icon-on-hover');
 
-                if (undefined === iconDefault) {
-                    node.attr('icon', icon.attr('class'));
-                }
+            if (undefined === iconDefault) {
+                node.attr('icon', icon.attr('class'));
+            }
 
-                icon.removeClass().addClass(e.type === 'focusin' || e.type === 'mouseenter' ? iconOnHover : iconDefault);
-            });
+            icon.removeClass().addClass(e.type === 'focusin' || e.type === 'mouseenter' ? iconOnHover : iconDefault);
+        });
 };
 
 panel.list.prototype.initCategories = function () {
     this.categoriesSelect.change(function (e) {
         var select = $(this),
-            url    = select.attr('url');
+            url = select.attr('url');
 
         panel.go(url.replace('dummyCategory', select.val()));
 
@@ -120,9 +121,9 @@ panel.list.prototype.initMoveTo = function () {
         var select = $(this);
 
         if (select.val()) {
-            var url      = select.attr('url'),
-                confirm  = select.attr('confirm'),
-                form     = select.closest('form'),
+            var url = select.attr('url'),
+                confirm = select.attr('confirm'),
+                form = select.closest('form'),
                 callback = function () {
                     form.attr('action', url.replace('dummyMoveTo', select.val()));
                     form.submit();
@@ -145,8 +146,8 @@ panel.list.prototype.initCheckboxes = function () {
     });
 
     this.checkboxes.on('state-changed', $.proxy(function (e) {
-        var checkbox   = $(e.target),
-            row        = checkbox.closest('tr'),
+        var checkbox = $(e.target),
+            row = checkbox.closest('tr'),
             rowChecked = checkbox.prop('checked');
 
         row.toggleClass('panel-list-selected', rowChecked);
@@ -154,25 +155,28 @@ panel.list.prototype.initCheckboxes = function () {
     }, this));
 
     this.checkboxesCheckAll.on('change', $.proxy(function (e) {
-        this.checkboxes.prop('checked', $(e.target).prop('checked')).trigger('state-changed');
+        var checked = $(e.target).prop('checked');
+        this.checkboxes.prop('checked', checked).trigger('state-changed');
     }, this));
+};
 
+panel.list.prototype.initCheckboxesSelectionWithMouse = function () {
     this.dataCells.on('mousedown', $.proxy(function (e) {
         var checkbox = $(e.target).closest('tr').find('.panel-list-checkbox input'),
-            checked  = !checkbox.prop('checked');
+            checked = !checkbox.prop('checked');
 
         checkbox.prop('checked', checked).trigger('state-changed');
 
         if (e.shiftKey && this.lastClickedCheckbox) {
             var lastClickedCheckboxIndex = this.checkboxes.index(this.lastClickedCheckbox),
-                currentCheckboxIndex     = this.checkboxes.index(checkbox);
+                currentCheckboxIndex = this.checkboxes.index(checkbox);
 
             this.checkboxes.slice(lastClickedCheckboxIndex, currentCheckboxIndex).prop('checked', checked).trigger('state-changed');
 
             e.preventDefault(); // Disable text selection
         }
 
-        this.lastClickedCheckbox        = checkbox;
+        this.lastClickedCheckbox = checkbox;
         this.lastClickedCheckboxChecked = checked;
     }, this));
 
@@ -199,14 +203,12 @@ panel.list.prototype.updateCheckboxesCheckAll = function () {
 
 panel.list.prototype.clearBrowserSelection = function () {
     if (window.getSelection) {
-        if (window.getSelection().empty) {
-            // Chrome
+        if (window.getSelection().empty) { // Chrome
             window.getSelection().empty();
             return;
         }
 
-        if (window.getSelection().removeAllRanges) {
-            // Firefox
+        if (window.getSelection().removeAllRanges) { // Firefox
             window.getSelection().removeAllRanges();
             return;
         }
@@ -214,8 +216,7 @@ panel.list.prototype.clearBrowserSelection = function () {
         return;
     }
 
-    if (document.selection) {
-        // IE
+    if (document.selection) { // IE
         document.selection.empty();
     }
 };

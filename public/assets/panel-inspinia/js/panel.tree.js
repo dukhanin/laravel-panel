@@ -1,0 +1,1 @@
+panel.tree = panel.list;

@@ -1,54 +1,43 @@
 panel = {
-    labels:  {
-        buttons:   {
+    uploadUrl: '/panel/upload',
+
+    trans: {
+        buttons: {
             confirm: 'Confirm',
-            cancel:  'Cancel'
+            cancel: 'Cancel'
         },
-        confirm:   {
+        confirm: {
             'default': 'Really?'
         },
         responses: {
             success: 'Success!',
-            error:   'Error!'
+            error: 'Error!'
         }
     },
+
+    alert: function (message) {
+        message = this.validateMessage(message);
+
+        swal(message);
+    },
+
+    error: function (message) {
+        message = this.validateMessage(message);
+
+        if (message.title === '') {
+            message.title = this.trans.responses.error;
+        }
+
+        swal(message)
+    },
+
     confirm: function (message, callback) {
-        if (typeof message !== 'object') {
-            message = {
-                text: message
-            }
-        }
+        message = this.validateMessage(message);
 
-        if ('undefined' === typeof message.title) {
+        message.showCancelButton = true;
+
+        if (message.title === '') {
             message.title = this.trans.confirm.default;
-        }
-
-        if ('undefined' === typeof message.text) {
-            message.text = '';
-        }
-
-        if ('undefined' === typeof message.type) {
-            message.type = 'warning';
-        }
-
-        if ('undefined' === typeof message.showCancelButton) {
-            message.showCancelButton = true;
-        }
-
-        if ('undefined' === typeof message.confirmButtonText) {
-            message.confirmButtonText = this.trans.buttons.confirm;
-        }
-
-        if ('undefined' === typeof message.cancelButtonText) {
-            message.cancelButtonText = this.trans.buttons.cancel;
-        }
-
-        if ('undefined' === typeof message.closeOnConfirm) {
-            message.closeOnConfirm = true;
-        }
-
-        if ('undefined' === typeof message.confirmButtonColor) {
-            message.confirmButtonColor = '#DD6B55';
         }
 
         swal(message, callback);
@@ -58,114 +47,164 @@ panel = {
         document.location = url;
     },
 
-    handleResponseMessages: function (response) {
-        if (response.status && response.status != 200) {
-            return this.error(response);
-        }
-
-        var data = response.responseJSON;
-
-        var message = {
-            title: null,
-            text:  typeof data == 'object' && data.messages.length > 0 ? data.messages[0].substr(0, 500) : null,
-            type:  null
-        };
-
-        if (typeof data == 'object' && data.success) {
-            message.type  = 'success';
-            message.title = '';
-        }
-        else {
-            message.type  = 'error';
-            message.title = '';
-
-            if (typeof data == 'object' && data.error) {
-                message.title += ' ' + data.error;
-            }
-        }
-
-        if (message.type === 'error' || message.text) {
-            swal(message);
-        }
+    ajax: function (options) {
+        return $.ajax(panel.validateAjaxOptions(options));
     },
 
-    ajax: function (url, options) {
-        if (typeof url === "object") {
-            options = url;
-            url     = undefined;
-        }
-
-        options = options || {};
-
-        var successCallback, errorCallback, completeCallback;
-
-        if (typeof options.success === 'function') {
-            successCallback = options.success;
-        }
-
-        if (typeof options.error === 'function') {
-            errorCallback = options.error;
-        }
-
-        if (typeof options.complete === 'function') {
-            completeCallback = options.complete;
-        }
-
-        if (typeof options.data === 'object') {
-            this.validateData(options.data);
-        }
-
-        options.dataType = 'json';
-        options.error    = function (response, textStatus, jqXHR) {
-            if (errorCallback) {
-                errorCallback.call(this, typeof response.data === 'undefined' ? {} : response.data, textStatus, jqXHR);
-            }
-
-            panel.ajaxError.call(this, response, textStatus, jqXHR);
-        };
-        options.success  = function (response, textStatus, jqXHR) {
-            if (!response.success) {
-                options.error.call(this, typeof response.data === 'undefined' ? {} : response.data, textStatus, jqXHR);
-                return;
-            }
-
-            if (successCallback) {
-                successCallback.call(this, response.data === 'undefined' ? {} : response.data, textStatus, jqXHR);
-            }
-
-            panel.ajaxSuccess.call(this, response, textStatus, jqXHR);
-        };
-        options.complete = function (response, textStatus, jqXHR) {
-            if (completeCallback) {
-                completeCallback.call(this, response.data === 'undefined' ? {} : response.data, textStatus, jqXHR);
-            }
-
-            panel.ajaxComplete.call(this, response, textStatus, jqXHR);
-        };
-
-        return $.ajax(url, options);
+    ajaxSuccess: function (jqXHR) {
+        panel.handleAjaxMessages(jqXHR);
     },
 
-    ajaxSuccess: function (data, textStatus, jqXHR) {
-        panel.handleResponseMessages(jqXHR);
-    },
-
-    ajaxError: function (data, textStatus, jqXHR) {
-        panel.handleResponseMessages(jqXHR);
+    ajaxError: function (jqXHR) {
+        panel.handleAjaxMessages(jqXHR);
     },
 
     ajaxComplete: function (data, textStatus, jqXHR) {
 
     },
 
+    handleAjaxMessages: function (jqXHR) {
+        if (jqXHR.status && jqXHR.status != 200) {
+            return this.error(jqXHR.statusText);
+        }
+
+        var responseJSON = this.validateResponseJSON(jqXHR.responseJSON);
+
+        if (responseJSON.messages.length > 0) {
+            var message = responseJSON.messages[0];
+        } else if (responseJSON.error != 0) {
+            var message = 'Code ' + responseJSON.error;
+        } else {
+            var message = '';
+        }
+
+        if (responseJSON.success) {
+            message.type = 'success';
+            !message.text || this.alert(message);
+        } else {
+            message.type = 'error';
+            this.error(message);
+        }
+    },
+
     validateData: function (data) {
-        $.each(data, $.proxy(function (i) {
-            if ($.isPlainObject(data[i])) {
-                this.validateData(data[i]);
+        for (var key in data) {
+            if ($.isPlainObject(data[key])) {
+                data[key] = this.validateData(data[key]);
+                continue;
             }
-            else if (typeof data[i] == 'boolean') {
-                data[i] = data[i] ? 1 : null
+
+            if (typeof data[key] == 'boolean') {
+                data[key] = data[key] ? 1 : null;
+                continue;
             }
-        }, this));
-    }
+        }
+
+        return data;
+    },
+
+    validateMessage: function (message) {
+        if (!$.isPlainObject(message)) {
+            message = {text: message}
+        }
+
+        if (!('title' in message)) {
+            message.title = '';
+        }
+
+        if (!('text' in message)) {
+            message.text = '';
+        }
+
+        if (!('type' in message)) {
+            message.type = 'warning';
+        }
+
+        if (!('showCancelButton' in message)) {
+            message.showCancelButton = false;
+        }
+
+        if (!('confirmButtonText' in message)) {
+            message.confirmButtonText = this.trans.buttons.confirm;
+        }
+
+        if (!('cancelButtonText' in message)) {
+            message.cancelButtonText = this.trans.buttons.cancel;
+        }
+
+        if (!('closeOnConfirm' in message)) {
+            message.closeOnConfirm = true;
+        }
+
+        if (!('confirmButtonColor' in message)) {
+            message.confirmButtonColor = '#DD6B55';
+        }
+
+        return message;
+    },
+
+    validateAjaxOptions: function (options) {
+        options = options || {};
+
+        options.dataType = 'json';
+
+        var successCallback, errorCallback, completeCallback;
+
+        if ('function' === typeof options.success) {
+            successCallback = options.success;
+        }
+
+        if ('function' === typeof options.error) {
+            errorCallback = options.error;
+        }
+
+        if ('function' === typeof options.complete) {
+            completeCallback = options.complete;
+        }
+
+        options.data = this.validateData('data' in options ? options.data : {});
+
+        options.error = function (jqXHR, textStatus, errorThrown) {
+            if (errorCallback) {
+                errorCallback.call(this, jqXHR, textStatus, errorThrown);
+            }
+
+            panel.ajaxError.call(this, jqXHR);
+        };
+
+        options.success = function (responseJSON, textStatus, jqXHR) {
+            responseJSON = panel.validateResponseJSON(jqXHR.responseJSON);
+
+            if (responseJSON.success !== true) {
+                options.error.call(this, jqXHR, textStatus, 'JSON backend returned an error');
+
+                return;
+            }
+
+            if (successCallback) {
+                successCallback.call(this, responseJSON, textStatus, jqXHR);
+            }
+
+            panel.ajaxSuccess.call(this, jqXHR);
+        };
+
+        options.complete = function (jqXHR, textStatus) {
+            if (completeCallback) {
+                completeCallback.call(this, response.data === 'undefined' ? {} : response.data, textStatus, jqXHR);
+            }
+
+            panel.ajaxComplete.call(this, jqXHR);
+        };
+
+        return options;
+    },
+
+    validateResponseJSON: function (response) {
+        return $.extend({
+            error: null,
+            success: null,
+            messages: [],
+            data: {}
+        }, $.isPlainObject(response) ? response : {});
+    },
 };
