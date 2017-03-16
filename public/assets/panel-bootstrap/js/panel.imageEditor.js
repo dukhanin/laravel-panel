@@ -1,14 +1,9 @@
 panel.imageEditor = function (options) {
-    this.original     = null; // @todo rename to parent
     this.activeResize = null;
-    this.resizes      = [];
+    this.resizes = [];
+    this.file = new panel.file;
 
-    var defaults = {},
-        options  = $.extend(true, defaults, options ? options : {});
-
-    for (var key in options) {
-        this[key] = options[key];
-    }
+    $.extend(true, this, $.isPlainObject(options) ? options : {});
 };
 
 panel.imageEditor.prototype.init = function () {
@@ -50,34 +45,39 @@ panel.imageEditor.prototype.initModal = function () {
     }
 
     this.modal.find('.btn-primary').click($.proxy(function () {
-        for (var i in this.resizes) {
-            var resize = this.original.getResize(this.resizes[i]);
+        this.updateAllCroppedFiles();
+        this.close();
+    }, this));
 
-            if (!resize || !resize.changed) {
-                continue;
-            }
-
-            resize.cropFromParent({
-                                      area: resize.data.settings.crop.area,
-                                      size: resize.resizeOptions.size
-                                  });
-        }
-
-        this.modal.modal('hide');
+    this.modal.one('shown.bs.modal', $.proxy(function () {
+        this.loadFile();
     }, this));
 };
 
-panel.imageEditor.prototype.loadFile = function (file) {
-    this.original = file;
+panel.imageEditor.prototype.open = function () {
+    this.modal.modal('show');
+};
 
-    this.modal.find('.image-editor-preview').append(this.createImageNode(file));
+panel.imageEditor.prototype.close = function () {
+    this.modal.modal('hide');
+};
+
+panel.imageEditor.prototype.setFile = function (file) {
+    this.file = file;
+};
+
+panel.imageEditor.prototype.loadFile = function () {
+    this.modal.find('.image-editor-preview').append(this.createImageNode());
 
     this.initResizes();
 };
 
-panel.imageEditor.prototype.initResizes = function()
-{
-    if(this.resizes.length === 0) {
+panel.imageEditor.prototype.setResizes = function (resizes) {
+    this.resizes = resizes;
+};
+
+panel.imageEditor.prototype.initResizes = function () {
+    if (this.resizes.length === 0) {
         this.modal.find('.image-editor-resizes').parent().removeClass('col-md-3');
         this.modal.find('.image-editor-preview').parent().removeClass('col-md-9');
 
@@ -85,12 +85,12 @@ panel.imageEditor.prototype.initResizes = function()
     }
 
     $(this.resizes).each($.proxy(function (key, resizeOptions) {
-        var resize = this.original.getResize(resizeOptions);
+        var resize = this.file.getResize(resizeOptions);
 
         if (resize) {
             this.addResize(resize, resizeOptions);
         } else {
-            this.original.createResize(resizeOptions, $.proxy(function (resize) {
+            this.file.createResize(resizeOptions, $.proxy(function (resize) {
                 this.addResize(resize, resizeOptions);
                 this.selectAnyResize();
             }, this));
@@ -100,10 +100,21 @@ panel.imageEditor.prototype.initResizes = function()
     this.selectAnyResize();
 };
 
-panel.imageEditor.prototype.selectAnyResize = function () {
-    if (this.modal.find('.image-editor-resizes a.active').length === 0) {
-        this.modal.find('.image-editor-resizes a').first().trigger('click');
-    }
+panel.imageEditor.prototype.addResize = function (file, resizeOptions) {
+    resizeOptions = panel.file.prototype._resolveResizeOptions(resizeOptions);
+
+    file.resizeOptions = resizeOptions;
+    file.changed = false;
+
+    var option = $('<a href="#" class="list-group-item">' + this.getResizeLabel(resizeOptions) + '</a>')
+        .data('file', file)
+        .on('click', $.proxy(function (e) {
+            this.loadResize(file);
+
+            e.preventDefault();
+        }, this));
+
+    this.modal.find('.image-editor-resizes').append(option);
 };
 
 panel.imageEditor.prototype.loadResize = function (file) {
@@ -120,7 +131,6 @@ panel.imageEditor.prototype.loadResize = function (file) {
     this.initCropper();
 };
 
-
 panel.imageEditor.prototype.unloadResize = function (file) {
     var img = this.modal.find('.image-editor-preview img');
 
@@ -131,20 +141,34 @@ panel.imageEditor.prototype.unloadResize = function (file) {
     }
 };
 
+panel.imageEditor.prototype.getResizeLabel = function (resizeOptions) {
+    if ('label' in resizeOptions && resizeOptions.label) {
+        return resizeOptions.label;
+    }
+
+    return resizeOptions.key;
+};
+
+panel.imageEditor.prototype.selectAnyResize = function () {
+    if (this.modal.find('.image-editor-resizes a.active').length === 0) {
+        this.modal.find('.image-editor-resizes a').first().trigger('click');
+    }
+};
+
 panel.imageEditor.prototype.initCropper = function (options) {
-    var img            = this.modal.find('.image-editor-preview img'),
-        cropper        = img.data('cropper'),
-        resize         = this.activeResize,
-        cropperArea    = this.getCropperArea(),
+    var img = this.modal.find('.image-editor-preview img'),
+        cropper = img.data('cropper'),
+        resize = this.activeResize,
+        cropperArea = this.getCropperArea(),
         cropperOptions = $.extend(true, {
             zoomable: false,
-            strict:   false,
-            guides:   false,
+            strict: false,
+            guides: false,
             autoCrop: false,
-            center:   false,
+            center: false,
             viewMode: 2,
-            cropend:  function () {
-                var img  = $(this),
+            cropend: function () {
+                var img = $(this),
                     data = img.cropper('getData');
 
                 resize.data.settings = $.extend(true, resize.data.settings, {
@@ -168,12 +192,26 @@ panel.imageEditor.prototype.initCropper = function (options) {
 
     if (cropperArea) {
         cropperOptions.autoCrop = true;
-        cropperOptions.data     = cropperArea;
+        cropperOptions.data = cropperArea;
     }
 
     img.cropper(cropperOptions);
 };
 
+panel.imageEditor.prototype.updateAllCroppedFiles = function () {
+    for (var i in this.resizes) {
+        var resize = this.file.getResize(this.resizes[i]);
+
+        if (!resize || !resize.changed) {
+            continue;
+        }
+
+        resize.cropFromParent({
+            area: resize.data.settings.crop.area,
+            size: resize.resizeOptions.size
+        });
+    }
+};
 
 panel.imageEditor.prototype.getCropperArea = function () {
     if (!this.activeResize) {
@@ -181,23 +219,23 @@ panel.imageEditor.prototype.getCropperArea = function () {
     }
 
     if ('crop' in this.activeResize.data.settings && 'area' in this.activeResize.data.settings.crop) {
-        var a    = this.activeResize.data.settings.crop.area,
+        var a = this.activeResize.data.settings.crop.area,
             area = {
-                x:      a.x,
-                y:      a.y,
-                width:  a.w,
+                x: a.x,
+                y: a.y,
+                width: a.w,
                 height: a.h
             };
 
 
     } else if (this.activeResize.resizeOptions.size.static) {
-        var resizeK   = this.activeResize.resizeOptions.size.width / this.activeResize.resizeOptions.size.height,
-            originalK = this.original.getWidth() / this.original.getHeight(),
-            area      = {
-                x:      0,
-                y:      0,
-                width:  this.original.getWidth(),
-                height: this.original.getHeight()
+        var resizeK = this.activeResize.resizeOptions.size.width / this.activeResize.resizeOptions.size.height,
+            originalK = this.file.getWidth() / this.file.getHeight(),
+            area = {
+                x: 0,
+                y: 0,
+                width: this.file.getWidth(),
+                height: this.file.getHeight()
             };
 
         if (originalK < resizeK) {
@@ -216,31 +254,6 @@ panel.imageEditor.prototype.getCropperArea = function () {
     return area;
 };
 
-panel.imageEditor.prototype.createImageNode = function (file) {
-    return $('<img src="' + file.getUrl() + '" />');
-};
-
-panel.imageEditor.prototype.addResize = function (file, resizeOptions) {
-    resizeOptions = file._resolveResizeOptions(resizeOptions);
-
-    file.resizeOptions = resizeOptions;
-    file.changed       = false;
-
-    var option = $('<a href="#" class="list-group-item">' + this.getResizeLabel(resizeOptions) + '</a>')
-        .data('file', file)
-        .on('click', $.proxy(function (e) {
-            this.loadResize(file);
-
-            e.preventDefault();
-        }, this));
-
-    this.modal.find('.image-editor-resizes').append(option);
-};
-
-panel.imageEditor.prototype.getResizeLabel = function (resizeOptions) {
-    if ('label' in resizeOptions && resizeOptions.label) {
-        return resizeOptions.label;
-    }
-
-    return resizeOptions.key;
+panel.imageEditor.prototype.createImageNode = function () {
+    return $('<img src="' + this.file.getUrl() + '" />');
 };

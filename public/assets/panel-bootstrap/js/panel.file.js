@@ -1,31 +1,15 @@
-/**
- * @todo force resize param
- */
+panel.file = function (fileData) {
+    this.children = [];
 
-panel.file = function (fileData, options) {
-    this.setOptions(options);
+    this.url = panel.uploadUrl;
+
     this.setData(fileData);
 
     this.init();
 };
 
-panel.file.prototype.setOptions = function (options) {
-    var options = $.extend(true, {
-        url:      '/panel/upload/',
-        children: []
-    }, options ? options : {});
-
-    for (var key in options) {
-        this[key] = options[key];
-    }
-};
-
 panel.file.prototype.setData = function (fileData) {
-    this.data = fileData;
-
-    if (!$.isPlainObject(this.data.settings)) {
-        this.data.settings = {};
-    }
+    this.data = this.validateData(fileData);
 };
 
 panel.file.prototype.init = function () {
@@ -67,7 +51,7 @@ panel.file.prototype.getChild = function (key) {
 };
 
 panel.file.prototype.getResize = function (options) {
-    options = this._resolveResizeOptions(options);
+    options = panel.file.prototype._resolveResizeOptions(options);
 
     return this.getChild(options.key);
 };
@@ -89,7 +73,10 @@ panel.file.prototype.isDocument = function () {
 };
 
 panel.file.prototype.delete = function () {
-    panel.ajax(this.url + 'delete/' + this.data.id);
+    panel.ajax({
+        url: this.url + '/delete/' + this.data.id,
+        method: 'post'
+    });
 
     $(this).triggerHandler('delete');
 };
@@ -98,11 +85,11 @@ panel.file.prototype.createResize = function (options, callback) {
     var file = this;
 
     panel.ajax({
-        url:     this.url + 'createResize/' + this.data.id,
-        method:  'post',
-        data:    this._resolveResizeOptions(options),
-        success: function (resizeData) {
-            var resize = new panel.file(resizeData);
+        url: this.url + '/createResize/' + this.data.id,
+        method: 'post',
+        data: panel.file.prototype._resolveResizeOptions(options),
+        success: function (responseJSON) {
+            var resize = new panel.file(responseJSON.data);
 
             file.children.push(resize);
 
@@ -115,34 +102,46 @@ panel.file.prototype.cropFromParent = function (options, callback) {
     var file = this;
 
     panel.ajax({
-        url:     this.url + 'cropFromParent/' + this.data.id,
-        method:  'post',
-        data:    options,
-        success: function (fileData) {
-            file.setData(fileData);
+        url: this.url + '/cropFromParent/' + this.data.id,
+        method: 'post',
+        data: options,
+        success: function (responseJSON) {
+            file.setData(responseJSON.data);
 
             callback && callback.call(this);
         }
     });
 };
 
+panel.file.prototype.validateData = function (data) {
+    if (!$.isPlainObject(data)) {
+        data = {};
+    }
+
+    if (!('settings' in data) || !$.isPlainObject(data.settings)) {
+        data.settings = {};
+    }
+
+    return data;
+};
+
 panel.file.prototype._resolveResizeOptions = function (options) {
     if (!$.isPlainObject(options)) {
         options = {
-            key:  this._sizeToKey(options),
+            key: panel.file.prototype._sizeToKey(options),
             size: options
         }
     }
 
     options = $.extend({
-        key:  '',
+        key: '',
         size: ''
     }, options);
 
-    options.size = this._resolveImageSize(options.size);
+    options.size = panel.file.prototype._resolveImageSize(options.size);
 
     if (!options.key) {
-        options.key = this._sizeToKey(options.size);
+        options.key = panel.file.prototype._sizeToKey(options.size);
     }
 
     return options;
@@ -150,26 +149,26 @@ panel.file.prototype._resolveResizeOptions = function (options) {
 
 panel.file.prototype._resolveImageSize = function (size) {
     if (!$.isPlainObject(size)) {
-        size = this._parseImageSize(size);
+        size = this.parseImageSize(size);
     }
 
     return $.extend({
-        width:         null,
-        height:        null,
-        static:        null,
-        enlarge:       null,
-        reduce:        null
+        width: null,
+        height: null,
+        static: null,
+        enlarge: null,
+        reduce: null
     }, size);
 };
 
 panel.file.prototype._sizeToKey = function (size) {
-    size = this._resolveImageSize(size);
+    size = panel.file.prototype._resolveImageSize(size);
 
     return [size.width, size.static ? 'xx' : 'x', size.height].join('');
 };
 
-panel.file.prototype._parseImageSize = function (size) {
-    size        = String(size).toLowerCase();
+panel.file.prototype.parseImageSize = function (size) {
+    size = String(size).toLowerCase();
     var matches = size.match(/^(\d+)(x{1,2})(\d+)([-\+]{0,2})((\s+\w+){0,2})\s*$/i);
 
     if (!matches) {
@@ -177,11 +176,11 @@ panel.file.prototype._parseImageSize = function (size) {
     }
 
     var parsed = {
-        width:         parseInt(matches[1]),
-        height:        parseInt(matches[3]),
-        static:        matches[2].length == 2,
-        enlarge:       false,
-        reduce:        true
+        width: parseInt(matches[1]),
+        height: parseInt(matches[3]),
+        static: matches[2].length == 2,
+        enlarge: false,
+        reduce: true
     };
 
     if (matches[4].match(/\\+/)) {

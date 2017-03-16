@@ -1,30 +1,26 @@
 panel.inputFiles = function (input, options) {
-    var defaults = {
-        input:     null,
-        inputName: null,
-        directory: '',
-        url:       '/panel/upload',
-        multiple:  false,
-        container: null,
-        files:     [],
-        file:      null,
-        resizes:   []
-    };
-
-    var options = $.extend(true, defaults, options ? options : {});
-
-    for (var key in options) {
-        this[key] = options[key];
-    }
+    $.extend(true, this, this.defaults, options ? options : {});
 
     this.input = $(input);
+};
+
+panel.inputFiles.prototype.defaults = {
+    input: null,
+    inputName: null,
+    directory: '',
+    uploadUrl: panel.uploadUrl,
+    multiple: false,
+    container: null,
+    files: [],
+    file: null,
+    resizes: []
 };
 
 panel.inputFiles.prototype.init = function () {
     this.initInputName();
     this.initContainer();
     this.initMultiple();
-    this.initInputImmidiateUpload();
+    this.initUpload();
 };
 
 panel.inputFiles.prototype.initInputName = function () {
@@ -53,178 +49,203 @@ panel.inputFiles.prototype.initContainer = function () {
     }
 };
 
-panel.inputFiles.prototype.initInputImmidiateUpload = function () {
-    var inputFiles = this;
+panel.inputFiles.prototype.initUpload = function () {
+    this.input.on('change', $.proxy(this.doUpload, this));
+};
 
-    this.input.on('change', function () {
-        var data = new FormData();
+panel.inputFiles.prototype.doUpload = function () {
+    var data = new FormData(),
+        files = this.input.prop('files');
 
-        $.each(this.files, function (index, file) {
-            data.append('file[]', file);
-        });
+    for (var i in files) {
+        data.append('file[]', files[i]);
+    }
 
-        data.append('directory', inputFiles.directory);
+    data.append('directory', this.directory);
 
-        panel.ajax({
-                       url:         inputFiles.url,
-                       data:        data,
-                       cache:       false,
-                       contentType: false,
-                       processData: false,
-                       type:        'POST',
-                       success:     function (filesData) {
-                           if (!inputFiles.multiple) {
-                               inputFiles.deleteFiles();
-                           }
+    panel.ajax({
+        url: this.uploadUrl,
+        data: data,
+        cache: false,
+        contentType: false,
+        processData: false,
+        type: 'POST',
+        success: $.proxy(function (responseJSON) {
+            var files = $.map(responseJSON.data, function (fileData) {
+                return new panel.file(fileData);
+            });
 
-                           $(filesData).each(function (index, fileData) {
-                               inputFiles.addFile(new panel.file(fileData));
-                           });
-                       }
-                   });
+            this.onFilesUpload(files);
 
-        $(inputFiles).val('');
+            for (var i in files) {
+                this.onFileUpload(files[i]);
+            }
+        }, this)
+    });
+
+    this.input.val('');
+};
+
+panel.inputFiles.prototype.onFilesUpload = function (files) {
+    if (!this.multiple) {
+        this.deleteFiles();
+    }
+};
+
+panel.inputFiles.prototype.onFileUpload = function (file) {
+    this.addFile(file);
+};
+
+panel.inputFiles.prototype.onFileDelete = function (file) {
+    file.htmlNode.remove();
+
+    for (var i in this.files) {
+        if (this.files[i].getId() === file.getId()) {
+            this.files.splice(i, 1);
+        }
+    }
+};
+
+panel.inputFiles.prototype.createDeleteButtonForFile = function (file) {
+    return $('<a href="#" class="file-item-delete"> <i class="fa fa-times"></i> ' + panel.trans.actions.delete + '</a>').on('click', function (e) {
+        panel.confirm(
+            {title: panel.trans.confirm.delete, confirmButtonText: panel.trans.buttons.confirm},
+            function () {
+                file.delete();
+            }
+        );
+
+        e.preventDefault();
     });
 };
 
-panel.inputFiles.prototype.supplyFileObject = function (file) {
-    file.htmlNode   = null;
-    file.inputFiles = this;
+panel.inputFiles.prototype.createInputIdForFile = function (file) {
+    return $('<input type="hidden" name="' + this.inputName + '" value="' + file.getId() + '" />');
+};
 
-    file.getHtmlNode = function () {
-        if (this.htmlNode === null) {
-            this.initHtmlNode();
-        }
+panel.inputFiles.prototype.getTypeOfFile = function (file) {
 
-        return this.htmlNode;
-    };
+    if (file.isImage()) {
+        return 'image';
+    }
 
+    if (file.isDocument()) {
+        return 'document';
+    }
 
-    file.initHtmlNode = function () {
-        this.htmlNode = $('<div class="file-item" id="file-item-' + this.data.id + '"></div>');
+    if (file.isAudio()) {
+        return 'audio';
+    }
 
-        if (this.isImage()) {
-            this.htmlNode.addClass('file-item-image').append(this.createImageHtmlNode());
-        } else {
-            this.htmlNode.append(this.createLinkHtmlNode());
-        }
-    };
+    if (file.isVideo()) {
+        return 'video';
+    }
 
-    file.createLinkHtmlNode = function () {
-        var node = $('<div class="file-link"></div>');
+    return 'common';
+};
 
-        node.append('<a href="' + this.getUrl() + '" target="_blank">' + this.getUrl() + '</a>');
+panel.inputFiles.prototype.htmlNodeForFile = function (file) {
+    var methodName,
+        node = $('<div class="file-item file-item-' + file.type + '" id="file-item-' + file.getId() + '"></div>');
 
-        return node;
-    };
+    if ((methodName = file.type + 'NodeForFile') in this) {
+        node.append(this[methodName].call(this, file));
+    } else {
+        node.append(this.defaultNodeForFile(file));
+    }
 
-    file._generateImageHtmlNodeFor = function (file) {
-        return $('<img src="' + file.getUrl() + '" width="' + file.getWidth() + '" height="' + file.getHeight() + '" />');
-    };
+    node.append(this.createDeleteButtonForFile(file));
 
-    file.createImageHtmlNode = function (options, recursive) {
-        var resizeOptions = {key: 'panel_default', size: '150xx150'},
-            resize        = this.getResize(resizeOptions) || this._suggestResize(resizeOptions),
-            node          = this._generateImageHtmlNodeFor(resize);
+    node.append(this.createInputIdForFile(file));
 
-        if ('suggested' in resize) {
-            node.addClass('file-image-suggested');
+    return node;
+};
 
-            if (!recursive) {
-                this.createResize(resizeOptions, $.proxy(function (resize) {
-                    node.replaceWith(this.createImageHtmlNode(options, true));
-                }, this));
-            }
+panel.inputFiles.prototype.imageNodeForFile = function (file, isRecursiveCall) {
+    var resizeOptions = {key: 'panel_default', size: '150xx150'},
+        resize = file.getResize(resizeOptions) || this.suggestResizeForFile(file, resizeOptions),
+        node = $('<img src="' + resize.getUrl() + '" width="' + resize.getWidth() + '" height="' + resize.getHeight() + '" />');
 
-            return node;
-        }
+    if ('suggested' in resize && !isRecursiveCall) {
+        node.addClass('file-image-suggested');
 
-
-        node.click($.proxy(function () {
-            var editor = new panel.imageEditor({
-                resizes: this.inputFiles.resizes
-            });
-
-            editor.init();
-
-            editor.modal.one('shown.bs.modal', $.proxy(function () {
-                editor.loadFile(this);
-            }, this));
-
-            editor.modal.modal('show');
+        file.createResize(resizeOptions, $.proxy(function (resize) {
+            node.replaceWith(this.imageNodeForFile(file, true));
         }, this));
 
         return node;
-    };
-
-
-    file._suggestResize = function (options) {
-        options = this._resolveResizeOptions(options);
-
-        if (!options.size) {
-            return;
-        }
-
-        var suggestedSize = this._suggestSize(options.size),
-            fileData      = $.extend({}, this.data, {
-                id:         null,
-                key:        options.key,
-                width:      suggestedSize.width,
-                height:     suggestedSize.height,
-                size:       0,
-                updated_at: '',
-                created_at: '',
-                children:   []
-            });
-
-        return new panel.file(fileData, {suggested: true});
-    };
-
-    file._suggestSize = function (size) {
-        size = this._resolveImageSize(size);
-
-        if (size.static) {
-            // @todo ?
-        } else {
-            var k = Math.max(this.getWidth() / size.width, this.getHeight() / size.height);
-
-            size.width  = Math.round(this.getWidth() / k);
-            size.height = Math.round(this.getHeight() / k);
-        }
-
-        return size;
-    };
-
-    $(file).on('delete', function () {
-        this.getHtmlNode().remove();
-
-        for (var i in this.inputFiles.files) {
-            if (this.inputFiles.files[i].getId() === this.getId()) {
-                this.inputFiles.files.splice(i, 1);
-            }
-        }
-    });
-
-    file.getHtmlNode()
-        .append('<input type="hidden" name="' + this.inputName + '" value="' + file.getId() + '" />')
-        .append(
-            $('<a href="#" class="file-item-delete"> <i class="fa fa-times"></i> ' + panel.trans.actions.delete + '</a>').on('click', function (e) {
-                panel.confirm(
-                    {title: panel.trans.confirm.delete, confirmButtonText: panel.trans.buttons.confirm},
-                    function () {
-                        file.delete();
-                    }
-                );
-
-                e.preventDefault();
-            })
-        );
-
-    if (file.is_image) {
-        for (var i in this.resizes) {
-            file.getResize(this.resizes[i]) || file.createResize(this.resizes[i]);
-        }
     }
+
+    if ('imageEditor' in panel) {
+        node.click($.proxy(function () {
+            var editor = new panel.imageEditor();
+
+            editor.setResizes(this.inputFiles.resizes);
+
+            editor.setFile(file);
+
+            editor.init();
+
+            editor.open();
+        }, file));
+    }
+
+    for (var i in this.resizes) {
+        file.getResize(this.resizes[i]) || file.createResize(this.resizes[i]);
+    }
+
+    return node;
+};
+
+panel.inputFiles.prototype.defaultNodeForFile = function (file) {
+    return $('<div class="file"<a href="' + file.getUrl() + '" target="_blank">' + file.getUrl() + '</a>');
+};
+
+panel.inputFiles.prototype.suggestResizeForFile = function (file, options) {
+    options = panel.file.prototype._resolveResizeOptions(options);
+
+    if (!options.size) {
+        return;
+    }
+
+    var suggestedSize = this.suggestSizeForFile(file, options.size),
+        fileData = $.extend({}, file.data, {
+            id: null,
+            key: options.key,
+            width: suggestedSize.width,
+            height: suggestedSize.height,
+            size: 0,
+            updated_at: '',
+            created_at: '',
+            children: []
+        });
+
+    return $.extend(new panel.file(fileData), {suggested: true});
+};
+
+panel.inputFiles.prototype.suggestSizeForFile = function (file, size) {
+    size = panel.file.prototype._resolveImageSize(size);
+
+    if (!size.static) {
+        var k = Math.max(file.getWidth() / size.width, file.getHeight() / size.height);
+
+        size.width = Math.round(file.getWidth() / k);
+        size.height = Math.round(file.getHeight() / k);
+    }
+
+    return size;
+};
+
+panel.inputFiles.prototype.supplyFileObject = function (file) {
+    file.inputFiles = this;
+
+    file.type = this.getTypeOfFile(file);
+
+    file.htmlNode = this.htmlNodeForFile(file);
+
+    $(file).on('delete', $.proxy(function () {
+        this.inputFiles.onFileDelete(this);
+    }, file));
 
     return file;
 };
@@ -234,7 +255,7 @@ panel.inputFiles.prototype.addFile = function (file) {
 
     this.files.push(file);
 
-    this.container.append(file.getHtmlNode());
+    this.container.append(file.htmlNode);
 };
 
 panel.inputFiles.prototype.deleteFiles = function (file) {
