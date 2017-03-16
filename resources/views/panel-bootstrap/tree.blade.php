@@ -1,24 +1,16 @@
 @extends($panel->config('layout'))
 
-@push('styles')
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.list.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.tree.css') }}"/>
-@endpush
+@include('panel-bootstrap.init')
 
 @push('scripts')
-    <script src="{{ URL::asset('assets/panel-bootstrap/js/panel.js') }}"></script>
-    <script src="{{ URL::asset('assets/panel-bootstrap/js/panel.list.js') }}"></script>
-
-    <script>
-        $(function() {
-            panel.trans = {!! json_encode( trans('panel') ) !!};
-
-            var panelList = new panel.list('#{{ $panelId = str_random() }}');
-            panelList.init();
-        });
-    </script>
+<script>
+    $(function () {
+        var panelTree = new panel.tree('#{{ $panelId = str_random() }}');
+        panelTree.init();
+    });
+</script>
 @endpush
+
 
 @section('content')
     <div class="panel-list panel-tree" id="{{ $panelId }}">
