@@ -1,23 +1,12 @@
 @extends($panel->config('layout'))
 
-@push('styles')
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.list.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.tree.css') }}"/>
-@endpush
+@include('panel-inspinia.init')
 
 @push('scripts')
-    <script src="{{ URL::asset('assets/panel-inspinia/js/jquery-ui.min.js') }}"></script>
-    <script src="{{ URL::asset('assets/panel-inspinia/js/jquery.multisortable.js') }}"></script>
-    <script src="{{ URL::asset('assets/panel-inspinia/js/panel.js') }}"></script>
-    <script src="{{ URL::asset('assets/panel-inspinia/js/panel.list.js') }}"></script>
-
     <script>
         $(function () {
-            panel.trans = {!! json_encode( trans('panel') ) !!};
-
-            var panelList = new panel.list('#{{ $panelId = str_random() }}');
-            panelList.init();
+            var panelTree = new panel.tree('#{{ $panelId = str_random() }}');
+            panelTree.init();
         });
     </script>
 @endpush

@@ -1,19 +1,6 @@
 @extends($form->config('layout'))
 
-@push('styles')
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.form.css') }}"/>
-@endpush
-
-@push('scripts')
-    <script src="{{ URL::asset('assets/panel-bootstrap/js/panel.js') }}"></script>
-
-    <script>
-        $(function(){
-            panel.trans = {!! json_encode( trans('panel') ) !!};
-        });
-    </script>
-@endpush
+@include('panel-bootstrap.init')
 
 @section('content')
     <div class="panel panel-form">
