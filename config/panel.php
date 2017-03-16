@@ -49,19 +49,21 @@ return [
 
             if ($model->{$key}) {
                 return [
-                    'class'     => 'btn btn-default btn-xs',
-                    'label'     => 'panel.actions.disable',
-                    'action'    => 'disable',
-                    'icon'      => 'fa fa-eye',
-                    'icon-only' => true
+                    'class'         => 'btn btn-default btn-xs',
+                    'label'         => 'panel.actions.disable',
+                    'action'        => 'disable',
+                    'icon'          => 'fa fa-eye',
+                    'icon-on-hover' => 'fa fa-eye-slash',
+                    'icon-only'     => true
                 ];
             } else {
                 return [
-                    'class'     => 'btn btn-default btn-xs',
-                    'label'     => 'panel.actions.enable',
-                    'action'    => 'enable',
-                    'icon'      => 'fa fa-eye-slash',
-                    'icon-only' => true
+                    'class'         => 'btn btn-default btn-xs',
+                    'label'         => 'panel.actions.enable',
+                    'action'        => 'enable',
+                    'icon'          => 'fa fa-eye-slash',
+                    'icon-on-hover' => 'fa fa-eye',
+                    'icon-only'     => true
                 ];
             }
         },
@@ -70,19 +72,21 @@ return [
 
             if ($model->{$key}) {
                 return [
-                    'class'     => 'btn btn-default btn-xs',
-                    'label'     => 'panel.actions.enable',
-                    'action'    => 'enable',
-                    'icon'      => 'fa fa-eye-slash',
-                    'icon-only' => true
+                    'class'         => 'btn btn-default btn-xs',
+                    'label'         => 'panel.actions.enable',
+                    'action'        => 'enable',
+                    'icon'          => 'fa fa-eye-slash',
+                    'icon-on-hover' => 'fa fa-eye',
+                    'icon-only'     => true
                 ];
             } else {
                 return [
-                    'class'     => 'btn btn-default btn-xs',
-                    'label'     => 'panel.actions.disable',
-                    'action'    => 'disable',
-                    'icon'      => 'fa fa-eye',
-                    'icon-only' => true
+                    'class'         => 'btn btn-default btn-xs',
+                    'label'         => 'panel.actions.disable',
+                    'action'        => 'disable',
+                    'icon'          => 'fa fa-eye',
+                    'icon-on-hover' => 'fa fa-eye-slash',
+                    'icon-only'     => true
                 ];
             }
         },
