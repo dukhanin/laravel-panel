@@ -18,6 +18,8 @@ class PanelServiceProvider extends ServiceProvider
 
         $this->publishControllers();
 
+        $this->publishPolicies();
+
         $this->publishLang();
 
         $this->publishViews();
@@ -81,6 +83,13 @@ class PanelServiceProvider extends ServiceProvider
             $this->path('app/Http/Controllers/Panel/AbstractUploadController.php') => app_path('Http/Controllers/Panel/AbstractUploadController.php'),
             $this->path('app/Http/Controllers/Panel/PanelTinymceUploadController.php') => app_path('Http/Controllers/Panel/PanelTinymceUploadController.php'),
             $this->path('app/Http/Controllers/Panel/PanelUploadController.php') => app_path('Http/Controllers/Panel/PanelUploadController.php'),
+        ], 'routes');
+    }
+
+    protected function publishPolicies()
+    {
+        $this->publishes([
+            $this->path('app/Policies/UserPolicy.php') => app_path('Policies/UserPolicy.php'),
         ], 'routes');
     }
 

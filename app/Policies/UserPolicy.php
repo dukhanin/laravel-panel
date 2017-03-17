@@ -17,6 +17,6 @@ class UserPolicy
 
     public function uploadFiles()
     {
-        // return true;
+        return true;
     }
 }
