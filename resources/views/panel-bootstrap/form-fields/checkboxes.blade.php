@@ -1,17 +1,25 @@
 <?php
 global $checkboxesIndex;
 
-$value    = $form->inputValue($field['key']);
-$errors   = $form->fieldErrors($field['key']);
-$disabled = ! empty( $disabled );
-$state    = isset($state) ? $state : false;
+$value = $form->inputValue($field['key']);
+$errors = $form->fieldErrors($field['key']);
+$disabled = !empty($disabled);
+$state = isset($state) ? $state : false;
 
-if ( ! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {
-    $options = [ ];
+if (!is_array($options) && !$options instanceof Illuminate\Support\Collection) {
+    $options = [];
+}
+
+if ($value instanceof Illuminate\Database\Eloquent\Relations\Relation) {
+    $value = $value->get();
 }
 
 if ($value instanceof Illuminate\Database\Eloquent\Collection) {
     $value = $value->modelKeys();
+}
+
+if (!is_array($value)) {
+    $value = [];
 }
 ?>
 
@@ -30,7 +38,7 @@ if ($value instanceof Illuminate\Database\Eloquent\Collection) {
                        value="{{ $optionKey }}"
                        @if( $disabled ) disabled="" @endif
                        @if( in_array($optionKey, $value) ) checked @endif
-                        >
+                >
                 <label for="checkbox-{{ $checkboxesIndex }}"> <i></i> {{ $optionLabel }}</label>
             </div>
         @endforeach

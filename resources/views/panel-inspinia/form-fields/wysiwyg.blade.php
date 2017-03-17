@@ -36,8 +36,8 @@ $config['filemanager_subfolder'] = $form->uploadDirectory();
 </div>
 
 @push('scripts')
-<script src="{{ URL::asset('du/tinymce/tinymce.jquery.min.js') }}"></script>
-<script src="{{ URL::asset('du/tinymce/jquery.tinymce.min.js') }}"></script>
+<script src="{{ URL::asset('assets/tinymce/tinymce.jquery.min.js') }}"></script>
+<script src="{{ URL::asset('assets/tinymce/jquery.tinymce.min.js') }}"></script>
 
 <script type="text/javascript">
     $(function(){
