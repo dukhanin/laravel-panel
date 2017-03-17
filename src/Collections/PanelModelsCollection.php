@@ -2,9 +2,10 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Illuminate\Support\Collection;
 
-class PanelCollection extends Collection
+use Illuminate\Database\Eloquent\Collection;
+
+class PanelModelsCollection extends Collection
 {
 
     public $keyName = 'id';
