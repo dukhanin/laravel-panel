@@ -26,7 +26,7 @@ $config['filemanager_subfolder'] = $form->uploadDirectory();
         @if ( ! empty( $errors ) )
             <div class="error-text">
                 @foreach($errors as $error)
-                    <span class="help-block m-b-none">
+                    <span class="help-block">
                         {{ $error }}
                     </span>
                 @endforeach
