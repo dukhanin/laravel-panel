@@ -38,7 +38,7 @@ class ProductForm extends PanelForm
             ]
         ]);
 
-        $this->addTextarea('description', 'Description');
+        $this->addWysiwyg('description', 'Description');
 
         $this->addCheckbox('enabled', 'Enabled');
     }

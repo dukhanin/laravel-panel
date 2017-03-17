@@ -2,7 +2,7 @@
 
 namespace Dukhanin\Panel\Traits;
 
-use Dukhanin\Panel\Collections\PanelCollection;
+use Dukhanin\Panel\Collections\PanelModelsCollection;
 use Dukhanin\Panel\Query\PanelBuilder;
 
 trait PanelModel
@@ -59,7 +59,7 @@ trait PanelModel
 
     public function newCollection(array $models = [])
     {
-        $collection = new PanelCollection($models);
+        $collection = new PanelModelsCollection($models);
 
         $collection->keyName       = $this->getKeyName();
         $collection->parentKeyName = $this->getParentKeyName();

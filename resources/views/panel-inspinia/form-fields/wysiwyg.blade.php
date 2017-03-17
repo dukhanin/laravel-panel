@@ -1,9 +1,9 @@
 <?php
 $errors = $form->fieldErrors($field['key']);
-$id     = 'wysiwyg-' . mt_rand(1, 1000);
+$id = 'wysiwyg-' . mt_rand(1, 1000);
 
 $config = config('wysiwyg.default');
-$config['images_upload_url'] = urlbuilder($config['images_upload_url'])->query([ 'directory' => $form->uploadDirectory() ])->compile();
+$config['images_upload_url'] = urlbuilder($config['images_upload_url'])->query(['directory' => $form->uploadDirectory()])->compile();
 $config['filemanager_subfolder'] = $form->uploadDirectory();
 ?>
 
@@ -36,26 +36,26 @@ $config['filemanager_subfolder'] = $form->uploadDirectory();
 </div>
 
 @push('scripts')
-<script src="{{ URL::asset('du/tinymce/tinymce.jquery.min.js') }}"></script>
-<script src="{{ URL::asset('du/tinymce/jquery.tinymce.min.js') }}"></script>
+<script src="{{ URL::asset('assets/tinymce/tinymce.jquery.min.js') }}"></script>
+<script src="{{ URL::asset('assets/tinymce/jquery.tinymce.min.js') }}"></script>
 
 <script type="text/javascript">
-    $(function(){
+    $(function () {
         tinymce.init(
-                $.extend(
-                        {!! json_encode($config)  !!},
-                        {
-                            selector: '#{!! $id !!}',
-                            setup : function (editor) {
+            $.extend(
+                    {!! json_encode($config)  !!},
+                {
+                    selector: '#{!! $id !!}',
+                    setup: function (editor) {
 
-                                editor.on('FullscreenStateChanged', function(e){
-                                    if( editor.plugins.fullscreen.isFullscreen() ) {
-                                        $("body").addClass("mini-navbar");
-                                    }
-                                });
+                        editor.on('FullscreenStateChanged', function (e) {
+                            if (editor.plugins.fullscreen.isFullscreen()) {
+                                $("body").addClass("mini-navbar");
                             }
-                        }
-                )
+                        });
+                    }
+                }
+            )
         );
     });
 
