@@ -1,18 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Panel;
+namespace Dukhanin\Panel\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Dukhanin\Panel\Files\File;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Gate;
 
-class PanelUploadController extends AbstractUploadController
+class PanelFormUploadController extends PanelUploadController
 {
 
     public function upload()
     {
-        Gate::authorize('upload-files', Auth::user());
+        upload()->authorize();
 
         if ($this->getUploadedFiles()->isEmpty()) {
             return response()->json([
@@ -42,7 +39,7 @@ class PanelUploadController extends AbstractUploadController
 
     public function createResize($id)
     {
-        Gate::authorize('upload-files', Auth::user());
+        upload()->authorize();
 
         $options = request()->input();
 
@@ -75,7 +72,7 @@ class PanelUploadController extends AbstractUploadController
 
     public function cropFromParent($id)
     {
-        Gate::authorize('upload-files', Auth::user());
+        upload()->authorize();
 
         $options = request()->input();
 
@@ -111,7 +108,7 @@ class PanelUploadController extends AbstractUploadController
 
     public function delete($id)
     {
-        Gate::authorize('upload-files', Auth::user());
+        upload()->authorize();
 
         if ($file = File::find($id)) {
             $file->delete();

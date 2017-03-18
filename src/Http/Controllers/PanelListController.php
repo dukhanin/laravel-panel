@@ -1,15 +1,14 @@
 <?php
 
-namespace Dukhanin\Panel\Controllers;
+namespace Dukhanin\Panel\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Dukhanin\Panel\Controllers;
-use Dukhanin\Panel\Traits\PanelTreeTrait;
+use Dukhanin\Panel\Traits\PanelListTrait;
 
-abstract class PanelTreeController extends Controller
+abstract class PanelListController extends Controller
 {
 
-    use PanelTreeTrait;
+    use PanelListTrait;
 
 
     public function initUrl()
@@ -38,26 +37,10 @@ abstract class PanelTreeController extends Controller
     }
 
 
-    public function method($checkActions = null)
-    {
-        if ( ! ( $route = app('router')->current() )) {
-            return false;
-        }
-
-        $methodName = Str::parseCallback($route->getActionName())[1];
-
-        if (is_null($checkActions)) {
-            return $methodName;
-        }
-
-        return in_array(strtolower($methodName), array_map('strtolower', (array) $checkActions));
-    }
-
-
     protected function urlBuilderToLocalAction($action, $params = null)
     {
         return urlbuilder(method_exists($this, $action) ? action('\\' . get_called_class() . '@' . $action,
-            $params) : $action);
+            $params) : '\\' . $action);
     }
 
 }

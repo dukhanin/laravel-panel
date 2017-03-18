@@ -1,18 +1,15 @@
 <?php
 
-namespace App\Http\Controllers\Panel;
+namespace Dukhanin\Panel\Http\Controllers;
 
 // @todo добавить проверку на isImage
-
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Auth;
 
 class PanelTinymceUploadController extends AbstractUploadController
 {
 
     public function upload()
     {
-        Gate::authorize('upload-files', Auth::user());
+        upload()->authorize();
 
         if ($this->getUploadedFiles()->isEmpty()) {
             return $this->error()->response();
@@ -20,6 +17,6 @@ class PanelTinymceUploadController extends AbstractUploadController
 
         $this->uploadFileToDirectory($uploadedFile = $this->getUploadedFiles()->first());
 
-        return response()->json([ 'location' => upload()->url($this->getDirectory() . '/' . $uploadedFile->getBasename()) ]);
+        return response()->json(['location' => upload()->url($this->getDirectory() . '/' . $uploadedFile->getBasename())]);
     }
 }
