@@ -1,6 +1,9 @@
 <?php
 namespace Dukhanin\Panel\Files;
 
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Support\Facades\Gate;
+
 class UploadHelper
 {
     protected $path;
@@ -29,6 +32,24 @@ class UploadHelper
     }
 
 
+    public function allowed($arguments = [])
+    {
+        if (config('upload.unauthorized_upload')) {
+            return true;
+        }
+
+        return Gate::allows('upload-files');
+    }
+
+
+    public function authorize($arguments = [])
+    {
+        if (!$this->allowed($arguments)) {
+            throw new AuthorizationException('This action is unauthorized.');
+        }
+    }
+
+
     public function subdir()
     {
         return null;
@@ -49,7 +70,7 @@ class UploadHelper
     {
         $directory = $this->path($append);
 
-        if ( ! app('files')->exists($directory)) {
+        if (!app('files')->exists($directory)) {
             app('files')->makeDirectory($directory, 0755, true);
         }
     }
