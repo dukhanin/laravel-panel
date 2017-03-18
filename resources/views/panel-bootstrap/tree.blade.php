@@ -1,6 +1,6 @@
 @extends($panel->config('layout'))
 
-@include('panel-bootstrap.init')
+@include('panel::panel-bootstrap.init')
 
 @push('scripts')
 <script>

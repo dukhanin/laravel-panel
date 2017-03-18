@@ -38,20 +38,7 @@ $directory = isset($directory) ? strval($directory) : null;
     </div>
 </div>
 
-@push('styles')
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.inputFiles.css') }}"/>
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/panel.imageEditor.css') }}"/>
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-bootstrap/css/cropper.min.css') }}"/>
-@endpush
-
 @push('scripts')
-<script src="{{ URL::asset('assets/panel-bootstrap/js/jquery-ui.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-bootstrap/js/cropper.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-bootstrap/js/panel.file.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-bootstrap/js/panel.imageEditor.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-bootstrap/js/panel.inputFiles.js') }}"></script>
-
-
 <script type="text/javascript">
     $(function () {
         var inputFiles = new panel.inputFiles('#{!! $id !!}', {

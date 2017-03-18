@@ -1,6 +1,6 @@
 @extends($form->config('layout'))
 
-@include('panel-bootstrap.init')
+@include('panel::panel-bootstrap.init')
 
 @section('content')
     <div class="panel panel-form">
@@ -12,8 +12,8 @@
 
             @if ($form->isFailure())
                 <div class="form-group">
-                    <div class="col-sm-10 col-sm-offset-2 text-danger">
-                        <i class="fa fa-warning"></i> @lang( $panel->config('labels.validation-failed') )
+                    <div class="col-sm-10 text-danger">
+                        <i class="fa fa-warning"></i> @lang( $form->config('labels.validation-failed') )
                     </div>
                 </div>
             @endif

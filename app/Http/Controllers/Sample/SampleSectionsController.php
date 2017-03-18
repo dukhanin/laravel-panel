@@ -8,7 +8,7 @@ use Dukhanin\Panel\Features\CreateAndEdit;
 use Dukhanin\Panel\Features\Delete;
 use Dukhanin\Panel\Features\EnableAndDisable;
 use Dukhanin\Panel\Features\Order;
-use Dukhanin\Panel\Controllers\PanelTreeController;
+use Dukhanin\Panel\Http\Controllers\PanelTreeController;
 use Dukhanin\Panel\Files\File;
 
 class SampleSectionsController extends PanelTreeController
@@ -20,6 +20,10 @@ class SampleSectionsController extends PanelTreeController
     public function before()
     {
         view()->share('header', 'Panel Sample');
+
+        // config settings for sample only
+        $this->setConfig('views', request()->query('inspinia') ? 'panel::panel-inspinia' : 'panel::panel-bootstrap');
+        $this->setConfig('layout', request()->query('inspinia') ? 'panel::panel-inspinia.layout' : 'panel::panel-bootstrap.layout');
     }
 
 
@@ -43,12 +47,6 @@ class SampleSectionsController extends PanelTreeController
             'depth' => true,
             'order' => true
         ]);
-    }
-
-
-    public function initConfig()
-    {
-        $this->config = config(request()->query('inspinia') ? 'panel-inspinia' : 'panel-bootstrap');
     }
 
 

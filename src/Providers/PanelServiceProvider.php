@@ -10,19 +10,17 @@ class PanelServiceProvider extends ServiceProvider
 
     public function boot()
     {
+        $this->mergeConfigFrom($this->path('config/files.php'), 'files');
+
         $this->publishConfig();
 
         $this->publishMigrations();
 
         $this->publishRoutes();
 
-        $this->publishControllers();
-
         $this->publishPolicies();
 
         $this->publishLang();
-
-        $this->publishViews();
 
         $this->publishAssets();
 
@@ -56,7 +54,6 @@ class PanelServiceProvider extends ServiceProvider
             $this->path('config/panel.php') => config_path('/panel.php'),
             $this->path('config/upload.php') => config_path('/upload.php'),
             $this->path('config/wysiwyg.php') => config_path('/wysiwyg.php'),
-            $this->path('config/files.php') => config_path('/files.php'),
         ], 'config');
     }
 
@@ -77,15 +74,6 @@ class PanelServiceProvider extends ServiceProvider
     }
 
 
-    protected function publishControllers()
-    {
-        $this->publishes([
-            $this->path('app/Http/Controllers/Panel/AbstractUploadController.php') => app_path('Http/Controllers/Panel/AbstractUploadController.php'),
-            $this->path('app/Http/Controllers/Panel/PanelTinymceUploadController.php') => app_path('Http/Controllers/Panel/PanelTinymceUploadController.php'),
-            $this->path('app/Http/Controllers/Panel/PanelUploadController.php') => app_path('Http/Controllers/Panel/PanelUploadController.php'),
-        ], 'routes');
-    }
-
     protected function publishPolicies()
     {
         $this->publishes([
@@ -97,19 +85,10 @@ class PanelServiceProvider extends ServiceProvider
     protected function publishLang()
     {
         $this->publishes([
-            $this->path('resources/lang/') => resource_path('lang/'),
+            $this->path('resources/lang/en/panel.php') => resource_path('lang/en/panel.php'),
+            $this->path('resources/lang/ru/panel.php') => resource_path('lang/ru/panel.php'),
         ], 'lang');
     }
-
-
-    protected function publishViews()
-    {
-        $this->publishes([
-            $this->path('resources/views/panel-bootstrap') => resource_path('views/panel-bootstrap'),
-            $this->path('resources/views/panel-inspinia') => resource_path('views/panel-inspinia')
-        ], 'views');
-    }
-
 
     protected function publishSample()
     {
@@ -129,7 +108,7 @@ class PanelServiceProvider extends ServiceProvider
             $this->path('config/panel-bootstrap.php') => config_path('panel-bootstrap.php'),
             $this->path('database/migrations/2016_10_12_065204_sample_products.php') => database_path('migrations/2016_10_12_065204_sample_products.php'),
             $this->path('database/migrations/2016_10_12_065204_sample_sections.php') => database_path('migrations/2016_10_12_065204_sample_sections.php'),
-            $this->path('database/seeds') => database_path('/seeds'),
+            $this->path('database/seeds/SampleSeeder.php') => database_path('/seeds/SampleSeeder.php'),
             $this->path('routes/sample.php') => base_path('routes/sample.php'),
         ], 'sample');
     }
@@ -137,7 +116,7 @@ class PanelServiceProvider extends ServiceProvider
 
     protected function loadViews()
     {
-        $this->loadViewsFrom($this->path('src/views'), 'panel');
+        $this->loadViewsFrom($this->path('resources/views'), 'panel');
     }
 
 

@@ -1,7 +1,6 @@
 <?php
-
 return [
-    'views'     => 'panel-inspinia',
+    'views'     => 'panel::panel-inspinia',
     'layout'    => 'layouts.app',
     'labels'    => [
         'list-empty'        => 'panel.labels.list-empty',

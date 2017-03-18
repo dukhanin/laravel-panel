@@ -1,10 +1,10 @@
 <?php
 
-Route::group([ 'prefix' => 'panel/upload', 'namespace' => 'Panel' ], function () {
-    Route::post('', 'PanelUploadController@upload');
-    Route::post('createResize/{id}', 'PanelUploadController@createResize');
-    Route::post('cropFromParent/{id}', 'PanelUploadController@cropFromParent');
-    Route::post('delete/{id}', 'PanelUploadController@delete');
+Route::group([ 'prefix' => 'panel/upload', 'namespace' => '\\Dukhanin\\Panel\\Http\\Controllers' ], function () {
+    Route::post('', 'PanelFormUploadController@upload')->name('panel.upload.form');
+    Route::post('createResize/{id}', 'PanelFormUploadController@createResize');
+    Route::post('cropFromParent/{id}', 'PanelFormUploadController@cropFromParent');
+    Route::post('delete/{id}', 'PanelFormUploadController@delete');
 
-    Route::post('tinymce', 'PanelTinymceUploadController@upload');
+    Route::post('tinymce', 'PanelTinymceUploadController@upload')->name('panel.upload.tinymce');
 });

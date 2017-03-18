@@ -11,7 +11,7 @@ $directory = isset($directory) ? strval($directory) : null;
 ?>
 
 <div class="panel-file form-group @if( ! empty($errors) ) has-error @endif">
-    <label class="col-lg-10 control-label">
+    <label class="col-lg-10">
         {{ $label }}
     </label>
 
@@ -37,20 +37,7 @@ $directory = isset($directory) ? strval($directory) : null;
     </div>
 </div>
 
-@push('styles')
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.inputFiles.css') }}"/>
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.imageEditor.css') }}"/>
-<link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/cropper.min.css') }}"/>
-@endpush
-
 @push('scripts')
-<script src="{{ URL::asset('assets/panel-inspinia/js/jquery-ui.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/cropper.min.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/panel.file.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/panel.imageEditor.js') }}"></script>
-<script src="{{ URL::asset('assets/panel-inspinia/js/panel.inputFiles.js') }}"></script>
-
-
 <script type="text/javascript">
     $(function () {
         var inputFiles = new panel.inputFiles('#{!! $id !!}', {

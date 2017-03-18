@@ -13,8 +13,8 @@ use Dukhanin\Panel\Features\MoveTo;
 use Dukhanin\Panel\Features\Order;
 use Dukhanin\Panel\Features\Pages;
 use Dukhanin\Panel\Features\Sort;
-use Dukhanin\Panel\Controllers\PanelListController;
 use Dukhanin\Panel\Files\File;
+use Dukhanin\Panel\Http\Controllers\PanelListController;
 
 class SampleProductsController extends PanelListController
 {
@@ -25,12 +25,10 @@ class SampleProductsController extends PanelListController
     public function before()
     {
         view()->share('header', 'Panel Sample');
-    }
 
-
-    public function initConfig()
-    {
-        $this->config = config(request()->query('inspinia') ? 'panel-inspinia' : 'panel-bootstrap');
+        // config settings for sample only
+        $this->setConfig('views', request()->query('inspinia') ? 'panel::panel-inspinia' : 'panel::panel-bootstrap');
+        $this->setConfig('layout', request()->query('inspinia') ? 'panel::panel-inspinia.layout' : 'panel::panel-bootstrap.layout');
     }
 
 

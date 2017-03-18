@@ -1,6 +1,6 @@
 @extends($panel->config('layout'))
 
-@include('panel-inspinia.init')
+@include('panel::panel-inspinia.init')
 
 @push('scripts')
     <script>

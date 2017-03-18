@@ -1,6 +1,6 @@
 @extends($form->config('layout'))
 
-@include('panel-inspinia.init')
+@include('panel::panel-inspinia.init')
 
 @section('content')
     <div class="wrapper wrapper-content wrapper-panel animated fadeInRight">
