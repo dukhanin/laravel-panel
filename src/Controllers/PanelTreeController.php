@@ -1,6 +1,6 @@
 <?php
 
-namespace Dukhanin\Panel\Http\Controllers;
+namespace Dukhanin\Panel\Controllers;
 
 use App\Http\Controllers\Controller;
 use Dukhanin\Panel\Traits\PanelTreeTrait;

@@ -14,7 +14,7 @@ use Dukhanin\Panel\Features\Order;
 use Dukhanin\Panel\Features\Pages;
 use Dukhanin\Panel\Features\Sort;
 use Dukhanin\Panel\Files\File;
-use Dukhanin\Panel\Http\Controllers\PanelListController;
+use Dukhanin\Panel\Controllers\PanelListController;
 
 class ProductsController extends PanelListController
 {

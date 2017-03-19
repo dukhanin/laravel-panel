@@ -8,7 +8,7 @@ use Dukhanin\Panel\Features\CreateAndEdit;
 use Dukhanin\Panel\Features\Delete;
 use Dukhanin\Panel\Features\EnableAndDisable;
 use Dukhanin\Panel\Features\Order;
-use Dukhanin\Panel\Http\Controllers\PanelTreeController;
+use Dukhanin\Panel\Controllers\PanelTreeController;
 use Dukhanin\Panel\Files\File;
 
 class SectionsController extends PanelTreeController
