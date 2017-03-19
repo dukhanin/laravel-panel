@@ -20,7 +20,7 @@ _config/app.php_
    * Package Service Providers...
    */
   Intervention\Image\ImageServiceProvider::class,
-  Dukhanin\Panel\Providers\PanelServiceProvider::class
+  Dukhanin\Panel\Providers\PanelServiceProvider::class,
 ],
 
 'aliases' => [
@@ -39,6 +39,14 @@ Update composer autoload cache:
 
 ```shell
 composer dump-autoload
+```
+
+Require panel routes to your web routes file
+
+_routes/web.php_
+
+```php
+require 'panel.php';
 ```
 
 ## Running sample
@@ -64,12 +72,11 @@ php artisan migrate
 php artisan db:seed --class=SampleSeeder
 ```
 
-Require routes for panel package and samples routes
+Require samples routes to your web routes file
 
 _routes/web.php_
 
 ```php
-require 'panel.php';
 require 'sample.php';
 ```
 
