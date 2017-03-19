@@ -16,6 +16,7 @@ class Product extends EloquentModel
 
     protected $fillable = [
         'name',
+        'delivired',
         'images',
         'description',
         'settings',
