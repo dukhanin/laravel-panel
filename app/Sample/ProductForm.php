@@ -21,7 +21,7 @@ class ProductForm extends PanelForm
             'options' => Section::tree()->options('name')
         ]);
 
-        $this->addText('name', 'Name');
+        $this->addDate('name', 'Name');
 
         $this->addFiles('images', [
             'label'   => 'Image',
