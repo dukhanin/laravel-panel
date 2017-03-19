@@ -50,6 +50,41 @@ $config['filemanager_subfolder'] = $form->uploadDirectory();
                                 $("body").addClass("mini-navbar");
                             }
                         });
+                    },
+                    images_upload_handler: function (blobInfo, success, failure) {
+                        var formData;
+
+                        formData = new FormData();
+                        formData.append('file', blobInfo.blob(), blobInfo.filename());
+
+                        $.ajax({
+                            url: '{{ $config['images_upload_url'] }}',
+                            method: 'post',
+                            data: formData,
+                            cache: false,
+                            dataType: 'json',
+                            contentType: false,
+                            processData: false,
+                            success: function(responseJSON, textStatus, jqXHR) {
+                                if (jqXHR.status != 200) {
+                                    panel.error(textStatus);
+                                    failure(textStatus);
+                                    return;
+                                }
+
+                                if (!responseJSON || 'string' != typeof responseJSON.location) {
+                                    panel.error(jqXHR.responseText);
+                                    failure('Invalid JSON');
+                                    return;
+                                }
+
+                                success(responseJSON.location);
+                            },
+                            error: function(jqXHR) {
+                                panel.error(jqXHR.responseText);
+                                failure('Invalid JSON');
+                            }
+                        });
                     }
                 }
             )

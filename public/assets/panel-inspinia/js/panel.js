@@ -72,11 +72,13 @@ panel = {
 
         if (responseJSON.messages.length > 0) {
             var message = responseJSON.messages[0];
-        } else if (responseJSON.error != 0) {
-            var message = 'Code ' + responseJSON.error;
+        } else if (responseJSON.error != 0 && responseJSON.error !== null) {
+            var message = 'Code ' + responseJSON.error + ' ' + jqXHR.responseText;
         } else {
             var message = '';
         }
+
+        message = this.validateMessage(message);
 
         if (responseJSON.success) {
             message.type = 'success';
@@ -140,8 +142,20 @@ panel = {
             message.confirmButtonColor = '#DD6B55';
         }
 
+        message.text = this.validateMessageText(message.text);
+
         return message;
     },
+
+
+    validateMessageText: function (text) {
+        var node = $('<div>' +  text + '</div>');
+
+        node.find('style').remove();
+
+        return $.trim(node.text().substring(0, 500));
+    },
+
 
     validateAjaxOptions: function (options) {
         options = options || {};

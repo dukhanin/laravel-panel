@@ -42,7 +42,6 @@ return [
         'image_advtab'              => true,
         'paste_data_images'         => true,
         'images_upload_url'         => '/panel/upload/tinymce',
-        'images_upload_credentials' => true,
         'custom_elements'           => 'noindex',
         'extend_valid_elements'     => '',
         'style_formats'             => [

@@ -51,6 +51,7 @@ trait UploadsFiles
     protected function uploadFileToDirectory($file)
     {
         $uploadPath = upload()->path($this->getDirectory());
+
         $fileBasename = $file->getClientOriginalName();
 
         $this->renameIfExists($uploadPath, $fileBasename);
