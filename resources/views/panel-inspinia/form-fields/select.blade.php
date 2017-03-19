@@ -5,6 +5,7 @@ if ( ! isset( $options ) || ! is_array($options) && ! $options instanceof Illumi
     $options = [ ];
 }
 
+$value             = $form->inputValue($field['key']);
 $errors            = $form->fieldErrors($field['key']);
 $nullTitleSelected = in_array($form->inputValue($field['key']), array( NULL, '' ), true);
 ?>
@@ -29,8 +30,8 @@ $nullTitleSelected = in_array($form->inputValue($field['key']), array( NULL, '' 
         @foreach($options as $optionKey => $optionLabel)
             <option
                     value="{{ $optionKey }}"
-                    @if(! $nullTitleSelected && $form->inputValue($field['key']) == $optionKey) selected @endif
-                    >{{ preg_replace('/\s{2}/', '&nbsp;&nbsp;', $optionLabel) }}</option>
+                    @if(! $nullTitleSelected && $value == $optionKey) selected @endif
+            >{{ preg_replace('/\s{2}/', '&nbsp;&nbsp;', $optionLabel) }}</option>
         @endforeach
         {!! html_tag_close('select') !!}
 

@@ -21,27 +21,20 @@ class Section extends EloquentModel
     ];
 
 
+    public function parent()
+    {
+        return $this->belongsTo(static::class, 'parent_id', 'id');
+    }
+
+
+    public function children()
+    {
+        return $this->hasMany(static::class, 'parent_id', 'id');
+    }
+
+
     public function scopeOrderedDefault($query)
     {
         $query->orderBy('index', 'asc');
     }
-    /*
-
-        public static function initProductsCountForSections($collection)
-        {
-            $sectionsIds = $collection->pluck('id');
-
-            if ($sectionsIds->isEmpty()) {
-                return;
-            }
-
-            $counts = Product::select('section_id', DB::raw('count(*) as c'))->whereIn('section_id',
-                $sectionsIds)->groupBy('section_id')->get()->pluck('c', 'section_id');
-
-            foreach ($counts as $sectionId => $count) {
-                $collection[$sectionId]->productsCount = $count;
-            }
-
-
-        }*/
 }

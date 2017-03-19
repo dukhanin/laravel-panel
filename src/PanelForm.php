@@ -4,6 +4,10 @@ namespace Dukhanin\Panel;
 
 use Dukhanin\Panel\Collections\ButtonsCollection;
 use Dukhanin\Panel\Collections\FieldsCollection;
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\Concerns\InteractsWithPivotTable;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Model;
@@ -75,7 +79,7 @@ class PanelForm
     {
         $this->uploadDirectory = 'public/' . date('Y-m') . '/' . date('d');
 
-        if ( ! Storage::exists($this->uploadDirectory)) {
+        if (!Storage::exists($this->uploadDirectory)) {
             Storage::makeDirectory($this->uploadDirectory);
         }
     }
@@ -90,7 +94,7 @@ class PanelForm
     {
         if ($this->isSubmit()) {
             $this->initDataFromRequest();
-        } elseif ( ! empty($this->model)) {
+        } elseif (!empty($this->model)) {
             $this->initDataFromModel();
         } else {
             $this->initDataDefault();
@@ -136,7 +140,7 @@ class PanelForm
 
     public function initView()
     {
-        $this->view = view($this->config('views') . '.form', [ 'form' => $this ]);
+        $this->view = view($this->config('views') . '.form', ['form' => $this]);
     }
 
 
@@ -187,6 +191,36 @@ class PanelForm
         }
 
         return $this->model;
+    }
+
+
+    public function modelAttributes()
+    {
+        return $this->model()->attributesToArray();
+    }
+
+
+    public function modelRelations()
+    {
+        if (!$this->fields->touched()) {
+            $this->initFields();
+        }
+
+        $relations = [];
+
+        foreach ($this->fields->where('relation', true) as $field) {
+            if (!is_callable([$this->model(), $field['key']])) {
+                continue;
+            }
+
+            if (!($relation = $this->model()->{$field['key']}()) instanceof Relation) {
+                continue;
+            }
+
+            $relations[$field['key']] = $relation;
+        }
+
+        return $relations;
     }
 
 
@@ -244,7 +278,7 @@ class PanelForm
 
     public function fields()
     {
-        if ( ! $this->fields->touched()) {
+        if (!$this->fields->touched()) {
             $this->initFields();
         }
 
@@ -269,7 +303,7 @@ class PanelForm
         ];
 
         foreach ($options as $viewFile) {
-            if ( ! view()->exists($viewFile)) {
+            if (!view()->exists($viewFile)) {
                 continue;
             }
 
@@ -294,7 +328,7 @@ class PanelForm
         }
 
         $inputName[] = trim($name, '.');
-        $inputName   = implode('.', $inputName);
+        $inputName = implode('.', $inputName);
 
         return $inputName;
     }
@@ -322,7 +356,7 @@ class PanelForm
 
     public function fieldErrors($name)
     {
-        if ( ! $this->isSubmit()) {
+        if (!$this->isSubmit()) {
             return [];
         }
 
@@ -356,7 +390,7 @@ class PanelForm
 
     public function buttons()
     {
-        if ( ! $this->buttons->touched()) {
+        if (!$this->buttons->touched()) {
             $this->initButtons();
         }
 
@@ -375,19 +409,25 @@ class PanelForm
     }
 
 
-    public function dataFromRequest($name = null, $default = null)
+    public function dataFromRequest()
     {
-        return request()->input($this->inputName($name), []);
+        return request()->input($this->inputName());
     }
 
 
-    public function dataFromModel($name = null, $default = null)
+    public function dataFromModel()
     {
-        if ($name !== null) {
-            return $this->model()->getAttrubute($name, $default);
-        }
+        return $this->modelAttributes() + array_map(function ($relation) {
+                $results = $relation->getResults();
 
-        return $this->model()->attributesToArray();
+                if ($results instanceof Collection) {
+                    return $results->modelKeys();
+                }
+
+                if (!empty($results)) {
+                    return $results->getKey();
+                }
+            }, $this->modelRelations());
     }
 
 
@@ -432,7 +472,7 @@ class PanelForm
     public function isFailure()
     {
         $validator = $this->validator();
-        $validator->setData((array) $this->data());
+        $validator->setData((array)$this->data());
 
         return $this->isSubmit() && $validator->fails();
     }
@@ -441,7 +481,7 @@ class PanelForm
     public function isSuccess()
     {
         $validator = $this->validator();
-        $validator->setData((array) $this->data());
+        $validator->setData((array)$this->data());
 
         return $this->isSubmit() && $validator->passes();
     }
@@ -494,11 +534,11 @@ class PanelForm
         if (preg_match('/^(add)(.*?)?$/i', $method, $pock)) {
             $key = array_get($arguments, 0);
 
-            if ( ! is_array($field = array_get($arguments, 1))) {
-                $field = [ 'label' => $field ];
+            if (!is_array($field = array_get($arguments, 1))) {
+                $field = ['label' => $field];
             };
 
-            return $this->fields->put($key, [ 'type' => strtolower($pock[2]) ] + $field);
+            return $this->fields->put($key, ['type' => strtolower($pock[2])] + $field);
         }
 
         throw new ErrorException('Call to undefined method ' . get_class($this) . '::' . $method . '()');
@@ -513,7 +553,43 @@ class PanelForm
 
     public function saveModel()
     {
+        $this->saveModelAttributes();
+
+        $this->saveModelRelations();
+    }
+
+
+    public function saveModelAttributes()
+    {
         $this->model->save();
+    }
+
+
+    public function saveModelRelations()
+    {
+        foreach ($this->modelRelations() as $relationKey => $relation) {
+            if ($relation instanceof BelongsTo) {
+                $relation->dissociate();
+
+                if ($keys = intval($this->data($relationKey))) {
+                    $relation->associate($keys);
+                }
+
+                $this->model->save();
+
+                continue;
+            }
+
+            if (in_array(InteractsWithPivotTable::class, class_uses_recursive($relation))) {
+                $relation->detach();
+
+                if ($keys = (array)$this->data($relationKey)) {
+                    $relation->attach($keys);
+                }
+
+                continue;
+            }
+        }
     }
 
 
@@ -541,7 +617,7 @@ class PanelForm
 
     public function render()
     {
-        return $this->view()->render();
+        return $this->view();
     }
 
 
