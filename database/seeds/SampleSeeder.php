@@ -94,6 +94,7 @@ class SampleSeeder extends Seeder
     {
         Product::create([
             'name'        => 'Apple',
+            'delivired'   => '1987-10-27',
             'description' => '<p>Green and fresh</p>',
             'enabled'     => 1,
             'images'      => [ "3", "5", "1" ],
@@ -103,6 +104,7 @@ class SampleSeeder extends Seeder
 
         Product::create([
             'name'        => 'Pear',
+            'delivired'   => '2015-03-12',
             'description' => '<p>Yellow and crispy</p>',
             'enabled'     => 1,
             'images'      => [ "10", "11" ],
@@ -112,6 +114,7 @@ class SampleSeeder extends Seeder
 
         Product::create([
             'name'        => 'Carrot',
+            'delivired'   => '2012-05-15',
             'description' => '<p>Orange and long</p>',
             'enabled'     => 1,
             'images'      => [ "15" ],
@@ -121,6 +124,7 @@ class SampleSeeder extends Seeder
 
         Product::create([
             'name'        => 'Potatoe',
+            'delivired'   => '2017-03-19',
             'description' => '<p>Round and heavy</p>',
             'enabled'     => 1,
             'images'      => [ "18", "19" ],
@@ -130,6 +134,7 @@ class SampleSeeder extends Seeder
 
         Product::create([
             'name'        => 'Baguette',
+            'delivired'   => '1992-05-17',
             'description' => '<p>So French!</p>',
             'enabled'     => 1,
             'images'      => [ "23", "24" ],
@@ -139,6 +144,7 @@ class SampleSeeder extends Seeder
 
         Product::create([
             'name'        => 'Bun',
+            'delivired'   => '1987-10-27',
             'description' => '<p>Just baked</p>',
             'enabled'     => 1,
             'images'      => [ "43", "44" ],
@@ -148,6 +154,7 @@ class SampleSeeder extends Seeder
 
         Product::create([
             'name'        => 'Milk',
+            'delivired'   => '2010-04-01',
             'description' => '<p>From best cows</p>',
             'enabled'     => 1,
             'images'      => [ "38", "39" ],
@@ -157,6 +164,7 @@ class SampleSeeder extends Seeder
 
         Product::create([
             'name'        => 'Orange juice',
+            'delivired'   => '1992-10-12',
             'description' => '<p>Tasty!</p>',
             'enabled'     => 1,
             'images'      => [ "48", "49" ],
