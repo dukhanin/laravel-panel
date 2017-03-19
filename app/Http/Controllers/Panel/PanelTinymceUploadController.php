@@ -1,11 +1,15 @@
 <?php
 
-namespace Dukhanin\Panel\Http\Controllers;
+namespace App\Http\Controllers\Panel;
 
 // @todo добавить проверку на isImage
 
-class PanelTinymceUploadController extends AbstractUploadController
+use App\Http\Controllers\Controller;
+use Dukhanin\Panel\Traits\UploadsFiles;
+
+class PanelTinymceUploadController extends Controller
 {
+    use UploadsFiles;
 
     public function upload()
     {

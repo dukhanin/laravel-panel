@@ -1,14 +1,12 @@
 <?php
 
-namespace Dukhanin\Panel\Http\Controllers;
+namespace Dukhanin\Panel\Traits;
 
 use App\Http\Controllers\Controller;
 use Dukhanin\Panel\Files\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-// @todo сделать передачу папки захешированной
-
-abstract class PanelUploadController extends Controller
+trait UploadsFiles
 {
     protected $directory;
 

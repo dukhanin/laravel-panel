@@ -1,11 +1,15 @@
 <?php
 
-namespace Dukhanin\Panel\Http\Controllers;
+namespace App\Http\Controllers\Panel;
 
+use App\Http\Controllers\Controller;
 use Dukhanin\Panel\Files\File;
+use Dukhanin\Panel\Traits\UploadsFiles;
 
-class PanelFormUploadController extends PanelUploadController
+class PanelFormUploadController extends Controller
 {
+
+    use UploadsFiles;
 
     public function upload()
     {

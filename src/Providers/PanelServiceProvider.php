@@ -14,6 +14,8 @@ class PanelServiceProvider extends ServiceProvider
 
         $this->publishConfig();
 
+        $this->publishControllers();
+
         $this->publishMigrations();
 
         $this->publishRoutes();
@@ -37,17 +39,6 @@ class PanelServiceProvider extends ServiceProvider
     }
 
 
-    protected function publishAssets()
-    {
-        $this->publishes([
-            $this->path('public/assets/filemanager') => public_path('assets/filemanager'),
-            $this->path('public/assets/tinymce') => public_path('assets/tinymce'),
-            $this->path('public/assets/panel-bootstrap') => public_path('assets/panel-bootstrap'),
-            $this->path('public/assets/panel-inspinia') => public_path('assets/panel-inspinia')
-        ], 'public');
-    }
-
-
     protected function publishConfig()
     {
         $this->publishes([
@@ -55,6 +46,15 @@ class PanelServiceProvider extends ServiceProvider
             $this->path('config/upload.php') => config_path('/upload.php'),
             $this->path('config/wysiwyg.php') => config_path('/wysiwyg.php'),
         ], 'config');
+    }
+
+
+    protected function publishControllers()
+    {
+        $this->publishes([
+            $this->path('app/Http/Controllers/Panel/PanelTinymceUploadController.php') => app_path('Http/Controllers/Panel/PanelTinymceUploadController.php'),
+            $this->path('app/Http/Controllers/Panel/PanelFormUploadController.php') => app_path('Http/Controllers/Panel/PanelFormUploadController.php'),
+        ], 'routes');
     }
 
 
@@ -89,6 +89,18 @@ class PanelServiceProvider extends ServiceProvider
             $this->path('resources/lang/ru/panel.php') => resource_path('lang/ru/panel.php'),
         ], 'lang');
     }
+
+
+    protected function publishAssets()
+    {
+        $this->publishes([
+            $this->path('public/assets/filemanager') => public_path('assets/filemanager'),
+            $this->path('public/assets/tinymce') => public_path('assets/tinymce'),
+            $this->path('public/assets/panel-bootstrap') => public_path('assets/panel-bootstrap'),
+            $this->path('public/assets/panel-inspinia') => public_path('assets/panel-inspinia')
+        ], 'public');
+    }
+
 
     protected function publishSample()
     {
