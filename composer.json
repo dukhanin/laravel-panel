@@ -13,6 +13,7 @@
         "php": ">=5.5.9",
         "laravel/framework": "~5.4",
         "intervention/image": "^2.3",
+        "nesbot/carbon": "^1.22",
         "dukhanin/laravel-support": "~1.4"
     },
     "autoload": {

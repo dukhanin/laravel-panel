@@ -2,6 +2,9 @@
 return [
     'views'     => 'panel::panel-inspinia',
     'layout'    => 'layouts.app',
+    'date'      => [
+        'format' => 'm/d/Y'
+    ],
     'labels'    => [
         'list-empty'        => 'panel.labels.list-empty',
         'move-to'           => 'panel.labels.move-to',
