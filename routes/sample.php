@@ -1,16 +1,16 @@
 <?php
 
-use App\Http\Controllers\Sample\SampleProductsController;
-use App\Http\Controllers\Sample\SampleSectionsController;
+use App\Http\Controllers\Sample\ProductsController;
+use App\Http\Controllers\Sample\SectionsController;
 
 Route::group([ 'prefix' => 'sample/products' ], function () {
-    SampleProductsController::addRoutes([ 'as' => 'products' ]);
+    ProductsController::addRoutes([ 'as' => 'products' ]);
 });
 
 Route::group([ 'prefix' => 'sample/sections' ], function () {
-    SampleSectionsController::addRoutes([ 'as' => 'sections' ]);
+    SectionsController::addRoutes([ 'as' => 'sections' ]);
 });
 
 Route::any('sample', function () {
-    return redirect()->action('Sample\SampleProductsController@showList');
+    return redirect()->action('Sample\ProductsController@showList');
 });

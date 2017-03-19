@@ -11,7 +11,7 @@ use Dukhanin\Panel\Features\Order;
 use Dukhanin\Panel\Http\Controllers\PanelTreeController;
 use Dukhanin\Panel\Files\File;
 
-class SampleSectionsController extends PanelTreeController
+class SectionsController extends PanelTreeController
 {
 
     use Order, EnableAndDisable, CreateAndEdit, Delete;
@@ -52,7 +52,7 @@ class SampleSectionsController extends PanelTreeController
 
     public function initUrl()
     {
-        $this->url = action('Sample\SampleSectionsController@showList');
+        $this->url = action('Sample\SectionsController@showList');
 
         if (request()->query('inspinia')) {
             $this->url = urlbuilder($this->url)->query([ 'inspinia' => 1 ])->compile();

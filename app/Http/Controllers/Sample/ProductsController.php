@@ -16,7 +16,7 @@ use Dukhanin\Panel\Features\Sort;
 use Dukhanin\Panel\Files\File;
 use Dukhanin\Panel\Http\Controllers\PanelListController;
 
-class SampleProductsController extends PanelListController
+class ProductsController extends PanelListController
 {
 
     use Sort, Order, Pages, EnableAndDisable, CreateAndEdit, Delete, Categories, MoveTo;
@@ -55,7 +55,7 @@ class SampleProductsController extends PanelListController
 
     public function initUrl()
     {
-        $this->url = action('Sample\SampleProductsController@showList');
+        $this->url = action('Sample\ProductsController@showList');
     }
 
 
