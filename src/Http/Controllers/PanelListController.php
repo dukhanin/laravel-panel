@@ -19,24 +19,6 @@ abstract class PanelListController extends Controller
     }
 
 
-    public function callAction($action, $parameters)
-    {
-        $this->init();
-
-        if (method_exists($this, 'before')) {
-            $this->before();
-        }
-
-        $res = call_user_func_array([ $this, $action ], $parameters);
-
-        if (method_exists($this, 'after')) {
-            $this->after();
-        }
-
-        return $res;
-    }
-
-
     protected function urlBuilderToLocalAction($action, $params = null)
     {
         return urlbuilder(method_exists($this, $action) ? action('\\' . get_called_class() . '@' . $action,
