@@ -20,7 +20,6 @@ class PanelServiceProvider extends ServiceProvider
 
         $this->publishRoutes();
 
-        $this->publishPolicies();
 
         $this->publishLang();
 
@@ -74,14 +73,6 @@ class PanelServiceProvider extends ServiceProvider
     }
 
 
-    protected function publishPolicies()
-    {
-        $this->publishes([
-            $this->path('app/Policies/UserPolicy.php') => app_path('Policies/UserPolicy.php'),
-        ], 'routes');
-    }
-
-
     protected function publishLang()
     {
         $this->publishes([
@@ -116,8 +107,6 @@ class PanelServiceProvider extends ServiceProvider
             $this->path('app/Sample') => app_path('Sample/'),
             $this->path('public/assets/inspinia/') => public_path('assets/inspinia/'),
             $this->path('public/upload/') => public_path('upload'),
-            $this->path('config/panel-inspinia.php') => config_path('panel-inspinia.php'),
-            $this->path('config/panel-bootstrap.php') => config_path('panel-bootstrap.php'),
             $this->path('database/migrations/2016_10_12_065204_sample_products.php') => database_path('migrations/2016_10_12_065204_sample_products.php'),
             $this->path('database/migrations/2016_10_12_065204_sample_sections.php') => database_path('migrations/2016_10_12_065204_sample_sections.php'),
             $this->path('database/seeds/SampleSeeder.php') => database_path('/seeds/SampleSeeder.php'),
