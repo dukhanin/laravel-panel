@@ -3,7 +3,6 @@
 namespace Dukhanin\Panel\Features;
 
 use Dukhanin\Panel\PanelTree;
-use Illuminate\Support\Facades\DB;
 
 trait Sort
 {
@@ -176,9 +175,14 @@ trait Sort
 
     protected function resortModels()
     {
-        // @todo @dukhanin mysql support only!
-        $this->sortQuery()->orderBy($this->sortKey,
-            'asc')->update([ $this->sortKey => DB::raw('(select @i := IF(@i IS NULL, 0 , @i + 1))') ]);
+        $index = 0;
+
+        $this->sortQuery()->select(['id'])->orderBy($this->sortKey, 'asc')->chunk(50, function ($models) use ($index) {
+            foreach ($models as $model) {
+                $model->index = $index++;
+                $model->save();
+            }
+        });
     }
 
 
