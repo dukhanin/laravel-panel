@@ -45,7 +45,7 @@ class RoutesMetaCollection extends Collection
     {
         return $this->map(function ($meta) use ($options) {
             $options = $options + [
-                    'as'         => null,
+                    'name'         => null,
                     'prefix'     => null,
                     'middleware' => null,
                     'class'      => $this->class
@@ -55,7 +55,7 @@ class RoutesMetaCollection extends Collection
             $meta['name']   = $this->name($meta, $options);
             $meta['uri']    = $this->uri($meta, $options);
 
-            return array_except($options, [ 'as', 'prefix' ]) + $meta;
+            return array_except($options, [ 'name', 'prefix' ]) + $meta;
         });
     }
 
@@ -144,11 +144,11 @@ class RoutesMetaCollection extends Collection
 
     protected function name($meta, $options)
     {
-        if ( ! $options['as']) {
+        if ( ! $options['name']) {
             return false;
         }
 
-        return rtrim($options['as'], '.') . '.' . explode('@', $meta['action'])[1];
+        return rtrim($options['name'], '.') . '.' . explode('@', $meta['action'])[1];
     }
 
 }
