@@ -26,7 +26,21 @@ class PanelBuilder extends EloquentBuilder
 
         $keys = is_array($keys) ? $keys : [ $keys ];
 
-        return $this->whereIn($this->parentKeyName, $keys);
+        return $this->where(function($query) use ($keys) {
+            if(in_array(null, $keys)) {
+                $query->whereNull($this->parentKeyName);
+            }
+
+            $keys = array_filter($keys, function($key){
+                return $key !== null;
+            });
+
+            if($keys) {
+                $query->orWhereIn($this->parentKeyName, $keys);
+            }
+
+            return $query;
+        });
     }
 
 
