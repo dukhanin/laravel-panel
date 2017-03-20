@@ -4,11 +4,11 @@ use App\Http\Controllers\Sample\ProductsController;
 use App\Http\Controllers\Sample\SectionsController;
 
 Route::group([ 'prefix' => 'sample/products' ], function () {
-    ProductsController::addRoutes([ 'as' => 'products' ]);
+    ProductsController::addRoutes([ 'name' => 'products' ]);
 });
 
 Route::group([ 'prefix' => 'sample/sections' ], function () {
-    SectionsController::addRoutes([ 'as' => 'sections' ]);
+    SectionsController::addRoutes([ 'name' => 'sections' ]);
 });
 
 Route::any('sample', function () {
