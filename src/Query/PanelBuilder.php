@@ -18,7 +18,7 @@ class PanelBuilder extends EloquentBuilder
     public $parentKeyName = 'parent_id';
 
 
-    public function parent($keys)
+    public function byParent($keys)
     {
         if ($keys instanceof Collection) {
             $keys = $keys->toArray();
@@ -53,7 +53,7 @@ class PanelBuilder extends EloquentBuilder
         $depth = 0;
 
         while ( ! $currentLevelKeys->isEmpty() && ( is_null($depthTo) || $depthTo-- > 0 )) {
-            $currentLevelKeys = ( clone $this )->parent($currentLevelKeys)->select($this->keyName)->get()->pluck($this->keyName);
+            $currentLevelKeys = ( clone $this )->byParent($currentLevelKeys)->select($this->keyName)->get()->pluck($this->keyName);
 
             $currentLevelKeys->each(function ($key) use ($depth) {
                 $this->modelsDepths->put($key, $depth);

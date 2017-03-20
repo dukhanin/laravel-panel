@@ -85,7 +85,7 @@ class ProductsController extends PanelListController
 
     public function isSortEnabled()
     {
-        return ! empty($this->category) && Section::parent($this->category)->count() == 0;
+        return ! empty($this->category) && Section::byParent($this->category)->count() == 0;
     }
 
 

@@ -104,6 +104,14 @@ trait Sort
     }
 
 
+    public function applyQueryOrderDefault($query)
+    {
+        if(!method_exists($this, 'order') || empty($this->order())) {
+            $query->orderBy($this->sortKey, 'asc');
+        }
+    }
+
+
     protected function sort($primaryKey, $direction)
     {
         $this->modelToSort = $this->findModelOrFail($primaryKey);
