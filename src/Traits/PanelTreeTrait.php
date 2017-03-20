@@ -28,7 +28,7 @@ trait PanelTreeTrait
 
     public function initParentKeyValue()
     {
-        $this->parentKeyValue = 0;
+        $this->parentKeyValue = null;
     }
 
 
