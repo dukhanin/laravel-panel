@@ -204,7 +204,7 @@ panel = {
 
         options.complete = function (jqXHR, textStatus) {
             if (completeCallback) {
-                completeCallback.call(this, response.data === 'undefined' ? {} : response.data, textStatus, jqXHR);
+                completeCallback.call(this, undefined === jqXHR.responseJSON ? {} : jqXHR.responseJSON, textStatus, jqXHR);
             }
 
             panel.ajaxComplete.call(this, jqXHR);
