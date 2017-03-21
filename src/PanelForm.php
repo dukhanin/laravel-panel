@@ -27,6 +27,8 @@ class PanelForm
 
     protected $inputName;
 
+    protected $mergeAttributes = [];
+
     protected $data;
 
     protected $fields;
@@ -104,13 +106,28 @@ class PanelForm
 
     public function initDataFromRequest()
     {
-        $this->data = $this->dataFromRequest();
+        $this->data = (array)$this->dataFromRequest();
+
+        $this->mergeAttributes($this->data);
+    }
+
+
+    protected function mergeAttributes(array &$data) {
+        $dataFromModel = $this->dataFromModel();
+
+        foreach ($this->mergeAttributes as $key) {
+            if(!array_has($data, $key) || !array_has($dataFromModel, $key)) {
+                continue;
+            }
+
+            $data[$key] = (array)$data[$key] + (array)$dataFromModel[$key];
+        }
     }
 
 
     public function initDataFromModel()
     {
-        $this->data = $this->dataFromModel();
+        $this->data = (array)$this->dataFromModel();
     }
 
 
