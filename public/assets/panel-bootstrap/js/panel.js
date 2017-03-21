@@ -192,5 +192,5 @@ panel = {
             messages: [],
             data: {}
         }, $.isPlainObject(response) ? response : {});
-    },
+    }
 };
