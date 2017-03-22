@@ -112,7 +112,6 @@ class File extends Model
     public function getResize($options)
     {
         // @todo @dukhanin add force+config option
-        // @todo @dukhanin add resize using time
 
         $options = $this->resolveResizeOptions($options);
 
@@ -393,7 +392,7 @@ class File extends Model
             });
         }
 
-        $image->save();
+        $image->save(null, config('upload.images.quality', null));
 
         $this->updateFileAttributes();
     }
@@ -569,7 +568,7 @@ class File extends Model
     {
         if ( ! is_array($options)) {
             $options = [
-                'key'  => $this->sizeToKey($options),
+                'key'  => $options,
                 'size' => $options
             ];
         }
@@ -580,6 +579,7 @@ class File extends Model
                 'size'  => ''
             ];
 
+        $options['key'] = $options['key']?:$this->sizeToKey($options['size']);
         $options['size'] = $this->resolveImageSize($options['size']);
 
         return $options;
