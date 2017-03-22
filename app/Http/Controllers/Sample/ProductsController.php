@@ -85,7 +85,7 @@ class ProductsController extends PanelListController
 
     public function isSortEnabled()
     {
-        return ! empty($this->category) && Section::byParent($this->category)->count() == 0;
+        return ! empty($this->category()) && Section::byParent($this->category())->count() == 0;
     }
 
 
@@ -114,8 +114,8 @@ class ProductsController extends PanelListController
     {
         $model = parent::newModel();
 
-        if ($this->category) {
-            $model->section_id = $this->category;
+        if ($this->category()) {
+            $model->section_id = $this->category();
         }
 
         return $model;
@@ -142,8 +142,8 @@ class ProductsController extends PanelListController
 
     protected function applyQueryCategory($query)
     {
-        if ( ! empty($this->category)) {
-            $query->bySectionRecursive($this->category);
+        if ( ! empty($this->category())) {
+            $query->bySectionRecursive($this->category());
         }
     }
 }

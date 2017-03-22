@@ -49,7 +49,7 @@
                                     url="{!! $panel->urlTo('showList', [], ['!page', '!category', 'category' => 'dummyCategory']) !!}">
                                 @foreach($panel->categories() as $categoryKey=>$category)
                                     <option value="{{$categoryKey}}"
-                                            @if($categoryKey == $panel->category) selected @endif>{{$category}}</option>
+                                            @if($categoryKey == $panel->category()) selected @endif>{{$category}}</option>
                                 @endforeach
                             </select>
                         </div>
