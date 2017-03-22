@@ -101,10 +101,12 @@ trait CreateAndEdit
 
     public function afterSave()
     {
-        if (request()->input('_apply')) {
-            return redirect()->back();
-        }
+        return function() {
+            if (request()->input('_apply')) {
+                return redirect()->to( $this->urlTo('edit', $this->form()->model()) );
+            }
 
-        return redirect()->to($this->url());
+            return redirect()->to($this->url());
+        };
     }
 }
