@@ -12,11 +12,11 @@ trait CreateAndEdit
 
     protected static function routesForCreateAndEdit(array $options = null)
     {
-        app('router')->get('create/{into?}', '\\' . static::class . '@create');
-        app('router')->post('create/{into?}', '\\' . static::class . '@createModel');
+        app('router')->get('create/{into?}', '\\' . static::class . '@create')->name('create');
+        app('router')->post('create/{into?}', '\\' . static::class . '@createModel')->name('createModel');
 
-        app('router')->get('edit/{id}', '\\' . static::class . '@edit');
-        app('router')->post('edit/{id}', '\\' . static::class . '@updateModel');
+        app('router')->get('edit/{id}', '\\' . static::class . '@edit')->name('edit');
+        app('router')->post('edit/{id}', '\\' . static::class . '@updateModel')->name('updateModel');
     }
 
 

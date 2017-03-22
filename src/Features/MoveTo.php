@@ -10,7 +10,7 @@ trait MoveTo
 
     protected static function routesForMoveTo(array $options = null)
     {
-        app('router')->post('group-move-to/{location}', '\\' . static::class . '@groupMoveTo');
+        app('router')->post('group-move-to/{location}', '\\' . static::class . '@groupMoveTo')->name('groupMoveTo');
     }
 
 

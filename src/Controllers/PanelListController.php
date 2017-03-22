@@ -541,6 +541,10 @@ abstract class PanelListController extends Controller
 
         $attributes = $attributes ?: ['middleware' => ['web']];
 
+        if (empty($attributes['as'])) {
+            $attributes['as'] = class_basename(static::class);
+        }
+
         app('router')->group($attributes, function ($router) {
             static::initRoutes();
             static::initFeaturesRoutes();
@@ -549,7 +553,7 @@ abstract class PanelListController extends Controller
 
     static protected function initRoutes()
     {
-        app('router')->get('', '\\' . static::class . '@showList');
+        app('router')->get('', '\\' . static::class . '@showList')->name('showList');
     }
 
     static protected function initFeaturesRoutes()
@@ -560,5 +564,4 @@ abstract class PanelListController extends Controller
             }
         }
     }
-
 }

@@ -7,9 +7,9 @@ trait Delete
 
     protected static function routesForDelete(array $options = null)
     {
-        app('router')->get('delete/{id}', '\\' . static::class . '@delete');
+        app('router')->get('delete/{id}', '\\' . static::class . '@delete')->name('delete');
 
-        app('router')->post('group-delete', '\\' . static::class . '@groupDelete');
+        app('router')->post('group-delete', '\\' . static::class . '@groupDelete')->name('groupDelete');
     }
 
 
