@@ -71,19 +71,20 @@ panel = {
         var responseJSON = this.validateResponseJSON(jqXHR.responseJSON);
 
         if (responseJSON.messages.length > 0) {
-            var message = responseJSON.messages[0];
+            var message = {text: responseJSON.messages[0]};
         } else if (responseJSON.error != 0 && responseJSON.error !== null) {
-            var message = 'Code ' + responseJSON.error + ' ' + jqXHR.responseText;
+            var message = {text: 'Code ' + responseJSON.error + ' ' + jqXHR.responseText};
         } else {
-            var message = '';
+            var message = {text: ''};
         }
 
+        message.type = responseJSON.success ? 'success' : 'error';
         message = this.validateMessage(message);
 
-        if (responseJSON.success) {
-            !message.text || this.alert(message);
-        } else {
+        if (!responseJSON.success) {
             this.error(message);
+        } else if (message.text) {
+            this.alert(message);
         }
     },
 
@@ -124,9 +125,17 @@ panel = {
     validateMessageText: function (text) {
         var node = $('<div>' + text + '</div>');
 
-        node.find('style').remove();
+        if (node.find('.exception_message').length > 0) {
+            node = node.find('.exception_message');
+        }
 
-        return $.trim(node.text().substring(0, 500));
+        var text = node.text()
+            .replace(/^\s*[\r\n]/gm, '')
+            .replace(/^\s*\n/gm, '')
+            .replace(/^[\s\t]*/gm, '')
+            .substring(0, 500);
+
+        return $.trim(text);
     },
 
     validateAjaxOptions: function (options) {
