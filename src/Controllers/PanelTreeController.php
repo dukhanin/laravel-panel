@@ -3,60 +3,103 @@
 namespace Dukhanin\Panel\Controllers;
 
 use App\Http\Controllers\Controller;
-use Dukhanin\Panel\Traits\PanelTreeTrait;
 
-abstract class PanelTreeController extends Controller
+abstract class PanelTreeController extends PanelListController
 {
+    public $parentKey;
 
-    use PanelTreeTrait;
+    public $parentKeyValue;
 
 
-    public function initUrl()
+    public function initView()
     {
-        if ($route = app('router')->getRoutes()->getByAction($action = get_class($this) . '@showList')) {
-            $this->url = app('url')->action('\\' . $action, app('router')->current()->parameters());
-        }
+        $this->view = view($this->config('views') . '.tree', ['panel' => $this->decorator()]);
     }
 
 
-    public function callAction($action, $parameters)
+    public function initParentKey()
     {
-        $this->init();
-
-        if (method_exists($this, 'before')) {
-            $this->before();
-        }
-
-        $res = call_user_func_array([ $this, $action ], $parameters);
-
-        if (method_exists($this, 'after')) {
-            $this->after();
-        }
-
-        return $res;
+        $this->parentKey = 'parent_id';
     }
 
 
-    public function method($checkActions = null)
+    public function initParentKeyValue()
     {
-        if ( ! ( $route = app('router')->current() )) {
-            return false;
-        }
-
-        $methodName = Str::parseCallback($route->getActionName())[1];
-
-        if (is_null($checkActions)) {
-            return $methodName;
-        }
-
-        return in_array(strtolower($methodName), array_map('strtolower', (array) $checkActions));
+        $this->parentKeyValue = null;
     }
 
 
-    protected function urlBuilderToLocalAction($action, $params = null)
+    public function initModelActions()
     {
-        return urlbuilder(method_exists($this, $action) ? action('\\' . get_called_class() . '@' . $action,
-            $params) : $action);
+        $this->modelActions->push($this->config('actions.append'));
     }
 
+
+    public function initDecorator()
+    {
+        $this->decorator = new PanelTreeDecorator($this);
+    }
+
+
+    public function parentKey()
+    {
+        if (is_null($this->parentKey)) {
+            $this->initParentKey();
+        }
+
+        return $this->parentKey;
+    }
+
+
+    public function parentKeyValue()
+    {
+        if (is_null($this->parentKeyValue)) {
+            $this->initParentKeyValue();
+        }
+
+        return $this->parentKeyValue;
+    }
+
+
+    public function queryBranch($parentKeyValue = null, array $apply = ['*'])
+    {
+        return $this->query($apply)->where($this->parentKey(),
+            is_null($parentKeyValue) ? $this->parentKeyValue() : $parentKeyValue);
+    }
+
+
+    public function items(array $apply = ['*'])
+    {
+        return $this->queryBranch(null, $apply)->get();
+    }
+
+
+    protected function newModel()
+    {
+        $model = clone $this->model();
+
+        $parentKeyValue = $this->parameter('into');
+
+        if ($parentKeyValue) {
+            $parent = $this->findModel($parentKeyValue);
+
+            if (!$parent || $this->denies('append', [$parent, $model])) {
+                $parentKeyValue = null;
+            }
+        }
+
+        if (is_null($parentKeyValue)) {
+            $parentKeyValue = $this->parentKeyValue();
+        }
+
+        $model->{$this->parentKey()} = $parentKeyValue;
+
+        return $model;
+    }
+
+
+    protected function sortQuery()
+    {
+        return $this->queryBranch($this->model()->{$this->parentKey()}, ['!order']);
+    }
 }

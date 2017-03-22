@@ -14,14 +14,13 @@
         <div class="ibox-content">
             <form method="{{ $form->method() }}" action="{{ $form->submitUrl() }}" class="form-horizontal">
 
-                @if ($form->isFailure())
+                @if (count($form->errors()) > 0)
                     <div class="form-group">
                         <div class="col-sm-10 text-danger">
                             <i class="fa fa-warning"></i> @lang( $form->config('labels.validation-failed') )
                         </div>
                     </div>
                 @endif
-
 
                 @foreach ($form->fields() as $field)
                     @include($form->fieldView($field), array_merge([

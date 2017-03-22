@@ -3,7 +3,6 @@
 namespace Dukhanin\Panel\Features;
 
 use Dukhanin\Panel\PanelForm;
-use Dukhanin\Panel\Traits\PanelTreeTrait;
 
 trait CreateAndEdit
 {
@@ -13,13 +12,11 @@ trait CreateAndEdit
 
     protected static function routesForCreateAndEdit(array $options = null)
     {
-        if (class_uses(static::class, PanelTreeTrait::class)) {
-            static::routesMeta()->match([ 'get', 'post' ], 'create/{into?}', 'create');
-        } else {
-            static::routesMeta()->match([ 'get', 'post' ], 'create', 'create');
-        }
+        app('router')->get('create/{into?}', '\\' . static::class . '@create');
+        app('router')->post('create/{into?}', '\\' . static::class . '@createModel');
 
-        static::routesMeta()->match([ 'get', 'post' ], 'edit/{id}', 'edit');
+        app('router')->get('edit/{id}', '\\' . static::class . '@edit');
+        app('router')->post('edit/{id}', '\\' . static::class . '@updateModel');
     }
 
 
@@ -41,13 +38,9 @@ trait CreateAndEdit
     {
         $this->form->setConfig(null, $this->config());
 
-        $this->form->buttons()->put('cancel', [ 'url' => $this->url() ]);
+        $this->form->buttons()->put('cancel', ['url' => $this->url()]);
         $this->form->buttons()->put('submit');
         $this->form->buttons()->put('apply');
-
-        $this->redirectToFormAfterApply();
-
-        $this->redirectToListAfterSave();
     }
 
 
@@ -68,7 +61,19 @@ trait CreateAndEdit
 
         $this->authorize('edit', $model);
 
-        return $this->form()->setModel($model)->execute();
+        return $this->form()->setModel($model)->view();
+    }
+
+
+    public function updateModel()
+    {
+        $model = $this->findModelOrFail($this->parameter('id'));
+
+        $this->authorize('edit', $model);
+
+        $this->form()->setModel($model);
+
+        return $this->form()->handle($this->afterSave());
     }
 
 
@@ -78,32 +83,28 @@ trait CreateAndEdit
 
         $this->authorize('create', $model);
 
-        return $this->form()->setModel($model)->execute();
+        return $this->form()->setModel($model)->view();
     }
 
 
-    private function redirectToFormAfterApply()
+    public function createModel()
     {
-        $this->form()->succeed(function ($form) {
-            if ( ! request()->input('_apply')) {
-                return;
-            }
+        $model = $this->newModel();
 
-            $url = request()->fullUrl();
+        $this->authorize('create', $model);
 
-            if ($form->model()->wasRecentlyCreated) {
-                $url = $this->urlTo('edit', $form->model());
-            }
+        $this->form()->setModel($model);
 
-            abort(301, '', [ 'Location' => $url ]);
-        }, -1);
+        return $this->form()->handle($this->afterSave());
     }
 
 
-    private function redirectToListAfterSave()
+    public function afterSave()
     {
-        $this->form()->succeed(function () {
-            abort(301, '', [ 'Location' => $this->url() ]);
-        }, -2);
+        if (request()->input('_apply')) {
+            return redirect()->back();
+        }
+
+        return redirect()->to($this->url());
     }
 }

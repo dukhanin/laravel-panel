@@ -51,7 +51,7 @@ trait Order
             $order = $this->order();
         }
 
-        if (is_callable($order)) {
+        if (!is_string($order) && is_callable($order)) {
             call_user_func($order, $select, $this);
         } else {
             $select->orderBy($order, $this->orderDesc() ? 'desc' : 'asc');

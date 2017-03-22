@@ -18,11 +18,11 @@ trait Sort
 
     protected static function routesForSort(array $options = null)
     {
-        static::routesMeta()->get('sort-up/{id}', 'sortUp');
+        app('router')->get('sort-up/{id}', '\\' . static::class . '@sortUp');
 
-        static::routesMeta()->get('sort-down/{id}', 'sortDown');
+        app('router')->get('sort-down/{id}', '\\' . static::class . '@sortDown');
 
-        static::routesMeta()->post('sort-slice', 'sortSlice');
+        app('router')->post('sort-slice', '\\' . static::class . '@sortSlice');
     }
 
 

@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\Dispatcher;
 use ErrorException;
+use Illuminate\Support\ViewErrorBag;
+use Illuminate\Validation\ValidationException;
 
 class PanelForm
 {
@@ -39,9 +41,9 @@ class PanelForm
 
     protected $validator;
 
-    protected $url;
-
     protected $eventDispatcher;
+
+    protected $errors;
 
 
     public function __construct()
@@ -51,11 +53,6 @@ class PanelForm
 
         $this->fields = new FieldsCollection;
         $this->fields->setPanel($this);
-    }
-
-
-    public function init()
-    {
     }
 
 
@@ -95,7 +92,9 @@ class PanelForm
     public function initData()
     {
         if ($this->isSubmit()) {
-            $this->initDataFromRequest();
+            $this->initDataFromInput();
+        } elseif (array_has(request()->old(), $this->inputName())) {
+            $this->initDataFromOld();
         } elseif (!empty($this->model)) {
             $this->initDataFromModel();
         } else {
@@ -104,19 +103,28 @@ class PanelForm
     }
 
 
-    public function initDataFromRequest()
+    protected function initDataFromInput()
     {
-        $this->data = (array)$this->dataFromRequest();
+        $this->data = (array)request()->input($this->inputName());
 
         $this->mergeAttributes($this->data);
     }
 
 
-    protected function mergeAttributes(array &$data) {
+    protected function initDataFromOld()
+    {
+        $this->data = (array)request()->old($this->inputName());
+
+        $this->mergeAttributes($this->data);
+    }
+
+
+    protected function mergeAttributes(array &$data)
+    {
         $dataFromModel = $this->dataFromModel();
 
         foreach ($this->mergeAttributes as $key) {
-            if(!array_has($data, $key) || !array_has($dataFromModel, $key)) {
+            if (!array_has($data, $key) || !array_has($dataFromModel, $key)) {
                 continue;
             }
 
@@ -125,27 +133,21 @@ class PanelForm
     }
 
 
-    public function initDataFromModel()
+    protected function initDataFromModel()
     {
         $this->data = (array)$this->dataFromModel();
     }
 
 
-    public function initDataDefault()
+    protected function initDataDefault()
     {
         $this->data = [];
     }
 
 
-    public function initValidator()
+    protected function initValidator()
     {
         $this->validator = Validator::make([], []);
-    }
-
-
-    public function initUrl()
-    {
-        $this->url = request()->fullUrl();
     }
 
 
@@ -198,6 +200,8 @@ class PanelForm
         $this->eventDispatcher()->fire('failure', $this);
 
         $this->eventDispatcher()->fire('failed', $this);
+
+        throw new ValidationException($this->validator());
     }
 
 
@@ -261,16 +265,6 @@ class PanelForm
     }
 
 
-    public function url()
-    {
-        if (is_null($this->url)) {
-            $this->initUrl();
-        }
-
-        return $this->url;
-    }
-
-
     public function eventDispatcher()
     {
         if (is_null($this->eventDispatcher)) {
@@ -283,13 +277,13 @@ class PanelForm
 
     public function submitUrl()
     {
-        return $this->url();
+        return '';
     }
 
 
     public function method()
     {
-        return 'POST';
+        return 'post';
     }
 
 
@@ -370,14 +364,22 @@ class PanelForm
         return $htmlName;
     }
 
+    public function initErrors()
+    {
+        $this->errors = request()->session()->get('errors') ?: new ViewErrorBag;
+    }
+
+    public function errors()
+    {
+        if (is_null($this->errors)) {
+            $this->initErrors();
+        }
+        return $this->errors;
+    }
 
     public function fieldErrors($name)
     {
-        if (!$this->isSubmit()) {
-            return [];
-        }
-
-        return $this->validator()->errors()->get($name);
+        return $this->errors()->get($name);
     }
 
 
@@ -480,24 +482,16 @@ class PanelForm
     }
 
 
-    public function setUrl($url)
-    {
-        $this->url = $url;
-    }
-
-
     public function isFailure()
     {
-        $validator = $this->validator();
-        $validator->setData((array)$this->data());
-
-        return $this->isSubmit() && $validator->fails();
+        return $this->isSubmit() && !$this->isSuccess();
     }
 
 
     public function isSuccess()
     {
         $validator = $this->validator();
+
         $validator->setData((array)$this->data());
 
         return $this->isSubmit() && $validator->passes();
@@ -616,35 +610,23 @@ class PanelForm
     }
 
 
-    public function handle()
+    public function handle( $successResponse = null )
     {
         if ($this->isSubmit()) {
             $this->onSubmit();
-
-            if ($this->isSuccess()) {
-                $this->onSuccess();
-            }
-
-            if ($this->isFailure()) {
-                $this->onFailure();
-            }
         }
-    }
 
+        if($this->isSuccess()) {
+            $response = $this->onSuccess();
 
-    public function render()
-    {
-        return $this->view();
-    }
+            if( !is_null($successResponse) ) {
+                $response = value($successResponse);
+            }
+        } else {
+            $response = $this->onFailure();
+        }
 
-
-    public function execute()
-    {
-        $this->init();
-
-        $this->handle();
-
-        return $this->view();
+        return !is_null($response) ? $response : $this->view();
     }
 
 

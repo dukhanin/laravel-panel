@@ -18,6 +18,10 @@ panel = {
     alert: function (message) {
         message = this.validateMessage(message);
 
+        if (!('type' in message)) {
+            message.type = 'info';
+        }
+
         swal(message);
     },
 
@@ -71,21 +75,20 @@ panel = {
         var responseJSON = this.validateResponseJSON(jqXHR.responseJSON);
 
         if (responseJSON.messages.length > 0) {
-            var message = responseJSON.messages[0];
+            var message = {text: responseJSON.messages[0]};
         } else if (responseJSON.error != 0 && responseJSON.error !== null) {
-            var message = 'Code ' + responseJSON.error + ' ' + jqXHR.responseText;
+            var message = {text: 'Code ' + responseJSON.error + ' ' + jqXHR.responseText};
         } else {
-            var message = '';
+            var message = {text: ''};
         }
 
+        message.type = responseJSON.success ? 'success' : 'error';
         message = this.validateMessage(message);
 
-        if (responseJSON.success) {
-            message.type = 'success';
-            !message.text || this.alert(message);
-        } else {
-            message.type = 'error';
+        if (message.type === 'error') {
             this.error(message);
+        } else if (message.text) {
+            this.alert(message);
         }
     },
 
@@ -126,19 +129,19 @@ panel = {
             message.showCancelButton = false;
         }
 
-        if (!('confirmButtonText' in message)) {
-            message.confirmButtonText = this.trans.buttons.confirm;
-        }
-
         if (!('cancelButtonText' in message)) {
             message.cancelButtonText = this.trans.buttons.cancel;
+        }
+
+        if (!('confirmButtonText' in message) && message.showCancelButton) {
+            message.confirmButtonText = this.trans.buttons.confirm;
         }
 
         if (!('closeOnConfirm' in message)) {
             message.closeOnConfirm = true;
         }
 
-        if (!('confirmButtonColor' in message)) {
+        if (!('confirmButtonColor' in message) && (message.type == 'warning' || message.type == 'error')) {
             message.confirmButtonColor = '#DD6B55';
         }
 
@@ -149,11 +152,19 @@ panel = {
 
 
     validateMessageText: function (text) {
-        var node = $('<div>' +  text + '</div>');
+        var node = $('<div>' + text + '</div>');
 
-        node.find('style').remove();
+        if (node.find('.exception_message').length > 0) {
+            node = node.find('.exception_message');
+        }
 
-        return $.trim(node.text().substring(0, 500));
+        var text = node.text()
+            .replace(/^\s*[\r\n]/gm, '')
+            .replace(/^\s*\n/gm, '')
+            .replace(/^[\s\t]*/gm, '')
+            .substring(0, 500);
+
+        return $.trim(text);
     },
 
 
