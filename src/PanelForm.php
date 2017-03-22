@@ -308,6 +308,7 @@ class PanelForm
     public function fieldView($field)
     {
         $options = [
+            array_get($field, 'view'),
             "{$this->view()->getName()}.{$field['type']}",
             "{$this->config('views')}.form-fields.{$field['type']}",
             "{$this->config('views')}.form-fields.text"
