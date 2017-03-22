@@ -40,7 +40,7 @@ class SampleSeeder extends Seeder
             'enabled'     => 1,
             'image'       => 56,
             'index'       => 0,
-            'parent_id'   => 0,
+            'parent_id'   => null,
         ]);
 
         $this->fruits = Section::create([
@@ -67,7 +67,7 @@ class SampleSeeder extends Seeder
             'enabled'     => 1,
             'image'       => 53,
             'index'       => 1,
-            'parent_id'   => 0,
+            'parent_id'   => null,
         ]);
 
         $this->bread = Section::create([
@@ -85,7 +85,7 @@ class SampleSeeder extends Seeder
             'enabled'     => 1,
             'image'       => 62,
             'index'       => 2,
-            'parent_id'   => 0,
+            'parent_id'   => null,
         ]);
     }
 
