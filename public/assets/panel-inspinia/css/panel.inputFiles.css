@@ -15,7 +15,7 @@
     display: block;
     margin: 0 auto;
     cursor: pointer;
-    border: 1px solid #e5e6e7;
+    box-shadow: 5px 5px 14px -7px rgba(0,0,0,0.75);
 }
 
 .files-container .file-item-delete {
