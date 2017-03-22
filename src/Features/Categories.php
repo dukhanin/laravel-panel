@@ -5,7 +5,7 @@ namespace Dukhanin\Panel\Features;
 trait Categories
 {
 
-    public $category;
+    protected $category;
 
     protected $categories;
 
@@ -18,7 +18,7 @@ trait Categories
 
     public function initCategories()
     {
-        $this->categories = [ ];
+        $this->categories = [];
     }
 
 
@@ -38,6 +38,16 @@ trait Categories
     }
 
 
+    public function category()
+    {
+        if (is_null($this->category)) {
+            $this->initCategory();
+        }
+
+        return $this->category;
+    }
+
+
     protected function applyQueryCategories($select)
     {
         // extendable
@@ -46,8 +56,8 @@ trait Categories
 
     protected function applyUrlCategory(&$url)
     {
-        if ( ! empty( $this->category )) {
-            $url->query([ 'category' => $this->category ]);
+        if (!empty($this->category())) {
+            $url->query(['category' => $this->category()]);
         }
     }
 

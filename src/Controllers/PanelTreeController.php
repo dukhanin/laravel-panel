@@ -3,6 +3,7 @@
 namespace Dukhanin\Panel\Controllers;
 
 use App\Http\Controllers\Controller;
+use Dukhanin\Panel\PanelTreeDecorator;
 
 abstract class PanelTreeController extends PanelListController
 {
