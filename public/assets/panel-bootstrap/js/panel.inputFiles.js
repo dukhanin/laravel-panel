@@ -1,5 +1,10 @@
 panel.inputFiles = function (input, options) {
-    $.extend(true, this, this.defaults, options ? options : {});
+    $.extend(true,
+        this,
+        this.defaults,
+        {uploadUrl: panel.uploadUrl},
+        options ? options : {}
+    );
 
     this.input = $(input);
 };
