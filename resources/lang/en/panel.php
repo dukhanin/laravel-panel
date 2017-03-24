@@ -28,6 +28,7 @@ return [
         'group-delete' => 'Delete items?',
     ],
     'labels'    => [
+        'none'              => 'None',
         'filter'            => 'Filter',
         'list-empty'        => 'No items',
         'move-to'           => 'Move to...',

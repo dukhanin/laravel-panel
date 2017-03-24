@@ -6,9 +6,26 @@ $errors = $form->fieldErrors($field['key']);
 $disabled = isset($disabled) ? $disabled : false;
 $state = isset($state) ? $state : false;
 
-if (!isset($options) || !is_array($options) && !$options instanceof Illuminate\Support\Collection) {
+if(!isset($options)) {
     $options = [];
 }
+
+if($options instanceof Illuminate\Support\Collection) {
+    $options = $options->toArray();
+}
+
+if (!is_array($options)) {
+    $options = (array)$options;
+}
+
+$nullTitle = isset( $nullTitle ) ? $nullTitle : '(' . trans('panel.labels.none') . ')';
+$nullTitleSelected = in_array($form->inputValue($field['key']), array( NULL, '' ), true);
+
+if($nullTitle) {
+    array_before($options, '', $nullTitle);
+    $options = array_before($options, '', $nullTitle);
+}
+
 
 if(isset($cols)) {
     $cols = intval($cols);
@@ -32,9 +49,7 @@ if ($value instanceof Illuminate\Database\Eloquent\Collection) {
     $value = $value->modelKeys();
 }
 
-if (!is_array($value)) {
-    $value = [];
-}
+$value = (array)$value;
 ?>
 
 

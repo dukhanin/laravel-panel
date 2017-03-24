@@ -13,7 +13,7 @@ if (!isset($options) || !is_array($options) && !$options instanceof Illuminate\S
 if(isset($cols)) {
     $cols = intval($cols);
     $colSize = intval(isset($colSize) ? $colSize : floor(10 / $cols));
-} elseif(count($options) < 10) {
+} elseif(count($options) < 8) {
     $cols = 1;
     $colSize = 12;
 } elseif(count($options) < 20) {
@@ -32,9 +32,7 @@ if ($value instanceof Illuminate\Database\Eloquent\Collection) {
     $value = $value->modelKeys();
 }
 
-if (!is_array($value)) {
-    $value = [];
-}
+$value = (array)$value;
 ?>
 
 

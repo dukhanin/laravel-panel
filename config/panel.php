@@ -6,14 +6,15 @@ return [
         'format' => 'm/d/Y'
     ],
     'labels'    => [
+        'none'              => 'panel.labels.none',
+        'filter'            => 'panel.labels.filter',
         'list-empty'        => 'panel.labels.list-empty',
         'move-to'           => 'panel.labels.move-to',
         'sort-up'           => 'panel.labels.sort-up',
         'sort-down'         => 'panel.labels.sort-down',
         'validation-failed' => 'panel.labels.validation-failed',
         'choose'            => 'panel.labels.choose',
-        'name'              => 'panel.labels.name',
-        'filter'            => 'panel.labels.filter'
+        'name'              => 'panel.labels.name'
     ],
     'confirm'   => [
         'default'      => 'panel.confirm.default',
