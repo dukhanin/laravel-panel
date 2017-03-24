@@ -129,3 +129,25 @@ h2 + .panel-list-tools {
 .tabs-container + .panel-list .mail-box-header {
     border-top: 1px solid #fff;
 }
+
+.panel-list-filter {
+    margin-bottom: 0;
+    position: relative;
+    top: 1px;
+}
+
+.panel-list-filter .ibox-title {
+    border-left: 1px solid #e7eaec;
+    border-right: 1px solid #e7eaec;
+}
+
+.panel-list-filter .ibox-title h5 {
+    font-weight: normal;
+    position: relative;
+    left: 2px;
+}
+
+.panel-list-filter .ibox-content {
+    border-left: 1px solid #e7eaec;
+    border-right: 1px solid #e7eaec;
+}

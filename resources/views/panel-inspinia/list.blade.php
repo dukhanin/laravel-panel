@@ -14,7 +14,6 @@
 @section('content')
 
     <div class="wrapper wrapper-content wrapper-panel animated fadeInRight">
-
         @if($panel->filter())
             {!! $panel->filter()->view() !!}
         @endif

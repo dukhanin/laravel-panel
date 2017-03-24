@@ -20,7 +20,6 @@ class PanelServiceProvider extends ServiceProvider
 
         $this->publishRoutes();
 
-
         $this->publishLang();
 
         $this->publishAssets();
@@ -86,10 +85,16 @@ class PanelServiceProvider extends ServiceProvider
     {
         $this->publishes([
             $this->path('public/assets/filemanager') => public_path('assets/filemanager'),
+        ], 'filemanager');
+
+        $this->publishes([
             $this->path('public/assets/tinymce') => public_path('assets/tinymce'),
+        ], 'tinymce');
+
+        $this->publishes([
             $this->path('public/assets/panel-bootstrap') => public_path('assets/panel-bootstrap'),
             $this->path('public/assets/panel-inspinia') => public_path('assets/panel-inspinia')
-        ], 'public');
+        ], 'assets');
     }
 
 

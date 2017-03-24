@@ -1,8 +1,8 @@
 @if(!$form->fields()->isEmpty())
-    <div class="ibox @if(!$form->isSubmit()) collapsed @endif">
-        <div class="ibox-title">
-            <h5>@lang($form->config('labels.filter'))</h5>
-            <div class="ibox-tools">
+    <div class="ibox panel-list-filter @if(!$form->isSubmit()) collapsed @endif">
+        <div class="ibox-title"> <div class="ibox-tools">
+            <h5><a class="collapse-link">@lang($form->config('labels.filter'))</a></h5>
+
                 <a class="collapse-link">
                     <i class="fa fa-chevron-down"></i>
                 </a>

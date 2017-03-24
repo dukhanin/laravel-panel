@@ -37,7 +37,6 @@ trait Filter
         $this->filter()->buttons()->put('filter');
     }
 
-
     public function applyQueryFilter($query)
     {
         foreach ($this->filter()->fields() as $field) {
@@ -54,7 +53,6 @@ trait Filter
             $apply($query, $this->filter()->data($field['key']), $this, $field);
         }
     }
-
 
     public function applyUrlFilter(&$url)
     {
@@ -127,7 +125,6 @@ trait Filter
 
         $query->whereIn($column, $value, $boolean);
     }
-
 
     protected function resolveFilterValue($value, $field)
     {
