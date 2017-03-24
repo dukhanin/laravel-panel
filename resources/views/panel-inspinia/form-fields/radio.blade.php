@@ -1,5 +1,5 @@
 <?php
-global $checkboxesIndex;
+global $radioIndex;
 
 $value = $form->inputValue($field['key']);
 $errors = $form->fieldErrors($field['key']);
@@ -50,15 +50,15 @@ if (!is_array($value)) {
 
                 <div class="col-md-{{ $colSize }}">
                     @foreach($colsBlock as $optionKey => $optionLabel)
-                        <div class="checkbox @if( $state ) text-{{ $state }} checkbox-{{ $state }} @endif">
-                            <input type="checkbox"
-                                   id="checkbox-{{ ++$checkboxesIndex }}"
+                        <div class="radio @if( $state ) text-{{ $state }} radio-{{ $state }} @endif">
+                            <input type="radio"
+                                   id="radio-{{ ++$radioIndex }}"
                                    name="{{  $form->htmlInputName($field['key']) }}[]"
                                    value="{{ $optionKey }}"
                                    @if( $disabled ) disabled="" @endif
                                    @if( in_array($optionKey, $value) ) checked @endif
                             >
-                            <label for="checkbox-{{ $checkboxesIndex }}"> <i></i> {{ $optionLabel }}</label>
+                            <label for="radio-{{ $radioIndex }}"> <i></i> {{ $optionLabel }}</label>
                         </div>
                     @endforeach
                 </div>
