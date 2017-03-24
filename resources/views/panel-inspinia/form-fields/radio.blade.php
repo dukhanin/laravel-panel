@@ -53,7 +53,7 @@ if (!is_array($value)) {
                         <div class="radio @if( $state ) text-{{ $state }} radio-{{ $state }} @endif">
                             <input type="radio"
                                    id="radio-{{ ++$radioIndex }}"
-                                   name="{{  $form->htmlInputName($field['key']) }}[]"
+                                   name="{{  $form->htmlInputName($field['key']) }}"
                                    value="{{ $optionKey }}"
                                    @if( $disabled ) disabled="" @endif
                                    @if( in_array($optionKey, $value) ) checked @endif
