@@ -121,6 +121,10 @@ class PanelForm
 
     protected function mergeAttributes(array &$data)
     {
+        if(empty($this->model)) {
+            return;
+        }
+
         $dataFromModel = $this->dataFromModel();
 
         foreach ($this->mergeAttributes as $key) {
@@ -321,6 +325,9 @@ class PanelForm
 
             return $viewFile;
         }
+
+        throw new Exception('No view found for field ' . array_get($field, 'key')
+            . '(searched in ' . implode(', ', array_filter($options)) . ')');
     }
 
 

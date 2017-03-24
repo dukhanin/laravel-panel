@@ -12,7 +12,8 @@ return [
         'sort-down'         => 'panel.labels.sort-down',
         'validation-failed' => 'panel.labels.validation-failed',
         'choose'            => 'panel.labels.choose',
-        'name'              => 'panel.labels.name'
+        'name'              => 'panel.labels.name',
+        'filter'            => 'panel.labels.filter'
     ],
     'confirm'   => [
         'default'      => 'panel.confirm.default',
@@ -144,8 +145,21 @@ return [
             'label' => 'panel.buttons.cancel',
             'icon'  => 'cancel'
         ],
+        'filter'  => [
+            'class' => 'btn-primary',
+            'type'  => 'submit',
+            'label' => 'panel.buttons.filter',
+            'icon'  => 'fa fa-filter'
+        ],
+        'reset'  => [
+            'class' => 'btn-default',
+            'type'  => 'button',
+            'label' => 'panel.buttons.reset',
+            'icon'  => 'fa fa-times'
+        ],
         'default' => [
-
+            'class' => 'btn-default',
+            'type'  => 'button'
         ]
     ]
 ];

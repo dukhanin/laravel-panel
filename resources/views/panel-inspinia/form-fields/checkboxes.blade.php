@@ -3,10 +3,10 @@ global $checkboxesIndex;
 
 $value = $form->inputValue($field['key']);
 $errors = $form->fieldErrors($field['key']);
-$disabled = !empty($disabled);
+$disabled = isset($disabled) ? $disabled : false;
 $state = isset($state) ? $state : false;
 
-if (!is_array($options) && !$options instanceof Illuminate\Support\Collection) {
+if (!isset($options) || !is_array($options) && !$options instanceof Illuminate\Support\Collection) {
     $options = [];
 }
 

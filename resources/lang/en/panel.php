@@ -6,7 +6,9 @@ return [
         'confirm' => 'Confirm',
         'apply'   => 'Apply',
         'cancel'  => 'Cancel',
-        'close'   => 'Close'
+        'close'   => 'Close',
+        'filter'  => 'Filter',
+        'reset'   => 'Reset'
     ],
     'actions'   => [
         'create'        => 'Create New',
@@ -26,6 +28,7 @@ return [
         'group-delete' => 'Delete items?',
     ],
     'labels'    => [
+        'filter'            => 'Filter',
         'list-empty'        => 'No items',
         'move-to'           => 'Move to...',
         'choose'            => 'Choose...',

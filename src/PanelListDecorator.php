@@ -88,6 +88,12 @@ class PanelListDecorator
     }
 
 
+    public function filter()
+    {
+        return method_exists($this->panel, 'filter') ? $this->panel->filter() : false;
+    }
+
+
     public function modelActions()
     {
         if ( ! isset( $this->cache['modelActions'] )) {

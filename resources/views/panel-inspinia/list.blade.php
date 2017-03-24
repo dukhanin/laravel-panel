@@ -12,7 +12,13 @@
 @endpush
 
 @section('content')
+
     <div class="wrapper wrapper-content wrapper-panel animated fadeInRight">
+
+        @if($panel->filter())
+            {!! $panel->filter()->view() !!}
+        @endif
+
         <div class="panel-list" id="{{ $panelId }}">
             <form method="post" action="{{ $panel->url() }}" class="panel-list-form">
 
