@@ -590,8 +590,8 @@ class File extends Model
     {
         $path = strval($path);
 
-        if (starts_with($path, storage_path('app/public'))) {
-            return preg_replace('#^' . preg_quote(storage_path('app/public')) . '/*#', 'upload/', $path);
+        if (starts_with($path, storage_path('public'))) {
+            return preg_replace('#^' . preg_quote(storage_path('public')) . '/*#', trim( config('upload.url') ) . '/', $path);
         }
 
         if (starts_with($path, public_path())) {

@@ -11,7 +11,7 @@ if ( ! empty( $data )) {
         {{ $label }}
     </label>
     <div class="col-lg-10">
-        <div class="form-control" style="border: 0;">
+        <div class="form-control" style="border: 0; height: auto;">
             {!! $value !!}
         </div>
 
