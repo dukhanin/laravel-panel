@@ -75,6 +75,9 @@ abstract class PanelListController extends Controller
     }
 
 
+    abstract public function initModel();
+
+
     public function showList()
     {
         return $this->view();
@@ -110,12 +113,6 @@ abstract class PanelListController extends Controller
                 $this->$method();
             }
         }
-    }
-
-
-    public function initModel()
-    {
-
     }
 
 
@@ -544,6 +541,8 @@ abstract class PanelListController extends Controller
         if (empty($attributes['as'])) {
             $attributes['as'] = class_basename(static::class);
         }
+
+        $attributes['as'] = rtrim($attributes['as'], '.') . '.';
 
         app('router')->group($attributes, function ($router) {
             static::initRoutes();
