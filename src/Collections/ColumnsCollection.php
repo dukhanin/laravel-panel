@@ -42,7 +42,9 @@ class ColumnsCollection extends ExtendedCollection
 
         $valid['label'] = trans($valid['label']);
 
-        $valid = array_merge($valid, array_except($column, [ 'label', 'order', 'handler', 'key' ]));
+        if(is_array($column)) {
+            $valid = array_merge($valid, array_except($column, [ 'label', 'order', 'handler', 'key' ]));
+        }
 
         return $valid;
     }
