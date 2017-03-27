@@ -3,9 +3,9 @@
 namespace App\Sample;
 
 use Dukhanin\Panel\Traits\PanelModel;
-use Illuminate\Database\Eloquent\Model as EloquentModel;
+use Illuminate\Database\Eloquent\Model;
 
-class Section extends EloquentModel
+class Section extends Model
 {
 
     use PanelModel;
