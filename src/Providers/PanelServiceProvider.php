@@ -26,6 +26,8 @@ class PanelServiceProvider extends ServiceProvider
 
         $this->publishSample();
 
+        $this->publishInspinia();
+
         $this->loadViews();
 
         $this->loadHelpers();
@@ -95,6 +97,21 @@ class PanelServiceProvider extends ServiceProvider
             $this->path('public/assets/panel-bootstrap') => public_path('assets/panel-bootstrap'),
             $this->path('public/assets/panel-inspinia') => public_path('assets/panel-inspinia')
         ], 'assets');
+    }
+
+
+    protected function publishInspinia()
+    {
+        $input = new ArgvInput(isset($_SERVER['argv']) ? $_SERVER['argv'] : []);
+        $publishInspinia = $input->hasParameterOption('--tag=inspinia');
+
+        if (!$publishInspinia) {
+            return;
+        }
+
+        $this->publishes([
+            $this->path('public/assets/inspinia/') => public_path('assets/inspinia/')
+        ], 'inspinia');
     }
 
 
