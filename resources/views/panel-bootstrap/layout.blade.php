@@ -32,13 +32,18 @@
     @show
 
     <ul class="nav nav-tabs" role="tablist">
-        <li @if(str_is('products.*', app('router')->currentRouteName()))class="active"@endif>
-            <a href="{{ route('products.showList') }}">Products</a>
-        </li>
+        @if(app('router')->has('products.showList'))
+            <li @if(str_is('products.*', app('router')->currentRouteName()))class="active"@endif>
+                <a href="{{ route('products.showList') }}">Products</a>
+            </li>
+        @endif
 
-        <li @if(str_is('sections.*', app('router')->currentRouteName()))class="active"@endif>
-            <a href="{{ route('sections.showList') }}">Sections</a>
-        </li>
+        @if(app('router')->has('products.showList'))
+            <li @if(str_is('sections.*', app('router')->currentRouteName()))class="active"@endif>
+                <a href="{{ route('sections.showList') }}">Sections</a>
+            </li>
+        @endif
+
         <li class="pull-right">
             <select onchange="document.location=this.value;">
                 <option selected value="?">Bootstrap theme</option>

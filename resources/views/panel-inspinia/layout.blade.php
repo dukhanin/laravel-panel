@@ -108,13 +108,18 @@
         <div class="wrapper wrapper-tabs animated fadeInRight">
             <div class="tabs-container">
                 <ul class="nav nav-tabs">
-                    <li @if(str_is('products.*', app('router')->currentRouteName()))class="active"@endif>
-                        <a href="{{ route('products.showList') }}?inspinia=1">Products</a>
-                    </li>
+                    @if(app('router')->has('products.showList'))
+                        <li @if(str_is('products.*', app('router')->currentRouteName()))class="active"@endif>
+                            <a href="{{ route('products.showList') }}?inspinia=1">Products</a>
+                        </li>
+                    @endif
 
-                    <li @if(str_is('sections.*', app('router')->currentRouteName()))class="active"@endif>
-                        <a href="{{ route('sections.showList') }}?inspinia=1">Sections</a>
-                    </li>
+                    @if(app('router')->has('sections.showList'))
+                        <li @if(str_is('sections.*', app('router')->currentRouteName()))class="active"@endif>
+                            <a href="{{ route('sections.showList') }}?inspinia=1">Sections</a>
+                        </li>
+                    @endif
+
                     <li class="pull-right">
                         <select onchange="document.location=this.value;">
                             <option value="?">Bootstrap theme</option>

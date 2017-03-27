@@ -38,9 +38,11 @@
             language: '{{ app()->getLocale() }}'
         });
 
-        panel.uploadUrl = '{{ route('panel.upload.form') }}';
-
         panel.trans = {!! json_encode( trans('panel') ) !!};
+
+        @if(app('router')->has('panel.upload.form'))
+            panel.uploadUrl = '{{ route('panel.upload.form') }}';
+        @endif
     });
 </script>
 @endpush

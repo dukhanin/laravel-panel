@@ -215,7 +215,7 @@ class PanelListDecorator
         if ($action = value(array_get($cell, 'column.action'))) {
             $action = $action === true ? $defaultAction : $action;
 
-            $url = $this->urlTo($action, $row['model']);
+            $url = method_exists($this->panel, $action) ? $this->urlTo($action, $row['model']) : null;
         } else {
             $url = value(array_get($cell, 'column.url'));
         }
