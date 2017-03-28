@@ -12,9 +12,9 @@ class UploadHelper
 
     public function __construct()
     {
-        $this->path = config('upload.path', public_path('upload'));
+        $this->path = rtrim(config('upload.path', public_path('upload')), '/');
 
-        $this->url = config('upload.url', '/upload');
+        $this->url = rtrim(config('upload.url', '/upload') , '/');
 
         $this->makeDirectoryIfNotExists();
     }

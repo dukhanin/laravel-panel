@@ -76,7 +76,7 @@ class PanelForm
 
     public function initUploadDirectory()
     {
-        $this->uploadDirectory = 'public/' . date('Y-m') . '/' . date('d');
+        $this->uploadDirectory = date('Y-m') . '/' . date('d');
 
         if (!Storage::exists($this->uploadDirectory)) {
             Storage::makeDirectory($this->uploadDirectory);
