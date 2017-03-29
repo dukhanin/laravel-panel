@@ -12,9 +12,10 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\Dispatcher;
-use ErrorException;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\Validation\ValidationException;
+use ErrorException;
+use Closure;
 
 class PanelForm
 {
@@ -628,7 +629,7 @@ class PanelForm
             $response = $this->onSuccess();
 
             if( !is_null($successResponse) ) {
-                $response = value($successResponse);
+                $response = $successResponse instanceof Closure ? $successResponse($this) : $successResponse;
             }
         } else {
             $response = $this->onFailure();
