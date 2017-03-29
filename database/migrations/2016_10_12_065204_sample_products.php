@@ -11,8 +11,8 @@ class SampleProducts extends Migration
     {
         Schema::create('sample_products', function (Blueprint $table) {
             $table->increments('id');
-            $table->date('delivired')->nullable();
             $table->string('name')->nullable();
+            $table->date('delivired')->nullable();
             $table->text('description')->nullable();
             $table->text('images')->nullable();
             $table->text('settings')->nullable();
