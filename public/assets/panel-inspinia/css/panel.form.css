@@ -1,13 +1,24 @@
-.tabs-container + .panel-form {
+.wrapper-tabs {
+    position: relative;
+}
+
+.tabs-container + .panel-form,
+.tabs-container + .wrapper-panel .panel-form,
+.wrapper-tabs + .panel-form,
+.wrapper-tabs + .wrapper-panel  .panel-form {
     border-left: 1px solid #e7eaec;
     border-bottom: 1px solid #e7eaec;
-}
-
-.tabs-container + .panel-form {
-    border-top: 1px solid #fff;
-}
-
-.tabs-container + .panel-form .ibox-title {
-    border-top: 0;
     position: relative;
+    top: -1px;
+}
+
+.tabs-container + .panel-form .ibox-title,
+.tabs-container + .wrapper-panel .panel-form .ibox-title,
+.wrapper-tabs + .panel-form .ibox-title,
+.wrapper-tabs + .wrapper-panel .panel-form .ibox-title,
+.tabs-container + .panel-form .ibox-content,
+.tabs-container + .wrapper-panel .panel-form .ibox-content,
+.wrapper-tabs + .panel-form .ibox-content,
+.wrapper-tabs + .wrapper-panel .panel-form .ibox-content{
+    border-top: 0;
 }
