@@ -2,7 +2,7 @@
 
 return [
     'path' => storage_path('app/public'),
-    'url'  => url('storage'),
+    'url'  => '/storage',
     'unauthorized_upload' => true,
     'images' => [
         'quality' => 90
