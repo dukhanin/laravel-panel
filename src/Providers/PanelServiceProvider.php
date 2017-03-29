@@ -54,7 +54,7 @@ class PanelServiceProvider extends ServiceProvider
         $this->publishes([
             $this->path('app/Http/Controllers/Panel/PanelTinymceUploadController.php') => app_path('Http/Controllers/Panel/PanelTinymceUploadController.php'),
             $this->path('app/Http/Controllers/Panel/PanelFormUploadController.php') => app_path('Http/Controllers/Panel/PanelFormUploadController.php'),
-        ], 'routes');
+        ], 'controllers');
     }
 
 
