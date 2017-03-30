@@ -2,7 +2,6 @@
 
 namespace Dukhanin\Panel\Traits;
 
-use App\Http\Controllers\Controller;
 use Dukhanin\Panel\Files\File;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -52,7 +51,7 @@ trait UploadsFiles
     {
         $uploadPath = upload()->path($this->getDirectory());
 
-        $fileBasename = $file->getClientOriginalName();
+        $fileBasename = $file->getBaseFile() instanceof UploadedFile ? $file->getClientOriginalName() : $file->getBasename();
 
         $this->renameIfExists($uploadPath, $fileBasename);
 
