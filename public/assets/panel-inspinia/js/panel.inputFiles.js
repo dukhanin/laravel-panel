@@ -7,6 +7,8 @@ panel.inputFiles = function (input, options) {
     );
 
     this.input = $(input);
+
+    this.input.prop('inputFiles', this);
 };
 
 panel.inputFiles.prototype.defaults = {
@@ -30,7 +32,6 @@ panel.inputFiles.prototype.init = function () {
 
 panel.inputFiles.prototype.initInputName = function () {
     this.inputName = this.input.attr('name');
-    this.input.attr('name', '');
 };
 
 panel.inputFiles.prototype.initMultiple = function () {
