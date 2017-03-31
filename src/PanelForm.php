@@ -587,6 +587,8 @@ class PanelForm
 
     public function saveModelRelations()
     {
+        $anyChangesMade = false;
+
         foreach ($this->modelRelations() as $relationKey => $relation) {
             if ($relation instanceof BelongsTo) {
                 $relation->dissociate();
@@ -595,7 +597,7 @@ class PanelForm
                     $relation->associate($keys);
                 }
 
-                $this->model->save();
+                $anyChangesMade = true;
 
                 continue;
             }
@@ -607,8 +609,12 @@ class PanelForm
                     $relation->attach($keys);
                 }
 
+                $anyChangesMade = true;
+
                 continue;
             }
+
+            $anyChangesMade && $this->model->save();
         }
     }
 
