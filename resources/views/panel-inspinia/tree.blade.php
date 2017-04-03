@@ -50,7 +50,7 @@
                                 <div class="col-sm-3">
                                     <select class="panel-list-categories-select input-sm form-control input-s-sm inline"
                                             url="{!! $panel->urlTo('showList', [], ['!page', '!category', 'category' => 'dummyCategory']) !!}">
-                                        @foreach($panel->getCategories() as $categoryKey=>$category)
+                                        @foreach($panel->categories() as $categoryKey=>$category)
                                             <option value="{{$categoryKey}}"
                                                     @if($categoryKey == $panel->category()) selected @endif>{{$category}}</option>
                                         @endforeach
