@@ -39,7 +39,7 @@ trait Order
 
     protected function applyQueryOrder($select)
     {
-        $columns = $this->columns();
+        $columns = $this->columns()->resolved();
 
         if (empty( $columns[$this->order()]['order'] )) {
             return;

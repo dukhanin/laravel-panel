@@ -21,11 +21,11 @@
             <div class="panel-list-tools">
                 <div class="row">
                     <div class="col-sm-9 m-b-xs">
-                        @foreach ($panel->actions() as $action)
+                        @foreach ($panel->actions()->resolved() as $action)
                             {!! $panel->renderAction($action, '.panel-list-action') !!}
                         @endforeach
 
-                        @foreach ($panel->groupActions() as $actionKey => $action)
+                        @foreach ($panel->groupActions()->resolved() as $actionKey => $action)
                             {!! $panel->renderGroupAction($action, 'button.panel-list-group-action', [ 'type' => 'submit' ]) !!}
                         @endforeach
 
@@ -79,7 +79,7 @@
                             <th></th>
                         @endif
 
-                        @foreach ($panel->columns() as $column)
+                        @foreach ($panel->columns()->resolved() as $column)
                             <th>
                                 {!! $panel->renderColumnHead($column) !!}
                             </th>
@@ -116,7 +116,7 @@
                         @endif
 
 
-                        @foreach ($panel->columns() as $column)
+                        @foreach ($panel->columns()->resolved() as $column)
                             {!! html_tag('td.panel-list-data-cell', array_except($column, 'label'), array_get($row, "cells.{$column['key']}")) !!}
                         @endforeach
 

@@ -16,6 +16,8 @@ abstract class PanelListController extends Controller
 
     protected $url;
 
+    protected $urlParameters;
+
     protected $model;
 
     protected $label;
@@ -200,11 +202,34 @@ abstract class PanelListController extends Controller
     }
 
 
+    public function initUrlParameters()
+    {
+        $this->urlParameters = [];
+
+        if($route = app('router')->current()) {
+            foreach ($route->parameterNames as $name) {
+                $this->urlParameters[$name] = array_get($route->parameters, $name);
+            }
+        }
+    }
+
+    public function urlParameters()
+    {
+        if(is_null($this->urlParameters)) {
+            $this->initUrlParameters();
+        }
+
+        return $this->urlParameters;
+    }
+
+
     public function urlTo($action, $params = null, array $apply = ['*'])
     {
         if (!str_contains($action, '@')) {
-            $action = '\\' . static::class . '@' . $action;
+            $action = static::routeAction($action);
         }
+
+        $params = $this->urlParameters() + url()->formatParameters($params);
 
         $url = urlbuilder(action($action, $params));
 
@@ -527,7 +552,7 @@ abstract class PanelListController extends Controller
 
     public function initUrl()
     {
-        $this->url = action('\\' . get_class($this) . '@showList');
+        $this->url = action(static::routeAction('showList'), $this->urlParameters());
     }
 
     static public function routes(array $attributes = null)
@@ -550,9 +575,14 @@ abstract class PanelListController extends Controller
         });
     }
 
+    static protected function routeAction($method)
+    {
+        return '\\' . static::class . '@' . $method;
+    }
+
     static protected function initRoutes()
     {
-        app('router')->get('', '\\' . static::class . '@showList')->name('showList');
+        app('router')->get('', static::routeAction('showList'))->name('showList');
     }
 
     static protected function initFeaturesRoutes()

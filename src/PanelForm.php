@@ -50,10 +50,10 @@ class PanelForm
     public function __construct()
     {
         $this->buttons = new ButtonsCollection;
-        $this->buttons->setPanel($this);
+        $this->buttons->setForm($this);
 
         $this->fields = new FieldsCollection;
-        $this->fields->setPanel($this);
+        $this->fields->setForm($this);
     }
 
 
@@ -234,7 +234,7 @@ class PanelForm
 
         $relations = [];
 
-        foreach ($this->fields->where('relation', true) as $field) {
+        foreach ($this->fields->resolved()->where('relation', true) as $field) {
             if (!is_callable([$this->model(), $field['key']])) {
                 continue;
             }

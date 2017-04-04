@@ -93,7 +93,7 @@ trait Sort
             return true;
         }
 
-        $columns = $this->columns();
+        $columns = $this->columns()->resolved();
 
         if ( isset($this->order) && ! isset($columns[$this->order]['order'])) {
             return false;

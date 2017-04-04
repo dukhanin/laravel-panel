@@ -2,55 +2,21 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\ExtendedCollection;
+use Dukhanin\Support\Traits\BeforeAndAfterCollection;
+use Dukhanin\Support\Traits\Toucheble;
+use Illuminate\Database\Eloquent\Collection;
 
-class FieldsCollection extends ExtendedCollection
+class FieldsCollection extends Collection
 {
+    use Toucheble, BeforeAndAfterCollection;
 
-    protected $panel;
+    protected $form;
 
 
-    public function setPanel($panel)
+    public function setForm($form)
     {
-        $this->panel = $panel;
+        $this->form = $form;
     }
-
-
-    public function resolve($field, $key)
-    {
-        if ( ! is_null($key)) {
-            $key = strval($key);
-        }
-
-        if ( ! is_array($field)) {
-            $field = [ 'label' => strval($field ? $field : $key) ];
-        }
-
-        if (empty( $field['type'] )) {
-            $field['type'] = 'text';
-        }
-
-        if (empty( $field['label'] )) {
-            $field['label'] = $key;
-        }
-
-        if (isset( $field['before'] )) {
-            $field['before'] = strval($field['before']);
-        }
-
-        if (isset( $field['after'] )) {
-            $field['after'] = strval($field['after']);
-        }
-
-        if ( ! isset( $field['label'] )) {
-            $field['label'] = $key;
-        } else {
-            $field['label'] = trans($field['label']);
-        }
-
-        return $field + [ 'key' => $key ];
-    }
-
 
     public function offsetSet($key, $field)
     {
@@ -58,14 +24,75 @@ class FieldsCollection extends ExtendedCollection
             $this->pull($key);
         }
 
-        if (isset( $field['before'] )) {
-            return $this->before($key, array_except($field, 'before'), $field['before']);
+        if (array($field) && isset($field['before'])) {
+            return array_before($this->items, $key, array_except($field, ['before', 'after']), $field['before']);
+        } elseif (isset($field['after'])) {
+            return array_after($this->items, $key, array_except($field, ['before', 'after']), $field['after']);
+        } else {
+            parent::offsetSet($key, $field);
         }
 
-        if (isset( $field['after'] )) {
-            return $this->after($key, array_except($field, 'after'), $field['after']);
+        $this->touch();
+    }
+
+    public function offsetUnset($key)
+    {
+        parent::offsetUnset($key);
+
+        $this->touch();
+    }
+
+    public function offsetGet($key)
+    {
+        return $this->resolve($key, parent::offsetGet($key));
+    }
+
+
+    public function resolve($key, $field)
+    {
+        if (!is_null($key)) {
+            $key = strval($key);
         }
 
-        parent::offsetSet($key, $field);
+        if (is_string($field)) {
+            $field['label'] = $field;
+        } elseif (is_callable($field)) {
+            $field = call_user_func($field, $this->form);
+        }
+
+        if (!is_array($field)) {
+            $field = [];
+        }
+
+        if (empty($field['type'])) {
+            $field['type'] = 'text';
+        }
+
+        if (empty($field['label'])) {
+            $field['label'] = $key;
+        }
+
+        if (isset($field['before'])) {
+            $field['before'] = strval($field['before']);
+        }
+
+        if (isset($field['after'])) {
+            $field['after'] = strval($field['after']);
+        }
+
+        if (!isset($field['label'])) {
+            $field['label'] = $key;
+        } else {
+            $field['label'] = trans($field['label']);
+        }
+
+        return $field + ['key' => $key];
+    }
+
+    public function resolved()
+    {
+        return collect($this->items)->map(function ($field, $key) {
+            return $this->resolve($key, $field);
+        });
     }
 }

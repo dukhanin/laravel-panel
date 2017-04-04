@@ -18,7 +18,7 @@
                 </div>
             @endif
 
-            @foreach ($form->fields() as $field)
+            @foreach ($form->fields()->resolved() as $field)
                 @include($form->fieldView($field), array_merge([
                     'form'  => $form,
                     'field' => $field
@@ -27,7 +27,7 @@
 
             <div class="form-group">
                 <div class="col-lg-10 text-right">
-                    @foreach ($form->buttons() as $buttonKey => $button)
+                    @foreach ($form->buttons()->resolved() as $buttonKey => $button)
                         @if ($button['type'] == 'submit')
                             @continue
                         @endif
@@ -36,7 +36,7 @@
                     @endforeach
 
 
-                    @foreach ($form->buttons() as $buttonKey => $button)
+                    @foreach ($form->buttons()->resolved() as $buttonKey => $button)
                         @if ($button['type'] != 'submit')
                             @continue
                         @endif

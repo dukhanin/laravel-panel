@@ -2,10 +2,13 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\ExtendedCollection;
+use Dukhanin\Support\Traits\BeforeAndAfterCollection;
+use Dukhanin\Support\Traits\Toucheble;
+use Illuminate\Support\Collection;
 
-class ActionsCollection extends ExtendedCollection
+class ActionsCollection extends Collection
 {
+    use Toucheble, BeforeAndAfterCollection;
 
     protected $panel;
 
@@ -15,49 +18,45 @@ class ActionsCollection extends ExtendedCollection
         $this->panel = $panel;
     }
 
-
-    public function resolve($action, $key)
+    public function offsetSet($key, $value)
     {
-        if (is_callable($action)) {
-            return $action;
+        parent::offsetSet($key, $value);
+
+        $this->touch();
+    }
+
+    public function offsetUnset($key)
+    {
+        parent::offsetUnset($key);
+
+        $this->touch();
+    }
+
+    public function offsetGet($key)
+    {
+        return $this->resolve($key, parent::offsetGet($key));
+    }
+
+    public function resolve($key, $action, $model = null)
+    {
+        if (is_string($action)) {
+            $action['label'] = $action;
+        } elseif (is_callable($action)) {
+            $action = call_user_func($action, $this->panel, $model);
         }
 
-        return $this->validAction($key, $action);
-    }
-
-
-    public function resolvedForModel($model)
-    {
-        return $this->raw()->map(function (&$action, $key) use ($model) {
-            if (is_callable($action)) {
-                $action = call_user_func($action, $this->panel, $model);
-            }
-
-            return $this->validAction($key, $action, $model);
-        });
-    }
-
-
-    public function put($key, $value = null)
-    {
-        return parent::put($key, $value);
-    }
-
-
-    protected function validAction($key, $action, $model = null)
-    {
         if ( ! is_array($action)) {
             $action = [];
         }
 
-        $action = array_merge([
+        $action = $action + [
             'key'       => strval($key),
             'label'     => strval($key),
             'global'    => false,
             'class'     => '',
             'icon'      => null,
             'icon-only' => false
-        ], $action);
+        ];
 
         $action['label'] = trans($action['label']);
 
@@ -66,9 +65,28 @@ class ActionsCollection extends ExtendedCollection
         }
 
         if ( ! isset($action['url'])) {
-            $action['url'] = isset($action['action']) ? $this->panel->urlTo($action['action'], $model) : '#' . $key;
+            $action['url'] = isset($action['action']) ? $this->panel->urlTo($action['action'], [$model]) : '#' . $key;
         }
 
         return $action;
+    }
+
+    public function resolved()
+    {
+        return collect($this->items)->map(function (&$action, $key) {
+            return $this->resolve($key, $action);
+        });
+    }
+
+    public function resolvedForModel($model)
+    {
+        return collect($this->items)->map(function (&$action, $key) use ($model) {
+            return $this->resolve($key, $action, $model);
+        });
+    }
+
+    public function put($key, $value = null)
+    {
+        return parent::put($key, $value);
     }
 }

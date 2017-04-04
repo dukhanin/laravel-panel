@@ -23,7 +23,7 @@ class PanelTreeDecorator extends PanelListDecorator
 
             $depthedColumnsKeys = $this->depthedColumnsKeys();
 
-            foreach ($this->columns() as $columnKey => $column) {
+            foreach ($this->columns()->resolved() as $columnKey => $column) {
                 $cell = &$row['cells'][$columnKey];
                 $cell = [ 'model' => $model, 'column' => $column, ];
 
@@ -48,15 +48,17 @@ class PanelTreeDecorator extends PanelListDecorator
 
     protected function depthedColumnsKeys()
     {
-        if ($keys = array_keys($this->columns()->where('depth', true)->all())) {
+        $columns = $this->columns()->resolved();
+
+        if ($keys = array_keys($columns->where('depth', true)->all())) {
             return $keys;
         }
 
-        if ($keys = array_keys($this->columns()->whereIn('key', [ 'name', 'title' ])->all())) {
+        if ($keys = array_keys($columns->whereIn('key', [ 'name', 'title' ])->all())) {
             return $keys;
         }
 
-        if ($keys = array_first(array_keys($this->columns()->whereNot('depth', false)->all()))) {
+        if ($keys = array_first(array_keys($columns->whereNot('depth', false)->all()))) {
             return $keys;
         }
 

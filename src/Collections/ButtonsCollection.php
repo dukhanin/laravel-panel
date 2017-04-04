@@ -2,50 +2,77 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\ExtendedCollection;
+use Dukhanin\Support\Traits\BeforeAndAfterCollection;
+use Dukhanin\Support\Traits\Toucheble;
+use Illuminate\Support\Collection;
 
-class ButtonsCollection extends ExtendedCollection
+class ButtonsCollection extends Collection
 {
+    use Toucheble, BeforeAndAfterCollection;
 
-    protected $panel;
+    protected $form;
 
-
-    public function setPanel($panel)
+    public function setForm($form)
     {
-        $this->panel = $panel;
+        $this->form = $form;
+    }
+
+    public function offsetSet($key, $value)
+    {
+        parent::offsetSet($key, $value);
+
+        $this->touch();
+    }
+
+    public function offsetUnset($key)
+    {
+        parent::offsetUnset($key);
+
+        $this->touch();
+    }
+
+    public function offsetGet($key)
+    {
+        return $this->resolve($key, parent::offsetGet($key));
     }
 
 
-    public function resolve($button, $key)
+    public function resolve($key, $button)
     {
-        if (is_callable($button)) {
-            $button = call_user_func($button, $this->panel);
+        if (is_string($button)) {
+            $button['label'] = $button;
+        } elseif (is_callable($button)) {
+            $button = call_user_func($button, $this->form);
         }
 
-        $_button = array_merge($this->panel->config('buttons.default', [ ]),
-            $this->panel->config("buttons.{$key}", [ ]), (array) $button, [ 'key' => $key ]);
-
-        if (empty( $_button['label'] )) {
-            $_button['label'] = $key;
+        if (!is_array($button)) {
+            $button = [];
         }
 
-        if (isset( $button['url'] )) {
-            $_button['url'] = $button['url'];
-        } else {
-            $_button['url'] = $this->panel->submitUrl();
+        $button = $button
+            + $this->form->config("buttons.{$key}", [])
+            + $this->form->config('buttons.default', [])
+            + [
+                'key' => strval($key),
+                'label' => strval($key),
+                'type' => $key === 'submit' ? 'submit' : 'button'
+            ];
+
+        if (!isset($button['url'])) {
+            $button['url'] = $this->form->submitUrl();
         }
 
-        if (isset( $button['type'] )) {
-            $_button['type'] = $button['type'];
-        } elseif ( ! isset( $_button['type'] )) {
-            $_button['type'] = $key === 'submit' ? 'submit' : 'button';
-        }
+        $button['label'] = trans($button['label']);
 
-        $_button['label'] = trans($_button['label']);
-
-        return $_button;
+        return $button;
     }
 
+    public function resolved()
+    {
+        return collect($this->items)->map(function ($button, $key) {
+            return $this->resolve($key, $button);
+        });
+    }
 
     public function put($key, $value = null)
     {

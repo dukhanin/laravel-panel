@@ -9,7 +9,7 @@
             </div>
         </div>
         <form method="{{ $form->method() }}" action="{{ $form->submitUrl() }}" class="ibox-content m-b-sm border-bottom">
-            @foreach (collect($form->fields())->chunk(3) as $chunk)
+            @foreach (collect($form->fields()->resolved())->chunk(3) as $chunk)
                 <div class="row">
 
                     @foreach ($chunk as $field)

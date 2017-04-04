@@ -12,11 +12,11 @@ trait CreateAndEdit
 
     protected static function routesForCreateAndEdit(array $options = null)
     {
-        app('router')->get('create/{into?}', '\\' . static::class . '@create')->name('create');
-        app('router')->post('create/{into?}', '\\' . static::class . '@createModel')->name('createModel');
+        app('router')->get('create/{into?}', static::routeAction('create'))->name('create');
+        app('router')->post('create/{into?}', static::routeAction('createModel'))->name('createModel');
 
-        app('router')->get('edit/{id}', '\\' . static::class . '@edit')->name('edit');
-        app('router')->post('edit/{id}', '\\' . static::class . '@updateModel')->name('updateModel');
+        app('router')->get('edit/{id}', static::routeAction('edit'))->name('edit');
+        app('router')->post('edit/{id}', static::routeAction('updateModel'))->name('updateModel');
     }
 
 
@@ -103,7 +103,7 @@ trait CreateAndEdit
     {
         return function() {
             if (request()->input('_apply')) {
-                return redirect()->to( $this->urlTo('edit', $this->form()->model()) );
+                return redirect()->to( $this->urlTo('edit', ['id' => $this->form()->model()]) );
             }
 
             return redirect()->to($this->url());

@@ -39,7 +39,7 @@ trait Filter
 
     public function applyQueryFilter($query)
     {
-        foreach ($this->filter()->fields() as $field) {
+        foreach ($this->filter()->fields()->resolved() as $field) {
             $apply = array_get($field, 'filter');
 
             if ($apply === false) {

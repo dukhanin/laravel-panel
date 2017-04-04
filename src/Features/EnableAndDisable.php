@@ -10,13 +10,13 @@ trait EnableAndDisable
 
     protected static function routesForEnableAndDisable(array $options = null)
     {
-        app('router')->get('enable/{id}', '\\' . static::class . '@enable')->name('enable');
+        app('router')->get('enable/{id}', static::routeAction('enable'))->name('enable');
 
-        app('router')->get('disable/{id}', '\\' . static::class . '@disable')->name('disable');
+        app('router')->get('disable/{id}', static::routeAction('disable'))->name('disable');
 
-        app('router')->post('group-enable', '\\' . static::class . '@groupEnable')->name('groupEnable');
+        app('router')->post('group-enable', static::routeAction('groupEnable'))->name('groupEnable');
 
-        app('router')->post('group-disable', '\\' . static::class . '@groupDisable')->name('groupDisable');
+        app('router')->post('group-disable', static::routeAction('groupDisable'))->name('groupDisable');
     }
 
 

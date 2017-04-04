@@ -2,10 +2,13 @@
 
 namespace Dukhanin\Panel\Collections;
 
-use Dukhanin\Support\ExtendedCollection;
+use Dukhanin\Support\Traits\BeforeAndAfterCollection;
+use Dukhanin\Support\Traits\Toucheble;
+use Illuminate\Support\Collection;
 
-class ColumnsCollection extends ExtendedCollection
+class ColumnsCollection extends Collection
 {
+    use Toucheble, BeforeAndAfterCollection;
 
     protected $panel;
 
@@ -15,37 +18,58 @@ class ColumnsCollection extends ExtendedCollection
         $this->panel = $panel;
     }
 
-
-    public function resolve($column, $key)
+    public function offsetSet($key, $value)
     {
-        $valid = [
-            'key'     => strval($key),
-            'label'   => strval($key),
-            'order'   => false,
-            'handler' => null,
-            'width'   => null
-        ];
+        parent::offsetSet($key, $value);
 
+        $this->touch();
+    }
+
+    public function offsetUnset($key)
+    {
+        parent::offsetUnset($key);
+
+        $this->touch();
+    }
+
+    public function offsetGet($key)
+    {
+        return $this->resolve($key, parent::offsetGet($key));
+    }
+
+    public function resolve($key, $column)
+    {
         if (is_string($column)) {
-            $valid['label'] = $column;
-        } elseif (isset( $column['label'] )) {
-            $valid['label'] = strval($column['label']);
+            $column['label'] = $column;
+        } elseif (is_callable($column)) {
+            $column = call_user_func($column, $this->panel);
         }
 
-        if (isset( $column['order'] )) {
-            $valid['order'] = $column['order'] === true ? $valid['key'] : $column['order'];
+        if (!is_array($column)) {
+            $column = [];
         }
 
-        if (isset( $column['handler'] )) {
-            $valid['handler'] = $column['handler'];
+        $column = $column + [
+                'key' => strval($key),
+                'label' => strval($key),
+                'order' => false,
+                'handler' => null,
+                'width' => null
+            ];
+
+        if (isset($column['order'])) {
+            $column['order'] = $column['order'] === true ? $column['key'] : $column['order'];
         }
 
-        $valid['label'] = trans($valid['label']);
+        $column['label'] = trans($column['label']);
 
-        if(is_array($column)) {
-            $valid = array_merge($valid, array_except($column, [ 'label', 'order', 'handler', 'key' ]));
-        }
+        return $column;
+    }
 
-        return $valid;
+    public function resolved()
+    {
+        return collect($this->items)->map(function ($column, $key) {
+            return $this->resolve($key, $column);
+        });
     }
 }

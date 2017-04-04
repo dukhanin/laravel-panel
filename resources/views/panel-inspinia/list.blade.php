@@ -30,11 +30,11 @@
                         <div class="row">
                             <div class="col-sm-9 m-b-xs">
 
-                                @foreach ($panel->actions() as $action)
+                                @foreach ($panel->actions()->resolved() as $action)
                                     {!! $panel->renderAction($action, '.panel-list-action') !!}
                                 @endforeach
 
-                                @foreach ($panel->groupActions() as $actionKey => $action)
+                                @foreach ($panel->groupActions()->resolved() as $actionKey => $action)
                                     {!! $panel->renderGroupAction($action, 'button.panel-list-group-action', [ 'type' => 'submit' ]) !!}
                                 @endforeach
 
@@ -101,8 +101,8 @@
                                     <th></th>
                                 @endif
 
-                                @foreach ($panel->columns() as $key => $column)
-                                    <th {!! html_tag_attr( array_only($column, ['width', 'class', 'style'])) !!}>
+                                @foreach ($panel->columns()->resolved() as $key => $column)
+                                        <th {!! html_tag_attr( array_only($column, ['width', 'class', 'style'])) !!}>
                                         {!! $panel->renderColumnHead($column) !!}
                                     </th>
                                 @endforeach
@@ -145,7 +145,7 @@
                                 @endif
 
 
-                                @foreach ($panel->columns() as $column)
+                                @foreach ($panel->columns()->resolved() as $column)
                                     {!! html_tag('td.mail-subject.panel-list-data-cell', array_except($column, 'label'), [ 'label' => false ], array_get($row, "cells.{$column['key']}")) !!}
                                 @endforeach
 
