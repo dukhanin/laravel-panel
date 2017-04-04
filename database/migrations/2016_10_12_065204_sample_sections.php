@@ -6,7 +6,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class SampleSections extends Migration
 {
-
     public function up()
     {
         Schema::create('sample_sections', function (Blueprint $table) {
@@ -21,7 +20,6 @@ class SampleSections extends Migration
             $table->timestamps();
         });
     }
-
 
     public function down()
     {

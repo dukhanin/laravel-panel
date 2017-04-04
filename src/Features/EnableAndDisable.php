@@ -4,9 +4,7 @@ namespace Dukhanin\Panel\Features;
 
 trait EnableAndDisable
 {
-
     protected $enabledKey;
-
 
     protected static function routesForEnableAndDisable(array $options = null)
     {
@@ -19,7 +17,6 @@ trait EnableAndDisable
         app('router')->post('group-disable', static::routeAction('groupDisable'))->name('groupDisable');
     }
 
-
     function initFeatureEnableAndDisable()
     {
         $this->initEnabledKey();
@@ -31,12 +28,10 @@ trait EnableAndDisable
         $this->groupActions['group-disable'] = $this->config('actions.group-disable');
     }
 
-
     public function initEnabledKey()
     {
         $this->enabledKey = 'enabled';
     }
-
 
     public function enabledKey()
     {
@@ -46,7 +41,6 @@ trait EnableAndDisable
 
         return $this->enabledKey;
     }
-
 
     public function enable()
     {
@@ -60,7 +54,6 @@ trait EnableAndDisable
         return redirect()->to($this->url());
     }
 
-
     public function disable()
     {
         $model = $this->findModelOrFail($this->parameter('id'));
@@ -72,7 +65,6 @@ trait EnableAndDisable
 
         return redirect()->to($this->url());
     }
-
 
     public function groupEnable()
     {
@@ -88,7 +80,6 @@ trait EnableAndDisable
         return redirect()->to($this->url());
     }
 
-
     public function groupDisable()
     {
         $group = $this->findModelsOrFail($this->input('group'));
@@ -103,10 +94,9 @@ trait EnableAndDisable
         return redirect()->to($this->url());
     }
 
-
     public function applyEachRowDisabled(&$row)
     {
-        if ( ! $row['model']->{$this->enabledKey()}) {
+        if (! $row['model']->{$this->enabledKey()}) {
             html_tag_add_class($row, 'inactive');
         }
     }

@@ -36,7 +36,6 @@ class ButtonsCollection extends Collection
         return $this->resolve($key, parent::offsetGet($key));
     }
 
-
     public function resolve($key, $button)
     {
         if (is_string($button)) {
@@ -45,20 +44,17 @@ class ButtonsCollection extends Collection
             $button = call_user_func($button, $this->form);
         }
 
-        if (!is_array($button)) {
+        if (! is_array($button)) {
             $button = [];
         }
 
-        $button = $button
-            + $this->form->config("buttons.{$key}", [])
-            + $this->form->config('buttons.default', [])
-            + [
+        $button = $button + $this->form->config("buttons.{$key}", []) + $this->form->config('buttons.default', []) + [
                 'key' => strval($key),
                 'label' => strval($key),
-                'type' => $key === 'submit' ? 'submit' : 'button'
+                'type' => $key === 'submit' ? 'submit' : 'button',
             ];
 
-        if (!isset($button['url'])) {
+        if (! isset($button['url'])) {
             $button['url'] = $this->form->submitUrl();
         }
 
@@ -78,5 +74,4 @@ class ButtonsCollection extends Collection
     {
         return parent::put($key, $value);
     }
-
 }

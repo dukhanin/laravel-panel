@@ -6,9 +6,7 @@ use Dukhanin\Panel\PanelForm;
 
 trait CreateAndEdit
 {
-
     protected $form;
-
 
     protected static function routesForCreateAndEdit(array $options = null)
     {
@@ -19,7 +17,6 @@ trait CreateAndEdit
         app('router')->post('edit/{id}', static::routeAction('updateModel'))->name('updateModel');
     }
 
-
     public function initFeatureCreateAndEdit()
     {
         $this->actions['create'] = $this->config('actions.create');
@@ -27,12 +24,10 @@ trait CreateAndEdit
         $this->modelActions['edit'] = $this->config('actions.edit');
     }
 
-
     public function initForm()
     {
         $this->form = new PanelForm;
     }
-
 
     public function setupForm()
     {
@@ -42,7 +37,6 @@ trait CreateAndEdit
         $this->form->buttons()->put('submit');
         $this->form->buttons()->put('apply');
     }
-
 
     public function form()
     {
@@ -54,7 +48,6 @@ trait CreateAndEdit
         return $this->form;
     }
 
-
     public function edit()
     {
         $model = $this->findModelOrFail($this->parameter('id'));
@@ -63,7 +56,6 @@ trait CreateAndEdit
 
         return $this->form()->setModel($model)->view();
     }
-
 
     public function updateModel()
     {
@@ -76,7 +68,6 @@ trait CreateAndEdit
         return $this->form()->handle($this->afterSave());
     }
 
-
     public function create()
     {
         $model = $this->newModel();
@@ -85,7 +76,6 @@ trait CreateAndEdit
 
         return $this->form()->setModel($model)->view();
     }
-
 
     public function createModel()
     {
@@ -98,12 +88,11 @@ trait CreateAndEdit
         return $this->form()->handle($this->afterSave());
     }
 
-
     public function afterSave()
     {
-        return function() {
+        return function () {
             if (request()->input('_apply')) {
-                return redirect()->to( $this->urlTo('edit', ['id' => $this->form()->model()]) );
+                return redirect()->to($this->urlTo('edit', ['id' => $this->form()->model()]));
             }
 
             return redirect()->to($this->url());

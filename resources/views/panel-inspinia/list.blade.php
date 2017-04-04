@@ -3,12 +3,12 @@
 @include('panel::panel-inspinia.init')
 
 @push('scripts')
-    <script>
-        $(function () {
-            var panelList = new panel.list('#{{ $panelId = str_random() }}');
-            panelList.init();
-        });
-    </script>
+<script>
+    $(function () {
+        var panelList = new panel.list('#{{ $panelId = str_random() }}');
+        panelList.init();
+    });
+</script>
 @endpush
 
 @section('content')
@@ -46,7 +46,8 @@
                                         <option value="">@lang( $panel->config('labels.move-to') )</option>
 
                                         @foreach($panel->moveToOptions() as $key => $label)
-                                            <option value="{{$key}}">&nbsp;&nbsp;&nbsp;&nbsp;{{preg_replace('/\s{2}/', '&nbsp;&nbsp;', $label)}}</option>
+                                            <option value="{{$key}}">
+                                                &nbsp;&nbsp;&nbsp;&nbsp;{{preg_replace('/\s{2}/', '&nbsp;&nbsp;', $label)}}</option>
                                         @endforeach
                                     </select>
                                 @endif
@@ -91,7 +92,7 @@
                                 @if(count($panel->groupActions()) > 0 || count($panel->moveToOptions()) > 0)
                                     <th class="check-mail panel-list-checkbox">
                                         <div class="checkbox">
-                                            <input type="checkbox" />
+                                            <input type="checkbox"/>
                                             <label></label>
                                         </div>
                                     </th>
@@ -102,7 +103,7 @@
                                 @endif
 
                                 @foreach ($panel->columns()->resolved() as $key => $column)
-                                        <th {!! html_tag_attr( array_only($column, ['width', 'class', 'style'])) !!}>
+                                    <th {!! html_tag_attr( array_only($column, ['width', 'class', 'style'])) !!}>
                                         {!! $panel->renderColumnHead($column) !!}
                                     </th>
                                 @endforeach
@@ -134,12 +135,14 @@
                                                class="btn btn-xs btn-white"
                                                data-toggle="tooltip"
                                                data-placement="auto"
-                                               title="@lang( $panel->config('labels.sort-up') )"><i class="fa fa-angle-up"></i></a>
+                                               title="@lang( $panel->config('labels.sort-up') )"><i
+                                                        class="fa fa-angle-up"></i></a>
                                             <a href="{!! $panel->urlTo('sortDown', $row['model']) !!}"
                                                class="btn btn-xs btn-white"
                                                data-toggle="tooltip"
                                                data-placement="auto"
-                                               title="@lang( $panel->config('labels.sort-down') )"><i class="fa fa-angle-down"></i></a>
+                                               title="@lang( $panel->config('labels.sort-down') )"><i
+                                                        class="fa fa-angle-down"></i></a>
                                         </div>
                                     </td>
                                 @endif

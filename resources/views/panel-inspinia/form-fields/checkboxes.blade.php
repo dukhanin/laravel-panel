@@ -6,17 +6,17 @@ $errors = $form->fieldErrors($field['key']);
 $disabled = isset($disabled) ? $disabled : false;
 $state = isset($state) ? $state : false;
 
-if (!isset($options) || !is_array($options) && !$options instanceof Illuminate\Support\Collection) {
+if (! isset($options) || ! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {
     $options = [];
 }
 
-if(isset($cols)) {
+if (isset($cols)) {
     $cols = intval($cols);
     $colSize = intval(isset($colSize) ? $colSize : floor(10 / $cols));
-} elseif(count($options) < 8) {
+} elseif (count($options) < 8) {
     $cols = 1;
     $colSize = 12;
-} elseif(count($options) < 20) {
+} elseif (count($options) < 20) {
     $cols = 2;
     $colSize = 4;
 } else {
@@ -32,7 +32,7 @@ if ($value instanceof Illuminate\Database\Eloquent\Collection) {
     $value = $value->modelKeys();
 }
 
-$value = (array)$value;
+$value = (array) $value;
 ?>
 
 

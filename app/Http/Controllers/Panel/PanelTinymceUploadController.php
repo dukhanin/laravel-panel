@@ -21,6 +21,6 @@ class PanelTinymceUploadController extends Controller
 
         $this->uploadFileToDirectory($uploadedFile = $this->getUploadedFiles()->first());
 
-        return response()->json(['location' => upload()->url($this->getDirectory() . '/' . $uploadedFile->getBasename())]);
+        return response()->json(['location' => upload()->url($this->getDirectory().'/'.$uploadedFile->getBasename())]);
     }
 }

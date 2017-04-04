@@ -1,16 +1,16 @@
 <?php
 
-if (!function_exists('upload')) {
+if (! function_exists('upload')) {
     function upload()
     {
         return app('upload');
     }
 }
 
-if (!function_exists('datepicker_format')) {
+if (! function_exists('datepicker_format')) {
     function datepicker_format($format)
     {
-        static $assoc = array(
+        static $assoc = [
             'Y' => 'yyyy',
             'y' => 'yy',
             'F' => 'MM',
@@ -38,13 +38,13 @@ if (!function_exists('datepicker_format')) {
             'H' => '',
             'i' => '',
             's' => '',
-            'u' => ''
-        );
+            'u' => '',
+        ];
 
         $keys = array_keys($assoc);
 
         $indeces = array_map(function ($index) {
-            return '{{' . $index . '}}';
+            return '{{'.$index.'}}';
         }, array_keys($keys));
 
         $format = str_replace($keys, $indeces, $format);

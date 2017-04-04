@@ -71,7 +71,7 @@
                     <tr>
                         @if(count($panel->groupActions()) > 0 || count($panel->moveToOptions()) > 0)
                             <th class="panel-list-checkbox">
-                                <input type="checkbox" />
+                                <input type="checkbox"/>
                             </th>
                         @endif
 
@@ -94,7 +94,7 @@
 
                         @if(count($panel->groupActions()) > 0 || count($panel->moveToOptions()) > 0)
                             <td class="panel-list-checkbox">
-                                <input type="checkbox" name="group[]" value="{{$row['model']->getKey()}}" />
+                                <input type="checkbox" name="group[]" value="{{$row['model']->getKey()}}"/>
                             </td>
                         @endif
 
@@ -110,7 +110,8 @@
                                        class="btn btn-xs"
                                        data-toggle="tooltip"
                                        data-placement="auto"
-                                       title="@lang( $panel->config('labels.sort-down') )"><i class="fa fa-angle-down"></i></a>
+                                       title="@lang( $panel->config('labels.sort-down') )"><i
+                                                class="fa fa-angle-down"></i></a>
                                 </div>
                             </td>
                         @endif

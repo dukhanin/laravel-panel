@@ -16,13 +16,13 @@ try {
         $date = Carbon::parse($value);
     }
 } catch (Exception $e) {
-    $date  = null;
+    $date = null;
 }
 
-$value     = $date ? $date->format($format) : '';
+$value = $date ? $date->format($format) : '';
 $raw_value = $date ? $date->format('Y-m-d') : '';
 
-$id = 'date-' . (++$dateIndex);
+$id = 'date-'.(++$dateIndex);
 ?>
 
 <div class="form-group">
@@ -61,7 +61,7 @@ $id = 'date-' . (++$dateIndex);
     $(function () {
         $('#{{ $id }}').datepicker({
             format: '{{ datepicker_format($format) }}'
-        }).on('clearDate changeDate', function(e){
+        }).on('clearDate changeDate', function (e) {
             console.log(1);
             $('#{{ $id }}-output').val(e.date === undefined ? '' : e.date.getFullYear() + '-' + (e.date.getMonth() + 1) + '-' + e.date.getDate());
         });

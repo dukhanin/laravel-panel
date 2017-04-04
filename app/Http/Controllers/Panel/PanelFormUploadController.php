@@ -8,7 +8,6 @@ use Dukhanin\Panel\Traits\UploadsFiles;
 
 class PanelFormUploadController extends Controller
 {
-
     use UploadsFiles;
 
     public function upload()
@@ -20,7 +19,7 @@ class PanelFormUploadController extends Controller
                 'error' => -1,
                 'success' => false,
                 'messages' => [],
-                'data' => []
+                'data' => [],
             ]);
         }
 
@@ -36,10 +35,9 @@ class PanelFormUploadController extends Controller
             'error' => 0,
             'success' => true,
             'messages' => [],
-            'data' => $files
+            'data' => $files,
         ]);
     }
-
 
     public function createResize($id)
     {
@@ -52,7 +50,7 @@ class PanelFormUploadController extends Controller
                 'error' => -1,
                 'success' => false,
                 'messages' => ['file.not_found'],
-                'data' => []
+                'data' => [],
             ]);
         }
 
@@ -61,7 +59,7 @@ class PanelFormUploadController extends Controller
                 'error' => -1,
                 'success' => false,
                 'messages' => ['file.error_creating_resize'],
-                'data' => []
+                'data' => [],
             ]);
         }
 
@@ -69,10 +67,9 @@ class PanelFormUploadController extends Controller
             'error' => 0,
             'success' => true,
             'messages' => [],
-            'data' => $resize
+            'data' => $resize,
         ]);
     }
-
 
     public function cropFromParent($id)
     {
@@ -85,7 +82,7 @@ class PanelFormUploadController extends Controller
                 'error' => -1,
                 'success' => false,
                 'messages' => ['file.not_found'],
-                'data' => []
+                'data' => [],
             ]);
         }
 
@@ -95,7 +92,7 @@ class PanelFormUploadController extends Controller
 
         $file->crop($options['area']['w'], $options['area']['h'], $options['area']['x'], $options['area']['y']);
 
-        if (!empty($options['size'])) {
+        if (! empty($options['size'])) {
             $file->resize($options['size']);
         }
 
@@ -105,10 +102,9 @@ class PanelFormUploadController extends Controller
             'error' => 0,
             'success' => true,
             'messages' => [],
-            'data' => $file
+            'data' => $file,
         ]);
     }
-
 
     public function delete($id)
     {
@@ -121,7 +117,7 @@ class PanelFormUploadController extends Controller
                 'error' => 0,
                 'success' => true,
                 'messages' => [],
-                'data' => []
+                'data' => [],
             ]);
         }
 
@@ -129,7 +125,7 @@ class PanelFormUploadController extends Controller
             'error' => -1,
             'success' => false,
             'messages' => [],
-            'data' => []
+            'data' => [],
         ]);
     }
 }

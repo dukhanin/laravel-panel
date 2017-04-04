@@ -6,13 +6,11 @@ use Illuminate\Pagination\LengthAwarePaginator;
 
 trait Pages
 {
-
     public $page;
 
     public $perPage;
 
     protected $paginator;
-
 
     public function initFeaturePages()
     {
@@ -20,30 +18,26 @@ trait Pages
         $this->initPerPage();
     }
 
-
     public function initPage()
     {
         $this->page = $this->input('page', 1);
     }
-
 
     public function initPerPage()
     {
         $this->perPage = 20;
     }
 
-
     public function initPaginator()
     {
         $this->paginator = new LengthAwarePaginator($this->perPage(), $this->total(), $this->perPage(), $this->page());
         $this->paginator->setPageName('page');
 
-        $url = urlbuilder($this->url([ '!page' ]));
+        $url = urlbuilder($this->url(['!page']));
 
         $this->paginator->appends($url->query());
         $this->paginator->setPath($url->query(false)->compile());
     }
-
 
     public function perPage()
     {
@@ -54,7 +48,6 @@ trait Pages
         return $this->perPage;
     }
 
-
     public function page()
     {
         if (is_null($this->page)) {
@@ -63,7 +56,6 @@ trait Pages
 
         return $this->page;
     }
-
 
     public function paginator()
     {
@@ -74,19 +66,15 @@ trait Pages
         return $this->paginator;
     }
 
-
     protected function applyQueryPage($select)
     {
-        if ( ! empty( $this->perPage )) {
+        if (! empty($this->perPage)) {
             $select->forPage($this->page, $this->perPage);
         }
-
     }
-
 
     protected function applyUrlPage(&$url)
     {
-        $url->query([ 'page' => $this->page ]);
+        $url->query(['page' => $this->page]);
     }
-
 }

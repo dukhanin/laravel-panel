@@ -4,7 +4,7 @@ global $checkboxesIndex;
 $value = $form->inputValue($field['key']);
 $state = isset($state) ? $state : false;
 
-if (!isset($options) || !is_array($options) && !$options instanceof Illuminate\Support\Collection) {
+if (! isset($options) || ! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {
     $options = [];
 }
 
@@ -16,7 +16,7 @@ if ($value instanceof Illuminate\Database\Eloquent\Collection) {
     $value = $value->modelKeys();
 }
 
-if (!is_array($value)) {
+if (! is_array($value)) {
     $value = [];
 }
 

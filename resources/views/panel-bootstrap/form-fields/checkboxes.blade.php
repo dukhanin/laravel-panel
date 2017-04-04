@@ -3,10 +3,10 @@ global $checkboxesIndex;
 
 $value = $form->inputValue($field['key']);
 $errors = $form->fieldErrors($field['key']);
-$disabled = !empty($disabled);
+$disabled = ! empty($disabled);
 $state = isset($state) ? $state : false;
 
-if (!is_array($options) && !$options instanceof Illuminate\Support\Collection) {
+if (! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {
     $options = [];
 }
 
@@ -18,7 +18,7 @@ if ($value instanceof Illuminate\Database\Eloquent\Collection) {
     $value = $value->modelKeys();
 }
 
-if (!is_array($value)) {
+if (! is_array($value)) {
     $value = [];
 }
 ?>

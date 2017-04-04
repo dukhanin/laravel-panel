@@ -3,19 +3,16 @@ namespace Dukhanin\Panel;
 
 class PanelListDecorator
 {
-
     protected $panel;
 
     protected $rows;
 
     protected $cache = [];
 
-
     public function __construct($panel)
     {
         $this->panel = $panel;
     }
-
 
     public function initRows()
     {
@@ -39,7 +36,6 @@ class PanelListDecorator
         unset($row);
     }
 
-
     public function rows()
     {
         if (is_null($this->rows)) {
@@ -49,18 +45,15 @@ class PanelListDecorator
         return $this->rows;
     }
 
-
     public function categories()
     {
         return method_exists($this->panel, 'categories') ? $this->panel->categories() : collect();
     }
 
-
     public function moveToOptions()
     {
         return method_exists($this->panel, 'moveToOptions') ? $this->panel->moveToOptions() : collect();
     }
-
 
     public function paginator()
     {
@@ -72,18 +65,15 @@ class PanelListDecorator
         return method_exists($this->panel, 'filter') ? $this->panel->filter() : false;
     }
 
-
     public function isSortEnabled()
     {
         return method_exists($this->panel, 'isSortEnabled') ? $this->panel->isSortEnabled() : false;
     }
 
-
     public function isEmpty()
     {
         return $this->rows()->isEmpty();
     }
-
 
     public function renderAction($action, ...$overwrites)
     {
@@ -96,7 +86,6 @@ class PanelListDecorator
         return html_tag($action, ...$overwrites);
     }
 
-
     public function renderModelAction($action, $model = null, ...$overwrites)
     {
         if ($this->denies($action['key'], $model)) {
@@ -108,7 +97,6 @@ class PanelListDecorator
         return html_tag($action, ...$overwrites);
     }
 
-
     public function renderGroupAction($action, ...$overwrites)
     {
         if ($this->denies($action['key'])) {
@@ -119,7 +107,6 @@ class PanelListDecorator
 
         return html_tag($action, ...$overwrites);
     }
-
 
     public function renderCell(&$cell, &$row = null)
     {
@@ -137,21 +124,20 @@ class PanelListDecorator
         return $content;
     }
 
-
     public function renderColumnHead($column, ...$overwrites)
     {
         $tag = $column;
         $query = [];
 
-        if (method_exists($this->panel, 'order') && !empty($column['order'])) {
+        if (method_exists($this->panel, 'order') && ! empty($column['order'])) {
             $thisColumnOrdered = $this->order() == $column['key'];
             $orderedDesc = $this->orderDesc();
             $resetAnyOrder = $thisColumnOrdered && $orderedDesc;
 
-            if (!$resetAnyOrder) {
+            if (! $resetAnyOrder) {
                 $query += ['order' => $column['key']];
 
-                if ($thisColumnOrdered && !$orderedDesc) {
+                if ($thisColumnOrdered && ! $orderedDesc) {
                     $query += ['orderDesc' => 1];
                 }
             }
@@ -164,10 +150,9 @@ class PanelListDecorator
         return html_tag($tag, [
             'url' => $this->url(['!order', '!orderDesc', '!page'] + $query),
             'title' => false,
-            'width' => false
+            'width' => false,
         ], ...$overwrites);
     }
-
 
     public function linkCell(&$cell, &$row, $content, $defaultAction = 'edit')
     {
@@ -185,20 +170,17 @@ class PanelListDecorator
 
         return html_tag('a', [
             'content' => $content,
-            'href' => $url
+            'href' => $url,
         ]);
     }
-
 
     public function __call($method, $arguments)
     {
         return $this->panel->$method(...$arguments);
     }
 
-
     public function __get($name)
     {
         return $this->panel->$name;
     }
-
 }

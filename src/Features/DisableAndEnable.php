@@ -4,21 +4,18 @@ namespace Dukhanin\Panel\Features;
 
 trait DisableAndEnable
 {
-
     protected $disabledKey;
-
 
     protected static function routesForDisableAndEnable(array $options = null)
     {
-        app('router')->get('enable/{id}', '\\' . static::class . '@enable')->name('enable');
+        app('router')->get('enable/{id}', '\\'.static::class.'@enable')->name('enable');
 
-        app('router')->get('disable/{id}', '\\' . static::class . '@disable')->name('disable');
+        app('router')->get('disable/{id}', '\\'.static::class.'@disable')->name('disable');
 
-        app('router')->post('group-enable', '\\' . static::class . '@groupEnable')->name('groupEnable');
+        app('router')->post('group-enable', '\\'.static::class.'@groupEnable')->name('groupEnable');
 
-        app('router')->post('group-disable', '\\' . static::class . '@groupDisable')->name('groupDisable');
+        app('router')->post('group-disable', '\\'.static::class.'@groupDisable')->name('groupDisable');
     }
-
 
     function initFeatureDisableAndEnable()
     {
@@ -31,12 +28,10 @@ trait DisableAndEnable
         $this->groupActions['group-disable'] = $this->config('actions.group-disable');
     }
 
-
     public function initDisabledKey()
     {
         $this->disabledKey = 'disabled';
     }
-
 
     public function disabledKey()
     {
@@ -46,7 +41,6 @@ trait DisableAndEnable
 
         return $this->disabledKey;
     }
-
 
     public function enable()
     {
@@ -60,7 +54,6 @@ trait DisableAndEnable
         return redirect()->to($this->url());
     }
 
-
     public function disable()
     {
         $model = $this->findModelOrFail($this->parameter('id'));
@@ -72,7 +65,6 @@ trait DisableAndEnable
 
         return redirect()->to($this->url());
     }
-
 
     public function groupEnable()
     {
@@ -88,7 +80,6 @@ trait DisableAndEnable
         return redirect()->to($this->url());
     }
 
-
     public function groupDisable()
     {
         $group = $this->findModelsOrFail($this->input('group'));
@@ -102,7 +93,6 @@ trait DisableAndEnable
 
         return redirect()->to($this->url());
     }
-
 
     public function applyEachRowDisabled(&$row)
     {

@@ -1,6 +1,6 @@
 <?php
 $errors = $form->fieldErrors($field['key']);
-$id = 'wysiwyg-' . mt_rand(1, 1000);
+$id = 'wysiwyg-'.mt_rand(1, 1000);
 
 $config = config('wysiwyg.default');
 $config['images_upload_url'] = urlbuilder($config['images_upload_url'])->query(['directory' => $form->uploadDirectory()])->compile();
@@ -65,7 +65,7 @@ $config['filemanager_subfolder'] = $form->uploadDirectory();
                             dataType: 'json',
                             contentType: false,
                             processData: false,
-                            success: function(responseJSON, textStatus, jqXHR) {
+                            success: function (responseJSON, textStatus, jqXHR) {
                                 if (jqXHR.status != 200) {
                                     panel.error(textStatus);
                                     failure(textStatus);
@@ -80,7 +80,7 @@ $config['filemanager_subfolder'] = $form->uploadDirectory();
 
                                 success(responseJSON.location);
                             },
-                            error: function(jqXHR) {
+                            error: function (jqXHR) {
                                 panel.error(jqXHR.responseText);
                                 failure('Invalid JSON');
                             }

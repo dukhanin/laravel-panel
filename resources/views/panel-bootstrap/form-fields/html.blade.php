@@ -2,7 +2,7 @@
 $value = $form->inputValue($field['key']);
 $errors = $form->fieldErrors($field['key']);
 
-if ( ! empty( $data )) {
+if (! empty($data)) {
     $value = $data;
 }
 ?>

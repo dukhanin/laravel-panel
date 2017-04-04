@@ -11,36 +11,30 @@ abstract class PanelTreeController extends PanelListController
 
     public $parentKeyValue;
 
-
     public function initView()
     {
-        $this->view = view($this->config('views') . '.tree', ['panel' => $this->decorator()]);
+        $this->view = view($this->config('views').'.tree', ['panel' => $this->decorator()]);
     }
-
 
     public function initParentKey()
     {
         $this->parentKey = 'parent_id';
     }
 
-
     public function initParentKeyValue()
     {
         $this->parentKeyValue = null;
     }
-
 
     public function initModelActions()
     {
         $this->modelActions->push($this->config('actions.append'));
     }
 
-
     public function initDecorator()
     {
         $this->decorator = new PanelTreeDecorator($this);
     }
-
 
     public function parentKey()
     {
@@ -51,7 +45,6 @@ abstract class PanelTreeController extends PanelListController
         return $this->parentKey;
     }
 
-
     public function parentKeyValue()
     {
         if (is_null($this->parentKeyValue)) {
@@ -61,19 +54,15 @@ abstract class PanelTreeController extends PanelListController
         return $this->parentKeyValue;
     }
 
-
     public function queryBranch($parentKeyValue = null, array $apply = ['*'])
     {
-        return $this->query($apply)->where($this->parentKey(),
-            is_null($parentKeyValue) ? $this->parentKeyValue() : $parentKeyValue);
+        return $this->query($apply)->where($this->parentKey(), is_null($parentKeyValue) ? $this->parentKeyValue() : $parentKeyValue);
     }
-
 
     public function items(array $apply = ['*'])
     {
         return $this->queryBranch(null, $apply)->get();
     }
-
 
     protected function newModel()
     {
@@ -84,7 +73,7 @@ abstract class PanelTreeController extends PanelListController
         if ($parentKeyValue) {
             $parent = $this->findModel($parentKeyValue);
 
-            if (!$parent || $this->denies('append', [$parent, $model])) {
+            if (! $parent || $this->denies('append', [$parent, $model])) {
                 $parentKeyValue = null;
             }
         }
@@ -97,7 +86,6 @@ abstract class PanelTreeController extends PanelListController
 
         return $model;
     }
-
 
     protected function sortQuery()
     {

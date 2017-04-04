@@ -14,23 +14,20 @@ class UploadHelper
     {
         $this->path = rtrim(config('upload.path', public_path('upload')), '/');
 
-        $this->url = rtrim(config('upload.url', '/upload') , '/');
+        $this->url = rtrim(config('upload.url', '/upload'), '/');
 
         $this->makeDirectoryIfNotExists();
     }
 
-
     public function path($append = null)
     {
-        return $this->path . $this->append($this->subdir()) . $this->append($append);
+        return $this->path.$this->append($this->subdir()).$this->append($append);
     }
-
 
     public function url($append = null)
     {
-        return $this->url . $this->append($this->subdir()) . $this->append($append);
+        return $this->url.$this->append($this->subdir()).$this->append($append);
     }
-
 
     public function allowed($arguments = [])
     {
@@ -41,20 +38,17 @@ class UploadHelper
         return Gate::allows('upload-files');
     }
 
-
     public function authorize($arguments = [])
     {
-        if (!$this->allowed($arguments)) {
+        if (! $this->allowed($arguments)) {
             throw new AuthorizationException('This action is unauthorized.');
         }
     }
-
 
     public function subdir()
     {
         return null;
     }
-
 
     protected function append($path)
     {
@@ -62,15 +56,14 @@ class UploadHelper
         $path = preg_replace('~/+~', '/', $path);
         $path = trim($path, '/');
 
-        return $path ? '/' . $path : '';
+        return $path ? '/'.$path : '';
     }
-
 
     public function makeDirectoryIfNotExists($append = null)
     {
         $directory = $this->path($append);
 
-        if (!app('files')->exists($directory)) {
+        if (! app('files')->exists($directory)) {
             app('files')->makeDirectory($directory, 0755, true);
         }
     }

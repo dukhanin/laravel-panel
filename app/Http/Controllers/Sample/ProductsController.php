@@ -18,9 +18,7 @@ use Dukhanin\Panel\Controllers\PanelListController;
 
 class ProductsController extends PanelListController
 {
-
     use Sort, Order, Pages, EnableAndDisable, CreateAndEdit, Delete, Categories, MoveTo;
-
 
     public function before()
     {
@@ -31,75 +29,65 @@ class ProductsController extends PanelListController
         $this->setConfig('layout', request()->query('inspinia') ? 'panel::panel-inspinia.layout' : 'panel::panel-bootstrap.layout');
     }
 
-
     public function initColumns()
     {
         $this->columns->put('image', [
-            'label'   => 'Image',
-            'width'   => 100,
-            'action'  => 'edit',
+            'label' => 'Image',
+            'width' => 100,
+            'action' => 'edit',
             'handler' => function ($product) {
                 if ($file = File::find(array_first($product->images))) {
                     return $file->getResize('50x50')->img();
                 }
-            }
+            },
         ]);
 
         $this->columns->put('name', [
-            'label'  => 'Product Name',
+            'label' => 'Product Name',
             'action' => 'edit',
-            'order'  => true
+            'order' => true,
         ]);
     }
-
 
     public function initUrl()
     {
         $this->url = action('Sample\ProductsController@showList');
     }
 
-
     public function initLabel()
     {
         $this->label = 'Dukhanin\Panel\PanelList';
     }
-
 
     public function initModel()
     {
         $this->model = new Product;
     }
 
-
     public function initPolicy()
     {
         $this->policy = true;
     }
-
 
     public function initForm()
     {
         $this->form = new ProductForm;
     }
 
-
     public function isSortEnabled()
     {
         return ! empty($this->category()) && Section::byParent($this->category())->count() == 0;
     }
-
 
     public function initCategories()
     {
         $this->categories = Section::tree()->options('name')->prepend('(All Sections)', '');
     }
 
-
     public function initMoveToOptions()
     {
         $this->moveToOptions = Section::tree()->options('name');
     }
-
 
     public function moveTo($model, $sectionId)
     {
@@ -108,7 +96,6 @@ class ProductsController extends PanelListController
         $model->section_id = $section->getKey();
         $model->save();
     }
-
 
     public function newModel()
     {
@@ -121,14 +108,12 @@ class ProductsController extends PanelListController
         return $model;
     }
 
-
     protected function applyUrlTheme($url)
     {
         if (request()->query('inspinia')) {
-            $url->query([ 'inspinia' => 1 ]);
+            $url->query(['inspinia' => 1]);
         }
     }
-
 
     protected function applyQueryDefaultOrder($select)
     {
@@ -139,10 +124,9 @@ class ProductsController extends PanelListController
         }
     }
 
-
     protected function applyQueryCategory($query)
     {
-        if ( ! empty($this->category())) {
+        if (! empty($this->category())) {
             $query->bySectionRecursive($this->category());
         }
     }

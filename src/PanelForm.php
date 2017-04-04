@@ -19,7 +19,6 @@ use Closure;
 
 class PanelForm
 {
-
     protected $config;
 
     protected $model;
@@ -46,7 +45,6 @@ class PanelForm
 
     protected $errors;
 
-
     public function __construct()
     {
         $this->buttons = new ButtonsCollection;
@@ -56,39 +54,32 @@ class PanelForm
         $this->fields->setForm($this);
     }
 
-
     public function initConfig()
     {
         $this->config = config('panel');
     }
 
-
     public function initModel()
     {
-
     }
-
 
     public function initLabel()
     {
         $this->label = '';
     }
 
-
     public function initUploadDirectory()
     {
-        $this->uploadDirectory = date('Y-m') . '/' . date('d');
+        $this->uploadDirectory = date('Y-m').'/'.date('d');
 
-        if (!Storage::exists($this->uploadDirectory)) {
+        if (! Storage::exists($this->uploadDirectory)) {
             Storage::makeDirectory($this->uploadDirectory);
         }
     }
 
-
     public function initFields()
     {
     }
-
 
     public function initData()
     {
@@ -96,89 +87,78 @@ class PanelForm
             $this->initDataFromInput();
         } elseif (array_has(request()->old(), $this->inputName())) {
             $this->initDataFromOld();
-        } elseif (!empty($this->model)) {
+        } elseif (! empty($this->model)) {
             $this->initDataFromModel();
         } else {
             $this->initDataDefault();
         }
     }
 
-
     protected function initDataFromInput()
     {
-        $this->data = (array)request()->input($this->inputName());
+        $this->data = (array) request()->input($this->inputName());
 
         $this->mergeAttributes($this->data);
     }
-
 
     protected function initDataFromOld()
     {
-        $this->data = (array)request()->old($this->inputName());
+        $this->data = (array) request()->old($this->inputName());
 
         $this->mergeAttributes($this->data);
     }
 
-
     protected function mergeAttributes(array &$data)
     {
-        if(empty($this->model)) {
+        if (empty($this->model)) {
             return;
         }
 
         $dataFromModel = $this->dataFromModel();
 
         foreach ($this->mergeAttributes as $key) {
-            if (!array_has($data, $key) || !array_has($dataFromModel, $key)) {
+            if (! array_has($data, $key) || ! array_has($dataFromModel, $key)) {
                 continue;
             }
 
-            $data[$key] = (array)$data[$key] + (array)$dataFromModel[$key];
+            $data[$key] = (array) $data[$key] + (array) $dataFromModel[$key];
         }
     }
 
-
     protected function initDataFromModel()
     {
-        $this->data = (array)$this->dataFromModel();
+        $this->data = (array) $this->dataFromModel();
     }
-
 
     protected function initDataDefault()
     {
         $this->data = [];
     }
 
-
     protected function initValidator()
     {
         $this->validator = Validator::make([], []);
     }
-
 
     public function initButtons()
     {
         $this->buttons->put('submit');
     }
 
-
     public function initView()
     {
-        $this->view = view($this->config('views') . '.form', ['form' => $this]);
+        $this->view = view($this->config('views').'.form', ['form' => $this]);
     }
-
 
     public function initInputName()
     {
         $this->inputName = 'model';
     }
 
-
     public function initEventDispatcher()
     {
         $this->eventDispatcher = new Dispatcher();
     }
-
 
     public function onSuccess()
     {
@@ -191,14 +171,12 @@ class PanelForm
         $this->eventDispatcher()->fire('succeed', $this);
     }
 
-
     public function onSubmit()
     {
         $this->eventDispatcher()->fire('submit', $this);
 
         $this->eventDispatcher()->fire('submited', $this);
     }
-
 
     public function onFailure()
     {
@@ -209,7 +187,6 @@ class PanelForm
         throw new ValidationException($this->validator());
     }
 
-
     public function model()
     {
         if (is_null($this->model)) {
@@ -219,27 +196,25 @@ class PanelForm
         return $this->model;
     }
 
-
     public function modelAttributes()
     {
         return $this->model()->attributesToArray();
     }
 
-
     public function modelRelations()
     {
-        if (!$this->fields->touched()) {
+        if (! $this->fields->touched()) {
             $this->initFields();
         }
 
         $relations = [];
 
         foreach ($this->fields->resolved()->where('relation', true) as $field) {
-            if (!is_callable([$this->model(), $field['key']])) {
+            if (! is_callable([$this->model(), $field['key']])) {
                 continue;
             }
 
-            if (!($relation = $this->model()->{$field['key']}()) instanceof Relation) {
+            if (! ($relation = $this->model()->{$field['key']}()) instanceof Relation) {
                 continue;
             }
 
@@ -248,7 +223,6 @@ class PanelForm
 
         return $relations;
     }
-
 
     public function label()
     {
@@ -259,7 +233,6 @@ class PanelForm
         return $this->label;
     }
 
-
     public function validator()
     {
         if (empty($this->validator)) {
@@ -268,7 +241,6 @@ class PanelForm
 
         return $this->validator;
     }
-
 
     public function eventDispatcher()
     {
@@ -279,28 +251,24 @@ class PanelForm
         return $this->eventDispatcher;
     }
 
-
     public function submitUrl()
     {
         return '';
     }
-
 
     public function method()
     {
         return 'post';
     }
 
-
     public function fields()
     {
-        if (!$this->fields->touched()) {
+        if (! $this->fields->touched()) {
             $this->initFields();
         }
 
         return $this->fields;
     }
-
 
     public function addField($key, $field)
     {
@@ -309,28 +277,25 @@ class PanelForm
         return $this;
     }
 
-
     public function fieldView($field)
     {
         $options = [
             array_get($field, 'view'),
             "{$this->view()->getName()}.{$field['type']}",
             "{$this->config('views')}.form-fields.{$field['type']}",
-            "{$this->config('views')}.form-fields.text"
+            "{$this->config('views')}.form-fields.text",
         ];
 
         foreach ($options as $viewFile) {
-            if (!view()->exists($viewFile)) {
+            if (! view()->exists($viewFile)) {
                 continue;
             }
 
             return $viewFile;
         }
 
-        throw new Exception('No view found for field ' . array_get($field, 'key')
-            . '(searched in ' . implode(', ', array_filter($options)) . ')');
+        throw new Exception('No view found for field '.array_get($field, 'key').'(searched in '.implode(', ', array_filter($options)).')');
     }
-
 
     public function inputName($name = null)
     {
@@ -353,7 +318,6 @@ class PanelForm
         return $inputName;
     }
 
-
     public function htmlInputName($name = null)
     {
         $inputName = $this->inputName($name);
@@ -367,7 +331,7 @@ class PanelForm
 
         $htmlName = $first;
         foreach ($inputName as $part) {
-            $htmlName .= '[' . $part . ']';
+            $htmlName .= '['.$part.']';
         }
 
         return $htmlName;
@@ -383,6 +347,7 @@ class PanelForm
         if (is_null($this->errors)) {
             $this->initErrors();
         }
+
         return $this->errors;
     }
 
@@ -390,7 +355,6 @@ class PanelForm
     {
         return $this->errors()->get($name);
     }
-
 
     public function inputValue($name)
     {
@@ -405,7 +369,6 @@ class PanelForm
         return $this->data($name);
     }
 
-
     public function view()
     {
         if (is_null($this->view)) {
@@ -415,17 +378,14 @@ class PanelForm
         return $this->view;
     }
 
-
     public function buttons()
     {
-        if (!$this->buttons->touched()) {
+        if (! $this->buttons->touched()) {
             $this->initButtons();
         }
 
         return $this->buttons;
-
     }
-
 
     public function data($name = null, $default = null)
     {
@@ -436,12 +396,10 @@ class PanelForm
         return array_get($this->data, $name, $default);
     }
 
-
     public function dataFromRequest()
     {
         return request()->input($this->inputName());
     }
-
 
     public function dataFromModel()
     {
@@ -452,18 +410,16 @@ class PanelForm
                     return $results->modelKeys();
                 }
 
-                if (!empty($results)) {
+                if (! empty($results)) {
                     return $results->getKey();
                 }
             }, $this->modelRelations());
     }
 
-
     public function dataDefault()
     {
         return [];
     }
-
 
     public function uploadDirectory()
     {
@@ -474,14 +430,12 @@ class PanelForm
         return $this->uploadDirectory;
     }
 
-
     public function setValidator(Validator $validator)
     {
         $this->validator = $validator;
 
         return $this;
     }
-
 
     public function setModel(Model $model)
     {
@@ -490,86 +444,74 @@ class PanelForm
         return $this;
     }
 
-
     public function isFailure()
     {
-        return $this->isSubmit() && !$this->isSuccess();
+        return $this->isSubmit() && ! $this->isSuccess();
     }
-
 
     public function isSuccess()
     {
         $validator = $this->validator();
 
-        $validator->setData((array)$this->data());
+        $validator->setData((array) $this->data());
 
         return $this->isSubmit() && $validator->passes();
     }
-
 
     public function isSubmit()
     {
         return request()->input($this->inputName());
     }
 
-
     public function submit($callback, $priority = 0)
     {
         $this->eventDispatcher()->listen('submit', $callback, $priority);
     }
-
 
     public function submited($callback, $priority = 0)
     {
         $this->eventDispatcher()->listen('submited', $callback, $priority);
     }
 
-
     public function success($callback, $priority = 0)
     {
         $this->eventDispatcher()->listen('success', $callback, $priority);
     }
-
 
     public function succeed($callback, $priority = 0)
     {
         $this->eventDispatcher()->listen('succeed', $callback, $priority);
     }
 
-
     public function failure($callback, $priority = 0)
     {
         $this->eventDispatcher()->listen('failure    ', $callback, $priority);
     }
-
 
     public function failed($callback, $priority = 0)
     {
         $this->eventDispatcher()->listen('failed    ', $callback, $priority);
     }
 
-
     public function __call($method, $arguments)
     {
         if (preg_match('/^(add)(.*?)?$/i', $method, $pock)) {
             $key = array_get($arguments, 0);
 
-            if (!is_array($field = array_get($arguments, 1))) {
+            if (! is_array($field = array_get($arguments, 1))) {
                 $field = ['label' => $field];
             };
 
             return $this->fields->put($key, ['type' => strtolower($pock[2])] + $field);
         }
 
-        throw new ErrorException('Call to undefined method ' . get_class($this) . '::' . $method . '()');
+        throw new ErrorException('Call to undefined method '.get_class($this).'::'.$method.'()');
     }
-
 
     public function fillModel()
     {
         $this->model->fill($this->data());
     }
-
 
     public function saveModel()
     {
@@ -578,12 +520,10 @@ class PanelForm
         $this->saveModelRelations();
     }
 
-
     public function saveModelAttributes()
     {
         $this->model->save();
     }
-
 
     public function saveModelRelations()
     {
@@ -605,7 +545,7 @@ class PanelForm
             if (in_array(InteractsWithPivotTable::class, class_uses_recursive($relation))) {
                 $relation->detach();
 
-                if ($keys = (array)$this->data($relationKey)) {
+                if ($keys = (array) $this->data($relationKey)) {
                     $relation->attach($keys);
                 }
 
@@ -618,32 +558,29 @@ class PanelForm
         }
     }
 
-
     public function clearData()
     {
         $this->data = null;
     }
 
-
-    public function handle( $successResponse = null )
+    public function handle($successResponse = null)
     {
         if ($this->isSubmit()) {
             $this->onSubmit();
         }
 
-        if($this->isSuccess()) {
+        if ($this->isSuccess()) {
             $response = $this->onSuccess();
 
-            if( !is_null($successResponse) ) {
+            if (! is_null($successResponse)) {
                 $response = $successResponse instanceof Closure ? $successResponse($this) : $successResponse;
             }
         } else {
             $response = $this->onFailure();
         }
 
-        return !is_null($response) ? $response : $this->view();
+        return ! is_null($response) ? $response : $this->view();
     }
-
 
     public function config($key = null, $default = null)
     {
@@ -653,7 +590,6 @@ class PanelForm
 
         return array_get($this->config, $key, $default);
     }
-
 
     public function setConfig($key, $value)
     {

@@ -1,14 +1,16 @@
 @if(!$form->fields()->isEmpty())
     <div class="ibox panel-list-filter @if(!$form->isSubmit()) collapsed @endif">
-        <div class="ibox-title"> <div class="ibox-tools">
-            <h5><a class="collapse-link">@lang($form->config('labels.filter'))</a></h5>
+        <div class="ibox-title">
+            <div class="ibox-tools">
+                <h5><a class="collapse-link">@lang($form->config('labels.filter'))</a></h5>
 
                 <a class="collapse-link">
                     <i class="fa fa-chevron-down"></i>
                 </a>
             </div>
         </div>
-        <form method="{{ $form->method() }}" action="{{ $form->submitUrl() }}" class="ibox-content m-b-sm border-bottom">
+        <form method="{{ $form->method() }}" action="{{ $form->submitUrl() }}"
+              class="ibox-content m-b-sm border-bottom">
             @foreach (collect($form->fields()->resolved())->chunk(3) as $chunk)
                 <div class="row">
 

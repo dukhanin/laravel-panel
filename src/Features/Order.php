@@ -4,18 +4,15 @@ namespace Dukhanin\Panel\Features;
 
 trait Order
 {
-
     protected $order;
 
     protected $orderDesc;
 
-
     public function initOrder()
     {
-        $this->order     = $this->input('order');
+        $this->order = $this->input('order');
         $this->orderDesc = $this->input('orderDesc', false);
     }
-
 
     public function order()
     {
@@ -26,7 +23,6 @@ trait Order
         return $this->order;
     }
 
-
     public function orderDesc()
     {
         if (is_null($this->orderDesc)) {
@@ -36,12 +32,11 @@ trait Order
         return $this->orderDesc;
     }
 
-
     protected function applyQueryOrder($select)
     {
         $columns = $this->columns()->resolved();
 
-        if (empty( $columns[$this->order()]['order'] )) {
+        if (empty($columns[$this->order()]['order'])) {
             return;
         }
 
@@ -51,17 +46,16 @@ trait Order
             $order = $this->order();
         }
 
-        if (!is_string($order) && is_callable($order)) {
+        if (! is_string($order) && is_callable($order)) {
             call_user_func($order, $select, $this);
         } else {
             $select->orderBy($order, $this->orderDesc() ? 'desc' : 'asc');
         }
     }
 
-
     protected function applyUrlOrder(&$url)
     {
-        $query = [ ];
+        $query = [];
 
         if ($this->order()) {
             $query['order'] = $this->order;

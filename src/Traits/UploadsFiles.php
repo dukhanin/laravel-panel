@@ -9,16 +9,13 @@ trait UploadsFiles
 {
     protected $directory;
 
-
     abstract public function upload();
-
 
     protected function initDirectory()
     {
         $this->directory = request()->input('directory');
         upload()->makeDirectoryIfNotExists($this->directory);
     }
-
 
     protected function getDirectory()
     {
@@ -28,7 +25,6 @@ trait UploadsFiles
 
         return $this->directory;
     }
-
 
     protected function getUploadedFiles()
     {
@@ -46,7 +42,6 @@ trait UploadsFiles
         });
     }
 
-
     protected function uploadFileToDirectory($file)
     {
         $uploadPath = upload()->path($this->getDirectory());
@@ -55,13 +50,12 @@ trait UploadsFiles
 
         $this->renameIfExists($uploadPath, $fileBasename);
 
-        $file->move($uploadPath . '/' . $fileBasename);
+        $file->move($uploadPath.'/'.$fileBasename);
 
         chmod($file->getPath(), 0644); // @todo do smth with
 
         return true;
     }
-
 
     protected function renameIfExists($uploadPath, &$fileBasename)
     {
@@ -69,11 +63,11 @@ trait UploadsFiles
         $fileExt = pathinfo($fileBasename, PATHINFO_EXTENSION);
         $counter = 0;
 
-        while (file_exists($uploadPath . '/' . $fileBasename)) {
-            $fileBasename = $fileName . '(' . (++$counter) . ')';
+        while (file_exists($uploadPath.'/'.$fileBasename)) {
+            $fileBasename = $fileName.'('.(++$counter).')';
 
             if ($fileExt) {
-                $fileBasename .= '.' . $fileExt;
+                $fileBasename .= '.'.$fileExt;
             }
         }
     }

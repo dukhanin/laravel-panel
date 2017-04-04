@@ -2,8 +2,8 @@
 global $checkboxesIndex;
 
 $errors = $form->fieldErrors($field['key']);
-$state    = isset($state) ? $state : false;
-$icon     = isset($icon) ? $icon : false;
+$state = isset($state) ? $state : false;
+$icon = isset($icon) ? $icon : false;
 ?>
 
 <div class="checkbox @if( ! empty($errors) )  has-error @endif">
@@ -15,7 +15,7 @@ $icon     = isset($icon) ? $icon : false;
                name="{{  $form->htmlInputName($field['key']) }}"
                value="1"
                @if( $form->inputValue($field['key']) ) checked @endif
-                />
+        />
         <i class="{{ $icon }}"></i> {{ $label }}
     </label>
 

@@ -3,24 +3,24 @@
 return [
     'types' => [
         'image' => [
-            'formats'    => [
+            'formats' => [
                 'jpeg',
                 'jpg',
                 'gif',
-                'png'
+                'png',
 
             ],
             'extensions' => [
                 'jpeg',
                 'jpg',
                 'gif',
-                'png'
+                'png',
             ],
-            'fake' => 'img/fake.png'
+            'fake' => 'img/fake.png',
         ],
 
         'video' => [
-            'formats'    => [
+            'formats' => [
                 'x-ms-asf',
                 'avi',
                 'msvideo',
@@ -44,7 +44,7 @@ return [
                 'octet-stream',
                 'x-ms-wmx',
                 'x-ms-wvx',
-                'x-xvid'
+                'x-xvid',
             ],
             'extensions' => [
                 'asf',
@@ -76,12 +76,12 @@ return [
                 'wmx',
                 'wmx',
                 'wvx',
-                'xvid'
-            ]
+                'xvid',
+            ],
         ],
 
         'audio' => [
-            'formats'    => [
+            'formats' => [
                 'x-aiff',
                 'mpeg',
                 'midi',
@@ -91,7 +91,7 @@ return [
                 'x-redhat-package-manager',
                 'x-wav',
                 'x-ms-wax',
-                'x-ms-wma'
+                'x-ms-wma',
             ],
             'extensions' => [
                 'm4a',
@@ -108,12 +108,12 @@ return [
                 'rpm',
                 'wav',
                 'wax',
-                'wma'
-            ]
+                'wma',
+            ],
         ],
 
         'document' => [
-            'formats'    => [
+            'formats' => [
                 'plain',
                 'msword',
                 'vnd.openxmlformats-officedocument.wordprocessingml.document',
@@ -131,7 +131,7 @@ return [
                 'xml',
                 'zip',
                 'x-compressed-zip',
-                'x-rar-compressed'
+                'x-rar-compressed',
             ],
             'extensions' => [
                 'txt',
@@ -151,8 +151,8 @@ return [
                 'xhtml',
                 'xml',
                 'zip',
-                'rar'
-            ]
-        ]
-    ]
+                'rar',
+            ],
+        ],
+    ],
 ];

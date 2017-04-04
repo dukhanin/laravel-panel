@@ -1,12 +1,12 @@
 <?php
-if ( ! isset( $options ) || ! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {
-    $options = [ ];
+if (! isset($options) || ! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {
+    $options = [];
 }
 
-$value             = $form->inputValue($field['key']);
-$errors            = $form->fieldErrors($field['key']);
-$nullTitle = isset( $nullTitle ) ? $nullTitle : trans('panel.labels.choose');
-$nullTitleSelected = in_array($form->inputValue($field['key']), array( NULL, '' ), true);
+$value = $form->inputValue($field['key']);
+$errors = $form->fieldErrors($field['key']);
+$nullTitle = isset($nullTitle) ? $nullTitle : trans('panel.labels.choose');
+$nullTitleSelected = in_array($form->inputValue($field['key']), array(NULL, ''), true);
 ?>
 
 <div class="form-group @if( ! empty($errors) )  has-error @endif">

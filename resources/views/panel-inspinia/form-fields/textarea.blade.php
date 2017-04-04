@@ -1,5 +1,5 @@
 <?php
-$errors = $form->fieldErrors( $field['key'] );
+$errors = $form->fieldErrors($field['key']);
 ?>
 
 

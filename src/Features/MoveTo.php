@@ -4,33 +4,27 @@ namespace Dukhanin\Panel\Features;
 
 trait MoveTo
 {
-
     protected $moveToOptions;
-
 
     protected static function routesForMoveTo(array $options = null)
     {
-        app('router')->post('group-move-to/{location}', '\\' . static::class . '@groupMoveTo')->name('groupMoveTo');
+        app('router')->post('group-move-to/{location}', '\\'.static::class.'@groupMoveTo')->name('groupMoveTo');
     }
-
 
     public function initFeatureMoveTo()
     {
         $this->initMoveToOptions();
     }
 
-
     public function initMoveToOptions()
     {
-        $this->moveToOptions = [ ];
+        $this->moveToOptions = [];
     }
-
 
     public function moveTo($model, $location)
     {
         // extendable
     }
-
 
     public function groupMoveTo()
     {
@@ -45,7 +39,6 @@ trait MoveTo
         return redirect()->to($this->url());
     }
 
-
     public function moveToOptions()
     {
         if (is_null($this->moveToOptions)) {
@@ -54,5 +47,4 @@ trait MoveTo
 
         return $this->moveToOptions;
     }
-
 }

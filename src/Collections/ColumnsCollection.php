@@ -12,7 +12,6 @@ class ColumnsCollection extends Collection
 
     protected $panel;
 
-
     public function setPanel($panel)
     {
         $this->panel = $panel;
@@ -45,7 +44,7 @@ class ColumnsCollection extends Collection
             $column = call_user_func($column, $this->panel);
         }
 
-        if (!is_array($column)) {
+        if (! is_array($column)) {
             $column = [];
         }
 
@@ -54,7 +53,7 @@ class ColumnsCollection extends Collection
                 'label' => strval($key),
                 'order' => false,
                 'handler' => null,
-                'width' => null
+                'width' => null,
             ];
 
         if (isset($column['order'])) {

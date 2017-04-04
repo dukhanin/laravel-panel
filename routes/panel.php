@@ -1,6 +1,6 @@
 <?php
 
-Route::group([ 'prefix' => 'panel/upload', 'namespace' => 'Panel' ], function () {
+Route::group(['prefix' => 'panel/upload', 'namespace' => 'Panel'], function () {
     Route::post('', 'PanelFormUploadController@upload')->name('panel.upload.form');
     Route::post('createResize/{id}', 'PanelFormUploadController@createResize');
     Route::post('cropFromParent/{id}', 'PanelFormUploadController@cropFromParent');

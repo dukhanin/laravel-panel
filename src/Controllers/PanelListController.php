@@ -10,10 +10,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
 
-
 abstract class PanelListController extends Controller
 {
-
     protected $url;
 
     protected $urlParameters;
@@ -42,7 +40,6 @@ abstract class PanelListController extends Controller
 
     protected $config;
 
-
     public function __construct()
     {
         $this->actions = new ActionsCollection;
@@ -57,7 +54,6 @@ abstract class PanelListController extends Controller
         $this->columns = new ColumnsCollection;
         $this->columns->setPanel($this);
     }
-
 
     public function callAction($action, $parameters)
     {
@@ -76,15 +72,12 @@ abstract class PanelListController extends Controller
         return $res;
     }
 
-
     abstract public function initModel();
-
 
     public function showList()
     {
         return $this->view();
     }
-
 
     public function init()
     {
@@ -99,17 +92,15 @@ abstract class PanelListController extends Controller
         $this->initFeatures();
     }
 
-
     public function initConfig()
     {
         $this->config = config('panel');
     }
 
-
     public function initFeatures()
     {
         foreach (class_uses_recursive(get_class($this)) as $trait) {
-            $method = 'initFeature' . class_basename($trait);
+            $method = 'initFeature'.class_basename($trait);
 
             if (method_exists($this, $method)) {
                 $this->$method();
@@ -117,36 +108,30 @@ abstract class PanelListController extends Controller
         }
     }
 
-
     public function initLabel()
     {
         $this->label = '';
     }
-
 
     public function initQuery()
     {
         $this->query = $this->model()->newQuery();
     }
 
-
     public function initPolicy()
     {
         $this->policy = Gate::getPolicyFor($this->model());
     }
 
-
     public function initView()
     {
-        $this->view = view($this->config('views') . '.list', ['panel' => $this->decorator()]);
+        $this->view = view($this->config('views').'.list', ['panel' => $this->decorator()]);
     }
-
 
     public function initDecorator()
     {
         $this->decorator = new PanelListDecorator($this);
     }
-
 
     public function initColumns()
     {
@@ -156,31 +141,26 @@ abstract class PanelListController extends Controller
             'action' => true,
             'handler' => function ($model, &$cell, &$row) {
                 return $model->name;
-            }
+            },
         ]);
     }
-
 
     public function initActions()
     {
     }
 
-
     public function initModelActions()
     {
     }
-
 
     public function initGroupActions()
     {
     }
 
-
     public function setUrl($url)
     {
         $this->url = $url;
     }
-
 
     public function url(array $apply = ['*'])
     {
@@ -201,12 +181,11 @@ abstract class PanelListController extends Controller
         return $url->query($apply)->compile();
     }
 
-
     public function initUrlParameters()
     {
         $this->urlParameters = [];
 
-        if($route = app('router')->current()) {
+        if ($route = app('router')->current()) {
             foreach ($route->parameterNames as $name) {
                 $this->urlParameters[$name] = array_get($route->parameters, $name);
             }
@@ -215,17 +194,16 @@ abstract class PanelListController extends Controller
 
     public function urlParameters()
     {
-        if(is_null($this->urlParameters)) {
+        if (is_null($this->urlParameters)) {
             $this->initUrlParameters();
         }
 
         return $this->urlParameters;
     }
 
-
     public function urlTo($action, $params = null, array $apply = ['*'])
     {
-        if (!str_contains($action, '@')) {
+        if (! str_contains($action, '@')) {
             $action = static::routeAction($action);
         }
 
@@ -238,7 +216,6 @@ abstract class PanelListController extends Controller
         return $url->compile();
     }
 
-
     public function model()
     {
         if (is_null($this->model)) {
@@ -248,7 +225,6 @@ abstract class PanelListController extends Controller
         return $this->model;
     }
 
-
     public function label()
     {
         if (is_null($this->label)) {
@@ -257,7 +233,6 @@ abstract class PanelListController extends Controller
 
         return $this->label;
     }
-
 
     public function query(array $apply = ['*'])
     {
@@ -272,12 +247,10 @@ abstract class PanelListController extends Controller
         return $select;
     }
 
-
     public function items(array $apply = ['*'])
     {
         return $this->query($apply)->get();
     }
-
 
     public function total(array $apply = [])
     {
@@ -291,7 +264,6 @@ abstract class PanelListController extends Controller
         return $builder->count();
     }
 
-
     public function policy()
     {
         if (is_null($this->policy)) {
@@ -300,7 +272,6 @@ abstract class PanelListController extends Controller
 
         return $this->policy;
     }
-
 
     public function view()
     {
@@ -311,7 +282,6 @@ abstract class PanelListController extends Controller
         return $this->view;
     }
 
-
     public function decorator()
     {
         if (is_null($this->decorator)) {
@@ -321,86 +291,75 @@ abstract class PanelListController extends Controller
         return $this->decorator;
     }
 
-
     public function columns()
     {
-        if (!$this->columns->touched()) {
+        if (! $this->columns->touched()) {
             $this->initColumns();
         }
 
         return $this->columns;
     }
 
-
     public function actions()
     {
-        if (!$this->actions->touched()) {
+        if (! $this->actions->touched()) {
             $this->initActions();
         }
 
         return $this->actions;
     }
 
-
     public function modelActions()
     {
-        if (!$this->modelActions->touched()) {
+        if (! $this->modelActions->touched()) {
             $this->initModelActions();
         }
 
         return $this->modelActions;
     }
 
-
     public function groupActions()
     {
-        if (!$this->groupActions->touched()) {
+        if (! $this->groupActions->touched()) {
             $this->initGroupActions();
         }
 
         return $this->groupActions;
     }
 
-
     public function input($key = null, $default = null)
     {
         return request()->input($key, $default);
     }
-
 
     public function parameter($key, $default = null)
     {
         return request()->route()->parameter($key, $default);
     }
 
-
     public function parameters()
     {
         return request()->route()->parameters();
     }
-
 
     public function findModel($primaryKey)
     {
         return $this->query(['!page', '!order'])->find($primaryKey);
     }
 
-
     public function findModelOrFail($primaryKey)
     {
-        if (!$model = $this->findModel($primaryKey)) {
+        if (! $model = $this->findModel($primaryKey)) {
             throw new ModelNotFoundException;
         }
 
         return $model;
     }
 
-
     public function findModels($primaryKeys)
     {
         return $this->query(['!page'])->findMany($primaryKeys);
     }
-
 
     public function findModelsOrFail($primaryKeys)
     {
@@ -410,7 +369,6 @@ abstract class PanelListController extends Controller
 
         return $collection;
     }
-
 
     public function allows($ability, $arguments = [])
     {
@@ -444,19 +402,17 @@ abstract class PanelListController extends Controller
             return true;
         }
 
-        if (!is_array($arguments)) {
+        if (! is_array($arguments)) {
             $arguments = [$arguments];
         }
 
         return is_callable([$policy, $ability]) && $policy->$ability(app('auth')->user(), ...$arguments);
     }
 
-
     public function denies($ability, $arguments = [])
     {
-        return !$this->allows($ability, $arguments);
+        return ! $this->allows($ability, $arguments);
     }
-
 
     public function authorize($ability, $arguments = [])
     {
@@ -465,12 +421,10 @@ abstract class PanelListController extends Controller
         }
     }
 
-
     public function eachRow(&$row, $handlers = ['*'])
     {
         $this->apply($row, $handlers, $methodPrefix = 'eachRow');
     }
-
 
     public function config($key = null, $default = null)
     {
@@ -481,7 +435,6 @@ abstract class PanelListController extends Controller
         return array_get($this->config, $key, $default);
     }
 
-
     public function setConfig($key, $value)
     {
         if (is_null($this->config)) {
@@ -491,14 +444,12 @@ abstract class PanelListController extends Controller
         return array_set($this->config, $key, $value);
     }
 
-
     protected function newModel()
     {
         $model = clone $this->model();
 
         return $model;
     }
-
 
     protected function apply(&$object, array $list, $methodPrefix = '')
     {
@@ -511,7 +462,7 @@ abstract class PanelListController extends Controller
         $handlersExclude = [];
 
         foreach ($handlers as $key => $name) {
-            if (!is_integer($key)) {
+            if (! is_integer($key)) {
                 unset($handlers[$key]);
             }
 
@@ -528,7 +479,7 @@ abstract class PanelListController extends Controller
             foreach (get_class_methods($this) as $method) {
                 $method = strtolower($method);
 
-                if (!preg_match('/^apply' . preg_quote($methodPrefix) . '(.+)$/i', $method, $pock)) {
+                if (! preg_match('/^apply'.preg_quote($methodPrefix).'(.+)$/i', $method, $pock)) {
                     continue;
                 }
 
@@ -540,12 +491,11 @@ abstract class PanelListController extends Controller
             }
         } else {
             foreach ($handlers as $arg) {
-                $method = 'apply' . $methodPrefix . $arg;
+                $method = 'apply'.$methodPrefix.$arg;
 
                 if (is_callable([$this, $method])) {
                     $this->{$method}($object);
                 }
-
             }
         }
     }
@@ -567,7 +517,7 @@ abstract class PanelListController extends Controller
             $attributes['as'] = class_basename(static::class);
         }
 
-        $attributes['as'] = rtrim($attributes['as'], '.') . '.';
+        $attributes['as'] = rtrim($attributes['as'], '.').'.';
 
         app('router')->group($attributes, function ($router) {
             static::initRoutes();
@@ -577,7 +527,7 @@ abstract class PanelListController extends Controller
 
     static protected function routeAction($method)
     {
-        return '\\' . static::class . '@' . $method;
+        return '\\'.static::class.'@'.$method;
     }
 
     static protected function initRoutes()
@@ -588,7 +538,7 @@ abstract class PanelListController extends Controller
     static protected function initFeaturesRoutes()
     {
         foreach (class_uses_recursive($class = get_called_class()) as $trait) {
-            if (is_callable([$class, $method = 'routesFor' . class_basename($trait)])) {
+            if (is_callable([$class, $method = 'routesFor'.class_basename($trait)])) {
                 $class::$method();
             }
         }

@@ -6,34 +6,33 @@ $errors = $form->fieldErrors($field['key']);
 $disabled = isset($disabled) ? $disabled : false;
 $state = isset($state) ? $state : false;
 
-if(!isset($options)) {
+if (! isset($options)) {
     $options = [];
 }
 
-if($options instanceof Illuminate\Support\Collection) {
+if ($options instanceof Illuminate\Support\Collection) {
     $options = $options->toArray();
 }
 
-if (!is_array($options)) {
-    $options = (array)$options;
+if (! is_array($options)) {
+    $options = (array) $options;
 }
 
-$nullTitle = isset( $nullTitle ) ? $nullTitle : '(' . trans('panel.labels.none') . ')';
-$nullTitleSelected = in_array($form->inputValue($field['key']), array( NULL, '' ), true);
+$nullTitle = isset($nullTitle) ? $nullTitle : '('.trans('panel.labels.none').')';
+$nullTitleSelected = in_array($form->inputValue($field['key']), array(NULL, ''), true);
 
-if($nullTitle) {
+if ($nullTitle) {
     array_before($options, '', $nullTitle);
     $options = array_before($options, '', $nullTitle);
 }
 
-
-if(isset($cols)) {
+if (isset($cols)) {
     $cols = intval($cols);
     $colSize = intval(isset($colSize) ? $colSize : floor(10 / $cols));
-} elseif(count($options) < 10) {
+} elseif (count($options) < 10) {
     $cols = 1;
     $colSize = 12;
-} elseif(count($options) < 20) {
+} elseif (count($options) < 20) {
     $cols = 2;
     $colSize = 4;
 } else {
@@ -49,7 +48,7 @@ if ($value instanceof Illuminate\Database\Eloquent\Collection) {
     $value = $value->modelKeys();
 }
 
-$value = (array)$value;
+$value = (array) $value;
 ?>
 
 

@@ -5,7 +5,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateFilesTable extends Migration
 {
-
     public function up()
     {
         Schema::create('files', function (Blueprint $table) {
@@ -22,10 +21,9 @@ class CreateFilesTable extends Migration
             $table->integer('site_id')->nullable();
             $table->timestamps();
 
-            $table->index([ 'parent_id' ]);
+            $table->index(['parent_id']);
         });
     }
-
 
     public function down()
     {

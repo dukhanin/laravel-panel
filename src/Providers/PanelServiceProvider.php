@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\ArgvInput;
 
 class PanelServiceProvider extends ServiceProvider
 {
-
     public function boot()
     {
         $this->mergeConfigFrom($this->path('config/files.php'), 'files');
@@ -33,11 +32,9 @@ class PanelServiceProvider extends ServiceProvider
         $this->loadHelpers();
     }
 
-
     public function register()
     {
     }
-
 
     protected function publishConfig()
     {
@@ -48,7 +45,6 @@ class PanelServiceProvider extends ServiceProvider
         ], 'config');
     }
 
-
     protected function publishControllers()
     {
         $this->publishes([
@@ -57,14 +53,12 @@ class PanelServiceProvider extends ServiceProvider
         ], 'controllers');
     }
 
-
     protected function publishMigrations()
     {
         $this->publishes([
             $this->path('database/migrations/2016_08_14_101727_create_files_table.php') => database_path('migrations/2016_08_14_101727_create_files_table.php'),
         ], 'migrations');
     }
-
 
     protected function publishRoutes()
     {
@@ -73,7 +67,6 @@ class PanelServiceProvider extends ServiceProvider
         ], 'routes');
     }
 
-
     protected function publishLang()
     {
         $this->publishes([
@@ -81,7 +74,6 @@ class PanelServiceProvider extends ServiceProvider
             $this->path('resources/lang/ru/panel.php') => resource_path('lang/ru/panel.php'),
         ], 'lang');
     }
-
 
     protected function publishAssets()
     {
@@ -95,32 +87,30 @@ class PanelServiceProvider extends ServiceProvider
 
         $this->publishes([
             $this->path('public/assets/panel-bootstrap') => public_path('assets/panel-bootstrap'),
-            $this->path('public/assets/panel-inspinia') => public_path('assets/panel-inspinia')
+            $this->path('public/assets/panel-inspinia') => public_path('assets/panel-inspinia'),
         ], 'assets');
     }
-
 
     protected function publishInspinia()
     {
         $input = new ArgvInput(isset($_SERVER['argv']) ? $_SERVER['argv'] : []);
         $publishInspinia = $input->hasParameterOption('--tag=inspinia');
 
-        if (!$publishInspinia) {
+        if (! $publishInspinia) {
             return;
         }
 
         $this->publishes([
-            $this->path('public/assets/inspinia/') => public_path('assets/inspinia/')
+            $this->path('public/assets/inspinia/') => public_path('assets/inspinia/'),
         ], 'inspinia');
     }
-
 
     protected function publishSample()
     {
         $input = new ArgvInput(isset($_SERVER['argv']) ? $_SERVER['argv'] : []);
         $publishWithSample = $input->hasParameterOption('--tag=sample');
 
-        if (!$publishWithSample) {
+        if (! $publishWithSample) {
             return;
         }
 
@@ -136,12 +126,10 @@ class PanelServiceProvider extends ServiceProvider
         ], 'sample');
     }
 
-
     protected function loadViews()
     {
         $this->loadViewsFrom($this->path('resources/views'), 'panel');
     }
-
 
     protected function loadHelpers()
     {
@@ -150,9 +138,8 @@ class PanelServiceProvider extends ServiceProvider
         });
     }
 
-
     protected function path($path)
     {
-        return __DIR__ . '/../../' . ltrim($path, '/');
+        return __DIR__.'/../../'.ltrim($path, '/');
     }
 }

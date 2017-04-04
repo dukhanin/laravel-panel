@@ -13,9 +13,7 @@ use Dukhanin\Panel\Files\File;
 
 class SectionsController extends PanelTreeController
 {
-
     use Order, EnableAndDisable, CreateAndEdit, Delete;
-
 
     public function before()
     {
@@ -26,63 +24,56 @@ class SectionsController extends PanelTreeController
         $this->setConfig('layout', request()->query('inspinia') ? 'panel::panel-inspinia.layout' : 'panel::panel-bootstrap.layout');
     }
 
-
     public function initColumns()
     {
 
         $this->columns->put('image', [
-            'label'   => 'Image',
-            'width'   => 100,
-            'action'  => 'edit',
+            'label' => 'Image',
+            'width' => 100,
+            'action' => 'edit',
             'handler' => function ($section) {
                 if ($file = File::find($section->image)) {
                     return $file->getResize('50x50')->img();
                 }
-            }
+            },
         ]);
 
         $this->columns->put('name', [
             'label' => 'Section Name',
             'action' => 'edit',
             'depth' => true,
-            'order' => true
+            'order' => true,
         ]);
     }
-
 
     public function initUrl()
     {
         $this->url = action('Sample\SectionsController@showList');
 
         if (request()->query('inspinia')) {
-            $this->url = urlbuilder($this->url)->query([ 'inspinia' => 1 ])->compile();
+            $this->url = urlbuilder($this->url)->query(['inspinia' => 1])->compile();
         }
     }
-
 
     public function initLabel()
     {
         $this->label = 'Dukhanin\Panel\PanelTree';
     }
 
-
     public function initModel()
     {
         $this->model = new Section;
     }
-
 
     public function initPolicy()
     {
         $this->policy = true;
     }
 
-
     public function initForm()
     {
         $this->form = new SectionForm;
     }
-
 
     public function newModel()
     {
@@ -91,11 +82,10 @@ class SectionsController extends PanelTreeController
         return $model;
     }
 
-
     protected function applyUrlTheme($url)
     {
         if (request()->query('inspinia')) {
-            $url->query([ 'inspinia' => 1 ]);
+            $url->query(['inspinia' => 1]);
         }
     }
 }

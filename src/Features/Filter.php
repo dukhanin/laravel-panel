@@ -7,9 +7,7 @@ use Illuminate\Support\Collection;
 
 trait Filter
 {
-
     protected $filter;
-
 
     public function initFilter()
     {
@@ -30,7 +28,7 @@ trait Filter
     {
         $this->filter()->setConfig(null, $this->config());
 
-        if($this->filter()->data()) {
+        if ($this->filter()->data()) {
             $this->filter()->buttons()->put('reset', ['url' => $this->url(['!filter'])]);
         }
 
@@ -46,7 +44,7 @@ trait Filter
                 continue;
             }
 
-            if (!is_callable($apply)) {
+            if (! is_callable($apply)) {
                 $apply = [$this, 'filterDefault'];
             }
 
@@ -91,7 +89,7 @@ trait Filter
 
         $query->where(function ($query) use ($column, $operator, $value, $boolean) {
             foreach ($value as $substring) {
-                $substring = strtolower($operator) == 'like' ? '%' . $substring . '%' : $substring;
+                $substring = strtolower($operator) == 'like' ? '%'.$substring.'%' : $substring;
 
                 $query->where($column, 'like', $substring, $boolean);
             }
@@ -132,7 +130,7 @@ trait Filter
             $value = $value->toArray();
         }
 
-        $value = (array)$value;
+        $value = (array) $value;
 
         $castAs = strtolower(array_get($field, 'as'));
 

@@ -12,7 +12,6 @@ class FieldsCollection extends Collection
 
     protected $form;
 
-
     public function setForm($form)
     {
         $this->form = $form;
@@ -24,7 +23,7 @@ class FieldsCollection extends Collection
             $this->pull($key);
         }
 
-        if (array($field) && isset($field['before'])) {
+        if ([$field] && isset($field['before'])) {
             return array_before($this->items, $key, array_except($field, ['before', 'after']), $field['before']);
         } elseif (isset($field['after'])) {
             return array_after($this->items, $key, array_except($field, ['before', 'after']), $field['after']);
@@ -47,10 +46,9 @@ class FieldsCollection extends Collection
         return $this->resolve($key, parent::offsetGet($key));
     }
 
-
     public function resolve($key, $field)
     {
-        if (!is_null($key)) {
+        if (! is_null($key)) {
             $key = strval($key);
         }
 
@@ -60,7 +58,7 @@ class FieldsCollection extends Collection
             $field = call_user_func($field, $this->form);
         }
 
-        if (!is_array($field)) {
+        if (! is_array($field)) {
             $field = [];
         }
 
@@ -80,7 +78,7 @@ class FieldsCollection extends Collection
             $field['after'] = strval($field['after']);
         }
 
-        if (!isset($field['label'])) {
+        if (! isset($field['label'])) {
             $field['label'] = $key;
         } else {
             $field['label'] = trans($field['label']);

@@ -1,12 +1,12 @@
 <?php
 $errors = $form->fieldErrors($field['key']);
-$id     = 'file-' . mt_rand(1, 1000);
+$id = 'file-'.mt_rand(1, 1000);
 
 $value = $form->inputValue($field['key']);
 $value = intval($value);
 
-$file      = \Dukhanin\Panel\Files\File::find($value);
-$resizes   = isset($resizes) ? (array) $resizes : [];
+$file = \Dukhanin\Panel\Files\File::find($value);
+$resizes = isset($resizes) ? (array) $resizes : [];
 $directory = isset($directory) ? strval($directory) : null;
 ?>
 

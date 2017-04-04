@@ -2,18 +2,15 @@
 
 namespace Dukhanin\Panel\Collections;
 
-
 use Illuminate\Database\Eloquent\Collection;
 
 class PanelModelsCollection extends Collection
 {
-
     public $keyName = 'id';
 
     public $keyParentName = 'parent_id';
 
     protected $isTree = false;
-
 
     public function tree()
     {
@@ -36,12 +33,10 @@ class PanelModelsCollection extends Collection
         return $tree;
     }
 
-
     public function isTree()
     {
         return $this->isTree;
     }
-
 
     public function options($key, $depthPrefix = null)
     {
@@ -56,7 +51,7 @@ class PanelModelsCollection extends Collection
         foreach ($this->items as $item) {
             $label = is_callable($key) ? $key($item) : array_get($item, $key);
 
-            $options->put(array_get($item, $this->keyName), str_repeat($depthPrefix, $depth) . $label);
+            $options->put(array_get($item, $this->keyName), str_repeat($depthPrefix, $depth).$label);
 
             if ($this->isTree()) {
                 $depth++;
@@ -76,10 +71,9 @@ class PanelModelsCollection extends Collection
         return $options;
     }
 
-
     protected function fillTreeCollectionRecursive(Collection $collection, array $index, $parentKey, $depth)
     {
-        if ( ! isset($index[$parentKey])) {
+        if (! isset($index[$parentKey])) {
             return false;
         }
 
@@ -98,7 +92,6 @@ class PanelModelsCollection extends Collection
         }
     }
 
-
     protected function buildTreeIndex()
     {
         $index = [];
@@ -110,7 +103,7 @@ class PanelModelsCollection extends Collection
                 continue;
             }
 
-            if ( ! isset($index[$parentKey])) {
+            if (! isset($index[$parentKey])) {
                 $index[$parentKey] = [];
             }
 
@@ -119,5 +112,4 @@ class PanelModelsCollection extends Collection
 
         return $index;
     }
-
 }

@@ -15,10 +15,9 @@ class PanelFilter extends PanelForm
         $this->inputName = 'f';
     }
 
-
     public function initView()
     {
-        $this->view = view($this->config('views') . '.filter', ['form' => $this]);
+        $this->view = view($this->config('views').'.filter', ['form' => $this]);
     }
 
     public function fieldView($field)
@@ -27,19 +26,18 @@ class PanelFilter extends PanelForm
             array_get($field, 'view'),
             "{$this->view()->getName()}.{$field['type']}",
             "{$this->config('views')}.filter-fields.{$field['type']}",
-            "{$this->config('views')}.filter-fields.text"
+            "{$this->config('views')}.filter-fields.text",
         ];
 
         foreach ($options as $viewFile) {
-            if (!view()->exists($viewFile)) {
+            if (! view()->exists($viewFile)) {
                 continue;
             }
 
             return $viewFile;
         }
 
-        throw new Exception('No view found for field ' . array_get($field, 'key')
-            . '(searched in ' . implode(', ', array_filter($options)) . ')');
+        throw new Exception('No view found for field '.array_get($field, 'key').'(searched in '.implode(', ', array_filter($options)).')');
     }
 
     public function initButtons()

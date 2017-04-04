@@ -1,13 +1,13 @@
 <?php
-$nullTitle = isset( $nullTitle ) ? $nullTitle : trans('panel.labels.choose');
+$nullTitle = isset($nullTitle) ? $nullTitle : trans('panel.labels.choose');
 
-if ( ! isset( $options ) || ! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {
-    $options = [ ];
+if (! isset($options) || ! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {
+    $options = [];
 }
 
-$value             = $form->inputValue($field['key']);
-$errors            = $form->fieldErrors($field['key']);
-$nullTitleSelected = in_array($form->inputValue($field['key']), array( NULL, '' ), true);
+$value = $form->inputValue($field['key']);
+$errors = $form->fieldErrors($field['key']);
+$nullTitleSelected = in_array($form->inputValue($field['key']), array(NULL, ''), true);
 ?>
 
 
@@ -31,7 +31,7 @@ $nullTitleSelected = in_array($form->inputValue($field['key']), array( NULL, '' 
             <option
                     value="{{ $optionKey }}"
                     @if(! $nullTitleSelected && $value == $optionKey) selected @endif
-                    >{{ preg_replace('/\s{2}/', '&nbsp;&nbsp;', $optionLabel) }}</option>
+            >{{ preg_replace('/\s{2}/', '&nbsp;&nbsp;', $optionLabel) }}</option>
         @endforeach
         {!! html_tag_close('select') !!}
 

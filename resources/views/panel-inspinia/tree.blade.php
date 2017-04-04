@@ -3,12 +3,12 @@
 @include('panel::panel-inspinia.init')
 
 @push('scripts')
-    <script>
-        $(function () {
-            var panelTree = new panel.tree('#{{ $panelId = str_random() }}');
-            panelTree.init();
-        });
-    </script>
+<script>
+    $(function () {
+        var panelTree = new panel.tree('#{{ $panelId = str_random() }}');
+        panelTree.init();
+    });
+</script>
 @endpush
 
 @section('content')
@@ -85,7 +85,7 @@
                                 @if(count($panel->groupActions()) > 0 || count($panel->moveToOptions()) > 0)
                                     <th class="check-mail panel-list-checkbox">
                                         <div class="checkbox">
-                                            <input type="checkbox" />
+                                            <input type="checkbox"/>
                                             <label></label>
                                         </div>
                                     </th>
@@ -128,12 +128,14 @@
                                                class="btn btn-xs btn-white"
                                                data-toggle="tooltip"
                                                data-placement="auto"
-                                               title="@lang( $panel->config('labels.sort-up') )"><i class="fa fa-angle-up"></i></a>
+                                               title="@lang( $panel->config('labels.sort-up') )"><i
+                                                        class="fa fa-angle-up"></i></a>
                                             <a href="{!! $panel->urlTo('sortDown', $row['model']) !!}"
                                                class="btn btn-xs btn-white"
                                                data-toggle="tooltip"
                                                data-placement="auto"
-                                               title="@lang( $panel->config('labels.sort-down') )"><i class="fa fa-angle-down"></i></a>
+                                               title="@lang( $panel->config('labels.sort-down') )"><i
+                                                        class="fa fa-angle-down"></i></a>
                                         </div>
                                     </td>
                                 @endif

@@ -1,12 +1,12 @@
 <?php
 $errors = $form->fieldErrors($field['key']);
-$id     = 'file-' . mt_rand(1, 1000);
+$id = 'file-'.mt_rand(1, 1000);
 
 $value = $form->inputValue($field['key']);
-$value = array_map('intval', is_array($value) ? $value : [ $value ]);
+$value = array_map('intval', is_array($value) ? $value : [$value]);
 
-$files     = \Dukhanin\Panel\Files\File::findManyOrdered($value);
-$resizes   = isset($resizes) ? (array) $resizes : [];
+$files = \Dukhanin\Panel\Files\File::findManyOrdered($value);
+$resizes = isset($resizes) ? (array) $resizes : [];
 $directory = isset($directory) ? strval($directory) : null;
 ?>
 

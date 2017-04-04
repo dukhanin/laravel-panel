@@ -6,7 +6,6 @@ use Illuminate\Database\Migrations\Migration;
 
 class SampleProducts extends Migration
 {
-
     public function up()
     {
         Schema::create('sample_products', function (Blueprint $table) {
@@ -22,7 +21,6 @@ class SampleProducts extends Migration
             $table->timestamps();
         });
     }
-
 
     public function down()
     {

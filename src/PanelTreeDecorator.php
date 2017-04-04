@@ -3,14 +3,12 @@ namespace Dukhanin\Panel;
 
 class PanelTreeDecorator extends PanelListDecorator
 {
-
     public function initRows()
     {
         $this->rows = collect();
 
         $this->initRowsRecursive();
     }
-
 
     protected function initRowsRecursive($parentKeyValue = null, $depth = 0)
     {
@@ -19,13 +17,13 @@ class PanelTreeDecorator extends PanelListDecorator
         }
 
         foreach ($this->queryBranch($parentKeyValue)->get() as $model) {
-            $row = [ 'model' => $model, 'cells' => [], 'class' => 'depth-' . $depth ];
+            $row = ['model' => $model, 'cells' => [], 'class' => 'depth-'.$depth];
 
             $depthedColumnsKeys = $this->depthedColumnsKeys();
 
             foreach ($this->columns()->resolved() as $columnKey => $column) {
                 $cell = &$row['cells'][$columnKey];
-                $cell = [ 'model' => $model, 'column' => $column, ];
+                $cell = ['model' => $model, 'column' => $column,];
 
                 if (in_array($columnKey, $depthedColumnsKeys)) {
                     html_tag_add_class($cell, 'panel-list-depth-cell');
@@ -45,7 +43,6 @@ class PanelTreeDecorator extends PanelListDecorator
         unset($row);
     }
 
-
     protected function depthedColumnsKeys()
     {
         $columns = $this->columns()->resolved();
@@ -54,7 +51,7 @@ class PanelTreeDecorator extends PanelListDecorator
             return $keys;
         }
 
-        if ($keys = array_keys($columns->whereIn('key', [ 'name', 'title' ])->all())) {
+        if ($keys = array_keys($columns->whereIn('key', ['name', 'title'])->all())) {
             return $keys;
         }
 
@@ -64,5 +61,4 @@ class PanelTreeDecorator extends PanelListDecorator
 
         return [];
     }
-
 }
