@@ -128,6 +128,7 @@ class PanelListDecorator
     {
         $tag = $column;
         $query = [];
+        $url = null;
 
         if (method_exists($this->panel, 'order') && ! empty($column['order'])) {
             $thisColumnOrdered = $this->order() == $column['key'];
@@ -145,10 +146,12 @@ class PanelListDecorator
             if ($thisColumnOrdered) {
                 $tag['icon'] = $orderedDesc ? 'fa fa-chevron-up' : 'fa fa-chevron-down';
             }
+
+            $url = $this->url(['!order', '!orderDesc', '!page'] + $query);
         }
 
         return html_tag($tag, [
-            'url' => $this->url(['!order', '!orderDesc', '!page'] + $query),
+            'url' => $url,
             'title' => false,
             'width' => false,
         ], ...$overwrites);
