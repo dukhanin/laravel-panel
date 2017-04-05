@@ -201,13 +201,18 @@ abstract class PanelListController extends Controller
         return $this->urlParameters;
     }
 
+    public function formatUrlParameters($params)
+    {
+        return url()->formatParameters($params);
+    }
+
     public function urlTo($action, $params = null, array $apply = ['*'])
     {
         if (! str_contains($action, '@')) {
             $action = static::routeAction($action);
         }
 
-        $params = $this->urlParameters() + url()->formatParameters($params);
+        $params = $this->formatUrlParameters($params) + $this->urlParameters();
 
         $url = urlbuilder(action($action, $params));
 
