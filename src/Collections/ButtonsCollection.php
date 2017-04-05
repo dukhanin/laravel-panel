@@ -12,6 +12,15 @@ class ButtonsCollection extends Collection
 
     protected $form;
 
+    public function __construct($items = [])
+    {
+        if (func_num_args() > 0) {
+            $this->touch();
+        }
+
+        parent::__construct($items);
+    }
+
     public function setForm($form)
     {
         $this->form = $form;
@@ -39,7 +48,7 @@ class ButtonsCollection extends Collection
     public function resolve($key, $button)
     {
         if (is_string($button)) {
-            $button['label'] = $button;
+            $button = ['label' => $button];
         } elseif (is_callable($button)) {
             $button = call_user_func($button, $this->form);
         }

@@ -12,6 +12,15 @@ class FieldsCollection extends Collection
 
     protected $form;
 
+    public function __construct($items = [])
+    {
+        if (func_num_args() > 0) {
+            $this->touch();
+        }
+
+        parent::__construct($items);
+    }
+
     public function setForm($form)
     {
         $this->form = $form;
@@ -53,7 +62,7 @@ class FieldsCollection extends Collection
         }
 
         if (is_string($field)) {
-            $field['label'] = $field;
+            $field = ['label' => $field];
         } elseif (is_callable($field)) {
             $field = call_user_func($field, $this->form);
         }

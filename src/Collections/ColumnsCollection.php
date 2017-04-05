@@ -12,6 +12,15 @@ class ColumnsCollection extends Collection
 
     protected $panel;
 
+    public function __construct($items = [])
+    {
+        if (func_num_args() > 0) {
+            $this->touch();
+        }
+
+        parent::__construct($items);
+    }
+
     public function setPanel($panel)
     {
         $this->panel = $panel;
@@ -39,7 +48,7 @@ class ColumnsCollection extends Collection
     public function resolve($key, $column)
     {
         if (is_string($column)) {
-            $column['label'] = $column;
+            $column = ['label' => $column];
         } elseif (is_callable($column)) {
             $column = call_user_func($column, $this->panel);
         }

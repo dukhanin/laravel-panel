@@ -12,6 +12,15 @@ class ActionsCollection extends Collection
 
     protected $panel;
 
+    public function __construct($items = [])
+    {
+        if (func_num_args() > 0) {
+            $this->touch();
+        }
+
+        parent::__construct($items);
+    }
+
     public function setPanel($panel)
     {
         $this->panel = $panel;
@@ -39,7 +48,7 @@ class ActionsCollection extends Collection
     public function resolve($key, $action, $model = null)
     {
         if (is_string($action)) {
-            $action['label'] = $action;
+            $action = ['label' => $action];
         } elseif (is_callable($action)) {
             $action = call_user_func($action, $this->panel, $model);
         }
