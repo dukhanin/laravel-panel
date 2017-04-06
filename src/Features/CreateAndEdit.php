@@ -33,7 +33,7 @@ trait CreateAndEdit
     {
         $this->form->setConfig(null, $this->config());
 
-        $this->form->buttons()->put('cancel', ['url' => $this->url()]);
+        $this->form->buttons()->put('cancel', ['url' => url()->previous( $this->url() )]);
         $this->form->buttons()->put('submit');
         $this->form->buttons()->put('apply');
     }

@@ -102,4 +102,19 @@ class FieldsCollection extends Collection
             return $this->resolve($key, $field);
         });
     }
+
+    public function __call($method, $arguments)
+    {
+        if (preg_match('/^(add)(.*?)?$/i', $method, $pock)) {
+            $key = array_get($arguments, 0);
+
+            if (! is_array($field = array_get($arguments, 1))) {
+                $field = ['label' => $field];
+            };
+
+            return $this->put($key, ['type' => strtolower($pock[2])] + $field);
+        }
+
+        throw new ErrorException('Call to undefined method '.get_class($this).'::'.$method.'()');
+    }
 }
