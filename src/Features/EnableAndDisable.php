@@ -4,7 +4,15 @@ namespace Dukhanin\Panel\Features;
 
 trait EnableAndDisable
 {
-    protected $enabledKey;
+    public function enabledKey()
+    {
+        return 'enabled';
+    }
+
+    public function enabledKeyInversion()
+    {
+        return false;
+    }
 
     protected static function routesForEnableAndDisable(array $options = null)
     {
@@ -19,51 +27,46 @@ trait EnableAndDisable
 
     function initFeatureEnableAndDisable()
     {
-        $this->initEnabledKey();
+        $this->modelActions()->put('enable', function ($panel, $model) {
+            $key = method_exists($panel, 'enabledKey') ? $panel->enabledKey() : 'enabled';
+            $inversion = method_exists($panel, 'enabledKeyInversion') ? $panel->enabledKeyInversion() : false;
 
-        $this->modelActions['enable'] = $this->config('actions.enable');
+            return config('panel.actions.' . ($model->{$key} == ! $inversion ? 'disable' : 'enable'));
+        });
 
-        $this->groupActions['group-enable'] = $this->config('actions.group-enable');
+        $this->groupActions()->put('group-enable');
 
-        $this->groupActions['group-disable'] = $this->config('actions.group-disable');
-    }
+        $this->groupActions()->put('group-disable');
 
-    public function initEnabledKey()
-    {
-        $this->enabledKey = 'enabled';
-    }
-
-    public function enabledKey()
-    {
-        if (is_null($this->enabledKey)) {
-            $this->initEnabledKey();
+        if (method_exists($this, 'show') && $this->allows($action = $this->model()->{$this->enabledKey()} == ! $this->enabledKeyInversion() ? 'disable' : 'enable', $this->model())) {
+            $this->show()->buttons()->put($action, [
+                'url' => $this->urlTo($action, [$this->model(), '_show' => true]),
+            ]);
         }
-
-        return $this->enabledKey;
     }
 
     public function enable()
     {
-        $model = $this->findModelOrFail($this->parameter('id'));
+        $this->model = $this->findModelOrFail($this->parameter('id'));
 
-        $this->authorize('enable', $model);
+        $this->authorize('enable', $this->model);
 
-        $model->{$this->enabledKey()} = true;
-        $model->save();
+        $this->model->{$this->enabledKey()} = $this->enabledKeyInversion() ? false : true;
+        $this->model->save();
 
-        return redirect()->to($this->url());
+        return redirect()->to(url()->previous($this->url()));
     }
 
     public function disable()
     {
-        $model = $this->findModelOrFail($this->parameter('id'));
+        $this->model = $this->findModelOrFail($this->parameter('id'));
 
-        $this->authorize('disable', $model);
+        $this->authorize('disable', $this->model);
 
-        $model->{$this->enabledKey()} = false;
-        $model->save();
+        $this->model->{$this->enabledKey()} = $this->enabledKeyInversion() ? true : false;
+        $this->model->save();
 
-        return redirect()->to($this->url());
+        return redirect()->to(url()->previous($this->url()));
     }
 
     public function groupEnable()
@@ -73,7 +76,7 @@ trait EnableAndDisable
         $this->authorize('group-enable', $group);
 
         foreach ($group as $model) {
-            $model->{$this->enabledKey()} = true;
+            $model->{$this->enabledKey()} = $this->enabledKeyInversion() ? false : true;
             $model->save();
         }
 
@@ -87,7 +90,7 @@ trait EnableAndDisable
         $this->authorize('group-disable', $group);
 
         foreach ($group as $model) {
-            $model->{$this->enabledKey()} = false;
+            $model->{$this->enabledKey()} = $this->enabledKeyInversion() ? true : false;
             $model->save();
         }
 
@@ -96,7 +99,7 @@ trait EnableAndDisable
 
     public function applyEachRowDisabled(&$row)
     {
-        if (! $row['model']->{$this->enabledKey()}) {
+        if (! $row['model']->{$this->enabledKey()} == ! $this->enabledKeyInversion()) {
             html_tag_add_class($row, 'inactive');
         }
     }

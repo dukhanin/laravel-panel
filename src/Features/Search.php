@@ -18,7 +18,6 @@ trait Search
 
     protected function applyQuerySearch($select)
     {
-        // @todo
     }
 
     protected function applyUrlSearch(&$url)

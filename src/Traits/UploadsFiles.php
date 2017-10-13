@@ -48,11 +48,12 @@ trait UploadsFiles
 
         $fileBasename = $file->getBaseFile() instanceof UploadedFile ? $file->getClientOriginalName() : $file->getBasename();
 
+
         $this->renameIfExists($uploadPath, $fileBasename);
 
         $file->move($uploadPath.'/'.$fileBasename);
 
-        chmod($file->getPath(), 0644); // @todo do smth with
+        chmod($file->getPath(), 0644);
 
         return true;
     }

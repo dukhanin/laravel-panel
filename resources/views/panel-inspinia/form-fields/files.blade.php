@@ -3,11 +3,10 @@ $errors = $form->fieldErrors($field['key']);
 $id = 'file-'.mt_rand(1, 1000);
 
 $value = $form->inputValue($field['key']);
-$value = array_map('intval', is_array($value) ? $value : [$value]);
 
-$files = \Dukhanin\Panel\Files\File::findManyOrdered($value);
+$files = $value instanceof \Illuminate\Database\Eloquent\Collection ? $value : \Dukhanin\Panel\Files\File::findManyOrdered( collect($value)->map('intval') );
 $resizes = isset($resizes) ? (array) $resizes : [];
-$directory = isset($directory) ? strval($directory) : null;
+$directory = isset($directory) ? strval($directory) : (method_exists($form, 'uploadDirectory') ? $form->uploadDirectory() : null);
 ?>
 
 <div class="panel-file form-group @if( ! empty($errors) ) has-error @endif">

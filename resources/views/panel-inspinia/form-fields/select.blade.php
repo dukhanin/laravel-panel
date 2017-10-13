@@ -1,12 +1,18 @@
 <?php
-if (! isset($options) || ! is_array($options) && ! $options instanceof Illuminate\Support\Collection) {
+$options = isset($options) ? $options : null;
+
+if ($options instanceof Illuminate\Support\Collection) {
+    $options = $options->toArray();
+}
+
+if (! isset($options) || ! is_array($options)) {
     $options = [];
 }
 
-$value = $form->inputValue($field['key']);
+$value = (array) $form->inputValue($field['key']);
 $errors = $form->fieldErrors($field['key']);
 $nullTitle = isset($nullTitle) ? $nullTitle : trans('panel.labels.choose');
-$nullTitleSelected = in_array($form->inputValue($field['key']), array(NULL, ''), true);
+$nullTitleSelected = count($value) == 1 && array_intersect($value, array(NULL, ''));
 ?>
 
 <div class="form-group @if( ! empty($errors) )  has-error @endif">
@@ -18,7 +24,7 @@ $nullTitleSelected = in_array($form->inputValue($field['key']), array(NULL, ''),
         {!! html_tag_open(
             'select.form-control',
             array_except($field, ['key', 'type', 'label', 'nullTitle']),
-            ['name' => $form->htmlInputName($field['key'])]
+            ['name' => $form->htmlInputName($field['key']) . (array_get($field, 'multiple') ? '[]' : '')]
         ) !!}
 
         @if($nullTitle !== false)
@@ -28,7 +34,7 @@ $nullTitleSelected = in_array($form->inputValue($field['key']), array(NULL, ''),
         @foreach($options as $optionKey => $optionLabel)
             <option
                     value="{{ $optionKey }}"
-                    @if(! $nullTitleSelected && $value == $optionKey) selected @endif
+                    @if(! $nullTitleSelected && in_array($optionKey, $value)) selected @endif
             >{{ preg_replace('/\s{2}/', '&nbsp;&nbsp;', $optionLabel) }}</option>
         @endforeach
         {!! html_tag_close('select') !!}

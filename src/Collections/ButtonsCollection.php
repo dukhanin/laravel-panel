@@ -2,13 +2,14 @@
 
 namespace Dukhanin\Panel\Collections;
 
+use Dukhanin\Panel\Traits\HasConfig;
 use Dukhanin\Support\Traits\BeforeAndAfterCollection;
 use Dukhanin\Support\Traits\Toucheble;
 use Illuminate\Support\Collection;
 
 class ButtonsCollection extends Collection
 {
-    use Toucheble, BeforeAndAfterCollection;
+    use Toucheble, BeforeAndAfterCollection, HasConfig;
 
     protected $form;
 
@@ -50,24 +51,32 @@ class ButtonsCollection extends Collection
         if (is_string($button)) {
             $button = ['label' => $button];
         } elseif (is_callable($button)) {
-            $button = call_user_func($button, $this->form);
+            $button = call_user_func($button, $this);
         }
 
         if (! is_array($button)) {
             $button = [];
         }
 
-        $button = $button + $this->form->config("buttons.{$key}", []) + $this->form->config('buttons.default', []) + [
+        $stack = [
+            $this->config("buttons.{$key}", []),
+            $this->config('buttons.default', []),
+            [
                 'key' => strval($key),
                 'label' => strval($key),
                 'type' => $key === 'submit' ? 'submit' : 'button',
-            ];
+            ],
+        ];
 
-        if (! isset($button['url'])) {
-            $button['url'] = $this->form->submitUrl();
+        foreach ($stack as $arr) {
+            $button = $button + (array) (is_callable($arr) ? call_user_func($arr, $this) : $arr);
         }
 
-        $button['label'] = trans($button['label']);
+        if (! empty($button['confirm'])) {
+            $button['confirm'] = app('translator')->trans(strval($button['confirm']));
+        }
+
+        $button['label'] = app('translator')->trans($button['label']);
 
         return $button;
     }

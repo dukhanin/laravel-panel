@@ -2,13 +2,15 @@
 
 namespace Dukhanin\Panel\Collections;
 
+use Dukhanin\Panel\Traits\HasConfig;
 use Dukhanin\Support\Traits\BeforeAndAfterCollection;
 use Dukhanin\Support\Traits\Toucheble;
 use Illuminate\Database\Eloquent\Collection;
+use ErrorException;
 
 class FieldsCollection extends Collection
 {
-    use Toucheble, BeforeAndAfterCollection;
+    use Toucheble, BeforeAndAfterCollection, HasConfig;
 
     protected $form;
 
@@ -21,21 +23,22 @@ class FieldsCollection extends Collection
         parent::__construct($items);
     }
 
-    public function setForm($form)
-    {
-        $this->form = $form;
-    }
-
     public function offsetSet($key, $field)
     {
         if ($this->has($key)) {
             $this->pull($key);
         }
 
-        if ([$field] && isset($field['before'])) {
-            return array_before($this->items, $key, array_except($field, ['before', 'after']), $field['before']);
+        if (isset($field['before'])) {
+            return array_before($this->items, $key, array_except($field, [
+                'before',
+                'after',
+            ]), is_string($field['before']) ? $field['before'] : null);
         } elseif (isset($field['after'])) {
-            return array_after($this->items, $key, array_except($field, ['before', 'after']), $field['after']);
+            return array_after($this->items, $key, array_except($field, [
+                'before',
+                'after',
+            ]), is_string($field['after']) ? $field['after'] : null);
         } else {
             parent::offsetSet($key, $field);
         }
@@ -64,19 +67,19 @@ class FieldsCollection extends Collection
         if (is_string($field)) {
             $field = ['label' => $field];
         } elseif (is_callable($field)) {
-            $field = call_user_func($field, $this->form);
+            $field = ['handler' => $field];
         }
 
         if (! is_array($field)) {
             $field = [];
         }
 
-        if (empty($field['type'])) {
-            $field['type'] = 'text';
+        if (! isset($field['label'])) {
+            $field['label'] = $key;
         }
 
-        if (empty($field['label'])) {
-            $field['label'] = $key;
+        if (empty($field['type'])) {
+            $field['type'] = 'text';
         }
 
         if (isset($field['before'])) {
@@ -90,7 +93,7 @@ class FieldsCollection extends Collection
         if (! isset($field['label'])) {
             $field['label'] = $key;
         } else {
-            $field['label'] = trans($field['label']);
+            $field['label'] = app('translator')->trans($field['label']);
         }
 
         return $field + ['key' => $key];
@@ -112,7 +115,7 @@ class FieldsCollection extends Collection
                 $field = ['label' => $field];
             };
 
-            return $this->put($key, ['type' => strtolower($pock[2])] + $field);
+            return $this->put($key, ['type' => kebab_case($pock[2])] + $field);
         }
 
         throw new ErrorException('Call to undefined method '.get_class($this).'::'.$method.'()');

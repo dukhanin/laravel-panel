@@ -2,10 +2,8 @@
 
 namespace Dukhanin\Panel\Files;
 
-use Dukhanin\Support\Traits\HasSettings;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\File as Filesystem;
 use Intervention\Image\Facades\Image;
 use Symfony\Component\HttpFoundation\File\File as BaseFile;
@@ -13,16 +11,14 @@ use Throwable;
 
 class File extends Model
 {
-    use HasSettings;
-
     protected $baseFile;
-
-    protected $children;
-
-    protected $parent;
 
     protected $casts = [
         'settings' => 'array',
+    ];
+
+    protected $hidden = [
+        'parent',
     ];
 
     public function __construct(array $attributes = [])
@@ -42,10 +38,20 @@ class File extends Model
         parent::__construct($attributes);
     }
 
+    public function children()
+    {
+        return $this->hasMany(static::class, 'parent_id', 'id');
+    }
+
+    public function parent()
+    {
+        return $this->belongsTo(static::class, 'parent_id');
+    }
+
     public function getPath()
     {
         if (! $this->isDefined()) {
-            return false;
+            return null;
         }
 
         if (starts_with($this->path, '/')) {
@@ -55,7 +61,7 @@ class File extends Model
         return public_path().'/'.$this->path;
     }
 
-    public function url()
+    public function getUrl()
     {
         if (! $this->isDefined()) {
             return '#undefined';
@@ -64,22 +70,18 @@ class File extends Model
         return '/'.ltrim($this->path, '/');
     }
 
-    public function children()
+    /**
+     * @deprecated
+     * @return string
+     */
+    public function url()
     {
-        if (is_null($this->children)) {
-            $this->initChildren();
-        }
-
-        return $this->children;
+        return $this->getUrl();
     }
 
-    public function getParent()
+    public function getUrlAttribute()
     {
-        if (is_null($this->parent)) {
-            $this->initParent();
-        }
-
-        return $this->parent === 'self' ? $this : $this->parent;
+        return $this->getUrl();
     }
 
     public function getWidth()
@@ -102,8 +104,6 @@ class File extends Model
 
     public function getResize($options)
     {
-        // @todo @dukhanin add force+config option
-
         $options = $this->resolveResizeOptions($options);
 
         if (empty($options['size'])) {
@@ -111,25 +111,22 @@ class File extends Model
         }
 
         try {
-            $resize = $this->children()->where('key', $options['key'])->first();
+            $resize = $this->children->where('key', $options['key'])->first();
 
-            if (empty($resize)) {
+            if (empty($resize) || $options['force']) {
                 $resize = $this->createResize($options);
             } elseif ($options['force']) {
                 $resize->resize($options['size']);
             }
         } catch (Throwable $e) {
-            if (App::environment('local', 'development')) {
-                $file = new static();
+            // @todo сделать человечью обработку ошибок
+            $file = new static();
 
-                $file->path = config('files.types.image.fake'); // @todo add this value to config
-                $file->width = $options['size']['width'];
-                $file->height = $options['size']['height'];
+            $file->path = config('files.types.image.fake');
+            $file->width = $options['size']['width'];
+            $file->height = $options['size']['height'];
 
-                return $file;
-            }
-
-            throw $e;
+            return $file;
         }
 
         return $resize;
@@ -144,24 +141,10 @@ class File extends Model
         return $this->baseFile;
     }
 
-    public function initChildren()
-    {
-        $this->children = File::parent($this->id)->get();
-    }
-
-    public function initParent()
-    {
-        if (empty($this->parent_id)) {
-            $this->parent = 'self';
-        }
-
-        $this->parent = File::find($this->parent_id);
-    }
-
     public function initWidthAndHeight()
     {
-        $this->attributes['width'] = 0;
-        $this->attributes['height'] = 0;
+        $this->attributes['width'] = null;
+        $this->attributes['height'] = null;
 
         if ($this->isImage() && ($size = @getimagesize($this->getPath()))) {
             $this->attributes['width'] = $size[0];
@@ -181,7 +164,7 @@ class File extends Model
         } elseif (is_string($file)) {
             $this->baseFile = new BaseFile($file, false);
         } else {
-            $this->baseFile = false;
+            $this->baseFile = new BaseFile($file, '');
         }
 
         $this->updateFileAttributes();
@@ -190,6 +173,11 @@ class File extends Model
     public function isDefined()
     {
         return ! empty($this->path);
+    }
+
+    public function isExists()
+    {
+        return Filesystem::exists($this->getPath());
     }
 
     public function isMime($type = null, $format = null)
@@ -299,10 +287,25 @@ class File extends Model
         return $this->getBaseFile() instanceof UploadedFile;
     }
 
-    public function isSizeActual()
+    public function isSizeActual($size)
     {
-        // @todo @dukhanin
-        return false;
+        if (empty($size = $this->resolveImageSize($size)) || is_null($this->getWidth()) || is_null($this->getHeight())) {
+            return false;
+        }
+
+        if ($this->getWidth() == $size['width'] && $this->getHeight() == $size['height']) {
+            return true;
+        }
+
+        if ($size['static']) {
+            return false;
+        }
+
+        if (! $size['enlarge']) {
+            return $this->getWidth() <= $size['width'] && $this->getHeight() <= $size['height'];
+        }
+
+        return $size['width'] / $size['height'] > 1 ? $this->getWidth() == $size['width'] : $this->getHeight() == $size['height'];
     }
 
     public function hasResize($options)
@@ -325,30 +328,30 @@ class File extends Model
         $info = pathinfo($source->getPath());
 
         $resize = new static;
-        $resize->parent_id = $this->id;
-        $resize->key = $options['key'];
-        $resize->path = $info['dirname'].'/'.$info['filename'].'-'.$options['key'].($info['extension'] ? '.'.$info['extension'] : '');
+        $resize->parent()->associate($this);
+        $resize->key = $options['key'];;
 
-        Filesystem::copy($source->getPath(), $resize->getPath()); // @todo @dukhanin dev-mode and error-handling
+        Filesystem::copy($source->getPath(), $fullPath = $info['dirname'].'/'.$info['filename'].'-'.$options['key'].($info['extension'] ? '.'.$info['extension'] : ''));
 
+        $resize->setBaseFile($fullPath);
         $resize->resize($options['size']);
         $resize->save();
 
-        $this->children()->put($options['key'], $resize);
+        if ($this->relationLoaded('children')) {
+            $this->children->push($resize);
+        }
 
         return $resize;
     }
 
     public function resize($size)
     {
-        $size = $this->resolveImageSize($size);
-
-        if (empty($size)) {
-            return;
+        if (! $this->isDefined() || empty($size = $this->resolveImageSize($size))) {
+            return false;
         }
 
         if ($this->isSizeActual($size)) {
-            return;
+            return true;
         }
 
         $image = Image::make($this->getPath());
@@ -368,10 +371,16 @@ class File extends Model
         $image->save(null, config('upload.images.quality', null));
 
         $this->updateFileAttributes();
+
+        return true;
     }
 
     public function crop($width, $height, $x = null, $y = null)
     {
+        if (! $this->isDefined()) {
+            return false;
+        }
+
         $image = Image::make($this->getPath());
 
         $area = [
@@ -385,9 +394,13 @@ class File extends Model
 
         $image->save();
 
-        $this->settings('crop.area', $area);
+        $settings = $this->settings;
+        array_set($settings, 'crop.area', $area);
+        $this->settings = $settings;
 
         $this->updateFileAttributes();
+
+        return true;
     }
 
     public function delete()
@@ -431,35 +444,28 @@ class File extends Model
             return '';
         }
 
-        return html_tag('img', $this->getHtmlTagAttributes(), is_array($attributes) ? $attributes : []);
+        return html_tag('img', $this->htmlTagAttributes(), is_array($attributes) ? $attributes : []);
     }
 
-    public function attr($attributes = null)
+    public function attr(array $attributes = [])
     {
-        $attributes = array_merge_recursive($this->getHtmlTagAttributes(), is_array($attributes) ? $attributes : []);
+        $attributes = array_merge_recursive($this->htmlTagAttributes(), $attributes);
 
         return html_tag_attr($attributes);
     }
 
     public function jsonSerialize()
     {
-        $serialized = parent::jsonSerialize();
-
         return [
-                'url' => $this->url(),
+                'url' => $this->getUrl(),
                 'is_image' => $this->isImage(),
                 'is_video' => $this->isVideo(),
                 'is_audio' => $this->isAudio(),
                 'is_document' => $this->isDocument(),
-                'children' => $this->children()->map(function ($file) {
+                'children' => $this->children->map(function ($file) {
                     return $file->jsonSerialize();
                 }),
-            ] + $serialized;
-    }
-
-    public function scopeParent($query, $parentId)
-    {
-        return $query->where('parent_id', '=', intval($parentId));
+            ] + parent::jsonSerialize();
     }
 
     public function __call($method, $arguments)
@@ -570,51 +576,43 @@ class File extends Model
         ]);
     }
 
-    protected function getHtmlTagAttributes()
+    protected function htmlTagAttributes()
     {
         if ($this->isImage()) {
             return [
-                'src' => $this->url(),
-                'width' => $this->getWidth() ? $this->getWidth() : null,
-                'height' => $this->getHeight() ? $this->getHeight() : null,
+                'src' => $this->getUrl(),
+                'width' => $this->width ?: null,
+                'height' => $this->height ?: null,
             ];
         }
+
+        return [];
     }
 
     protected function updateFileAttributes()
     {
-        if (! ($baseFile = $this->getBaseFile())) {
-            return $this->clearFileAttributes();
-        }
+        $this->attributes['path'] = $this->sanitizePath($this->getBaseFile()->getPathname());
+        $this->attributes['ext'] = $this->getBaseFile()->getExtension();
 
-        $this->attributes['path'] = $this->sanitizePath($baseFile->getPathname());
-        $this->attributes['ext'] = $baseFile->getExtension();
-
-        if (Filesystem::exists($baseFile->getPath())) {
-            $this->attributes['size'] = $baseFile->getSize();
-            $this->attributes['mime'] = $baseFile->getMimeType();
+        if ($this->isExists()) {
+            $this->attributes['size'] = $this->getBaseFile()->getSize();
+            $this->attributes['mime'] = $this->getBaseFile()->getMimeType();
         }
 
         if ($this->isJustUploaded()) {
-            $this->settings('upload_info', [
-                'extension' => $baseFile->clientExtension(),
-                'name' => $baseFile->getClientOriginalName(),
-                'type' => $baseFile->getClientMimeType(),
-                'size' => $baseFile->getClientSize(),
-                'error' => $baseFile->getError(),
+            $settings = $this->settings;
+
+            $this->settings = array_set($settings, 'upload_info', [
+                'extension' => $this->getBaseFile()->clientExtension(),
+                'name' => $this->getBaseFile()->getClientOriginalName(),
+                'type' => $this->getBaseFile()->getClientMimeType(),
+                'size' => $this->getBaseFile()->getClientSize(),
+                'error' => $this->getBaseFile()->getError(),
             ]);
         }
 
         if ($this->isImage()) {
             $this->initWidthAndHeight();
         }
-    }
-
-    protected function clearFileAttributes()
-    {
-        $this->attributes['path'] = null;
-        $this->attributes['ext'] = null;
-        $this->attributes['size'] = null;
-        $this->attributes['mime'] = null;
     }
 }

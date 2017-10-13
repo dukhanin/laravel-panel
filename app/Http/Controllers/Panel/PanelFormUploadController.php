@@ -75,9 +75,9 @@ class PanelFormUploadController extends Controller
     {
         upload()->authorize();
 
-        $options = request()->input();
+        $settings = request()->input();
 
-        if (empty($file = File::find($id)) || empty($original = $file->getParent())) {
+        if (empty($file = File::find($id)) || empty($original = $file->parent)) {
             return response()->json([
                 'error' => -1,
                 'success' => false,
@@ -90,10 +90,10 @@ class PanelFormUploadController extends Controller
 
         $file->setBaseFile($copy->getPath());
 
-        $file->crop($options['area']['w'], $options['area']['h'], $options['area']['x'], $options['area']['y']);
+        $file->crop($settings['area']['w'], $settings['area']['h'], $settings['area']['x'], $settings['area']['y']);
 
-        if (! empty($options['size'])) {
-            $file->resize($options['size']);
+        if (! empty($settings['size'])) {
+            $file->resize($settings['size']);
         }
 
         $file->save();

@@ -57,6 +57,9 @@ panel.list.prototype.initGroupActions = function () {
             return;
         }
 
+        e.stopPropagation();
+        e.preventDefault();
+
         if (confirm) {
             panel.confirm(confirm, callback);
         } else {
@@ -69,8 +72,16 @@ panel.list.prototype.initGroupActions = function () {
 
 panel.list.prototype.initModelActions = function () {
     this.modelActionsButtons.click(function (e) {
-        var button = $(this),
-            confirm = button.attr('confirm'),
+        var button = $(this);
+
+        if(button.hasClass('external') || button.attr('target')) {
+            return;
+        }
+
+        e.stopPropagation();
+        e.preventDefault();
+
+        var confirm = button.attr('confirm'),
             url = button.attr('href'),
             callback = function () {
                 panel.go(url);
@@ -81,8 +92,6 @@ panel.list.prototype.initModelActions = function () {
         } else {
             callback.call(this);
         }
-
-        e.preventDefault();
     });
 };
 

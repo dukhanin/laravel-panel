@@ -10,13 +10,9 @@ trait Pages
 
     public $perPage;
 
-    protected $paginator;
+    public $perPageOptions;
 
-    public function initFeaturePages()
-    {
-        $this->initPage();
-        $this->initPerPage();
-    }
+    protected $paginator;
 
     public function initPage()
     {
@@ -26,6 +22,11 @@ trait Pages
     public function initPerPage()
     {
         $this->perPage = 20;
+    }
+
+    public function initPerPageOptions()
+    {
+        $this->perPageOptions = [20, 50, 'all'];
     }
 
     public function initPaginator()
@@ -42,10 +43,23 @@ trait Pages
     public function perPage()
     {
         if (is_null($this->perPage)) {
-            $this->initPerPage();
+            if (in_array($customPerPage = $this->input('perPage'), $this->perPageOptions())) {
+                $this->perPage = $customPerPage;
+            } else {
+                $this->initPerPage();
+            }
         }
 
         return $this->perPage;
+    }
+
+    public function perPageOptions()
+    {
+        if (is_null($this->perPageOptions)) {
+            $this->initPerPageOptions();
+        }
+
+        return $this->perPageOptions;
     }
 
     public function page()
@@ -57,9 +71,14 @@ trait Pages
         return $this->page;
     }
 
+    public function offset()
+    {
+        return ($this->page() - 1) * $this->perPage();
+    }
+
     public function paginator()
     {
-        if (is_null($this->paginator)) {
+        if (is_null($this->paginator) && $this->perPage() > 0) {
             $this->initPaginator();
         }
 
@@ -68,13 +87,18 @@ trait Pages
 
     protected function applyQueryPage($select)
     {
-        if (! empty($this->perPage)) {
-            $select->forPage($this->page, $this->perPage);
+        if ($this->perPage() > 0) {
+            $select->forPage($this->page(), $this->perPage());
         }
     }
 
     protected function applyUrlPage(&$url)
     {
-        $url->query(['page' => $this->page]);
+        $url->query(['page' => $this->page()]);
+    }
+
+    protected function applyUrlPerPage(&$url)
+    {
+        $url->query(['perPage' => $this->perPage()]);
     }
 }

@@ -7,7 +7,6 @@ return [
     ],
     'labels' => [
         'none' => 'panel.labels.none',
-        'filter' => 'panel.labels.filter',
         'list-empty' => 'panel.labels.list-empty',
         'move-to' => 'panel.labels.move-to',
         'sort-up' => 'panel.labels.sort-up',
@@ -15,6 +14,9 @@ return [
         'validation-failed' => 'panel.labels.validation-failed',
         'choose' => 'panel.labels.choose',
         'name' => 'panel.labels.name',
+        'edit' => 'panel.labels.edit',
+        'create' => 'panel.labels.create',
+        'filter' => 'panel.labels.filter',
     ],
     'confirm' => [
         'default' => 'panel.confirm.default',
@@ -40,6 +42,13 @@ return [
             'icon' => 'fa fa-edit',
             'icon-only' => true,
         ],
+        'show' => [
+            'class' => 'btn btn-default btn-xs',
+            'label' => 'panel.actions.show',
+            'action' => 'showModel',
+            'icon' => 'fa fa-file-o',
+            'icon-only' => true,
+        ],
         'delete' => [
             'class' => 'btn btn-danger btn-xs',
             'label' => 'panel.actions.delete',
@@ -48,61 +57,52 @@ return [
             'icon-only' => true,
             'confirm' => 'panel.confirm.delete',
         ],
-        'enable' => function ($panel, $model) {
-            $key = method_exists($panel, 'getEnabledKey') ? $panel->enabledKey() : 'enabled';
-
-            if ($model->{$key}) {
-                return [
-                    'class' => 'btn btn-default btn-xs',
-                    'label' => 'panel.actions.disable',
-                    'action' => 'disable',
-                    'icon' => 'fa fa-eye',
-                    'icon-on-hover' => 'fa fa-eye-slash',
-                    'icon-only' => true,
-                ];
-            } else {
-                return [
-                    'class' => 'btn btn-default btn-xs',
-                    'label' => 'panel.actions.enable',
-                    'action' => 'enable',
-                    'icon' => 'fa fa-eye-slash',
-                    'icon-on-hover' => 'fa fa-eye',
-                    'icon-only' => true,
-                ];
-            }
-        },
-        'disable' => function ($panel, $model) {
-            $key = method_exists($panel, 'getDisabledKey') ? $panel->disabledKey() : 'disabled';
-
-            if ($model->{$key}) {
-                return [
-                    'class' => 'btn btn-default btn-xs',
-                    'label' => 'panel.actions.enable',
-                    'action' => 'enable',
-                    'icon' => 'fa fa-eye-slash',
-                    'icon-on-hover' => 'fa fa-eye',
-                    'icon-only' => true,
-                ];
-            } else {
-                return [
-                    'class' => 'btn btn-default btn-xs',
-                    'label' => 'panel.actions.disable',
-                    'action' => 'disable',
-                    'icon' => 'fa fa-eye',
-                    'icon-on-hover' => 'fa fa-eye-slash',
-                    'icon-only' => true,
-                ];
-            }
-        },
-        'append' => function ($panel, $model) {
-            return [
-                'class' => 'btn btn-default btn-xs',
-                'label' => 'panel.actions.append',
-                'action' => 'create',
-                'icon' => 'fa fa-plus',
-                'icon-only' => true,
-            ];
-        },
+        'enable' => [
+            'class' => 'btn btn-default btn-xs',
+            'label' => 'panel.actions.enable',
+            'action' => 'enable',
+            'icon' => 'fa fa-eye-slash',
+            'icon-on-hover' => 'fa fa-eye',
+            'icon-only' => true,
+        ],
+        'disable' => [
+            'class' => 'btn btn-default btn-xs',
+            'label' => 'panel.actions.disable',
+            'action' => 'disable',
+            'icon' => 'fa fa-eye',
+            'icon-on-hover' => 'fa fa-eye-slash',
+            'icon-only' => true,
+        ],
+        'lock' => [
+            'class' => 'btn btn-default btn-xs',
+            'label' => 'panel.actions.unlock',
+            'action' => 'unlock',
+            'icon' => 'fa fa-lock',
+            'icon-on-hover' => 'fa fa-unlock',
+            'icon-only' => true,
+        ],
+        'unlock' => [
+            'class' => 'btn btn-default btn-xs',
+            'label' => 'panel.actions.lock',
+            'action' => 'lock',
+            'icon' => 'fa fa-unlock',
+            'icon-on-hover' => 'fa fa-lock',
+            'icon-only' => true,
+        ],
+        'link' => [
+            'class' => 'btn btn-default btn-xs',
+            'label' => 'Открыть',
+            'icon' => 'fa fa-xs fa-external-link',
+            'icon-only' => true,
+            'target' => '_blank'
+        ],
+        'append' => [
+            'class' => 'btn btn-default btn-xs',
+            'label' => 'panel.actions.append',
+            'action' => 'create',
+            'icon' => 'fa fa-plus',
+            'icon-only' => true,
+        ],
         'group-enable' => [
             'class' => 'btn btn-default btn-sm',
             'label' => 'panel.actions.group-enable',
@@ -117,6 +117,20 @@ return [
             'icon' => 'fa fa-eye-slash',
             'icon-only' => true,
         ],
+        'group-lock' => [
+            'class' => 'btn btn-default btn-sm',
+            'label' => 'panel.actions.group-lock',
+            'action' => 'groupLock',
+            'icon' => 'fa fa-lock',
+            'icon-only' => true,
+        ],
+        'group-unlock' => [
+            'class' => 'btn btn-default btn-sm',
+            'label' => 'panel.actions.group-unlock',
+            'action' => 'groupUnlock',
+            'icon' => 'fa fa-unlock',
+            'icon-only' => true,
+        ],
         'group-delete' => [
             'class' => 'btn btn-default btn-sm',
             'label' => 'panel.actions.group-delete',
@@ -125,6 +139,10 @@ return [
             'icon-only' => true,
             'confirm' => 'panel.confirm.group-delete',
         ],
+        'default' => [
+            'class' => 'btn btn-default btn-sm',
+        ],
+
     ],
     'buttons' => [
         'submit' => [
@@ -157,6 +175,41 @@ return [
             'type' => 'button',
             'label' => 'panel.buttons.reset',
             'icon' => 'fa fa-times',
+        ],
+        'back' => [
+            'class' => 'btn-default',
+            'type' => 'button',
+            'label' => 'panel.buttons.back',
+            'icon' => 'fa fa-long-arrow-left',
+        ],
+        'edit' => [
+            'tag-name' => 'a',
+            'class' => 'btn-default',
+            'type' => 'button',
+            'label' => 'panel.buttons.edit',
+            'icon' => 'fa fa-edit',
+        ],
+        'enable' => [
+            'tag-name' => 'a',
+            'class' => 'btn-default',
+            'type' => 'button',
+            'label' => 'panel.buttons.enable',
+            'icon' => 'fa fa-eye',
+        ],
+        'disable' => [
+            'tag-name' => 'a',
+            'class' => 'btn-default',
+            'type' => 'button',
+            'label' => 'panel.buttons.disable',
+            'icon' => 'fa fa-eye-slash',
+        ],
+        'delete' => [
+            'tag-name' => 'a',
+            'class' => 'btn-default text-danger',
+            'type' => 'button',
+            'label' => 'panel.buttons.delete',
+            'icon' => 'fa fa-trash-o',
+            'confirm' => 'panel.confirm.delete',
         ],
         'default' => [
             'class' => 'btn-default',

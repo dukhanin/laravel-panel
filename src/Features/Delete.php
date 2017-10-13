@@ -13,18 +13,24 @@ trait Delete
 
     public function initFeatureDelete()
     {
-        $this->modelActions['delete'] = $this->config('actions.delete');
+        $this->modelActions()->put('delete');
 
-        $this->groupActions['group-delete'] = $this->config('actions.group-delete');
+        $this->groupActions()->put('group-delete');
+
+        if (method_exists($this, 'show') && $this->allows('delete', $this->model())) {
+            $this->show()->buttons()->put('delete', [
+                'url' => $this->urlTo('delete', $this->model()),
+            ]);
+        }
     }
 
     public function delete()
     {
-        $model = $this->findModelOrFail($this->parameter('id'));
+        $this->model = $this->findModelOrFail($this->parameter('id'));
 
-        $this->authorize('delete', $model);
+        $this->authorize('delete', $this->model);
 
-        $model->delete();
+        $this->model->delete();
 
         return redirect()->to($this->url());
     }

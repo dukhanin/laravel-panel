@@ -9,9 +9,13 @@ use Dukhanin\Panel\PanelListDecorator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Gate;
+use Dukhanin\Panel\Traits\HasAssets;
+use Dukhanin\Panel\Traits\HasConfig;
 
 abstract class PanelListController extends Controller
 {
+    use HasConfig, HasAssets;
+
     protected $url;
 
     protected $urlParameters;
@@ -37,8 +41,6 @@ abstract class PanelListController extends Controller
     protected $modelActions;
 
     protected $groupActions;
-
-    protected $config;
 
     public function __construct()
     {
@@ -92,11 +94,6 @@ abstract class PanelListController extends Controller
         $this->initFeatures();
     }
 
-    public function initConfig()
-    {
-        $this->config = config('panel');
-    }
-
     public function initFeatures()
     {
         foreach (class_uses_recursive(get_class($this)) as $trait) {
@@ -136,7 +133,7 @@ abstract class PanelListController extends Controller
     public function initColumns()
     {
         $this->columns->put('name', [
-            'label' => trans('panel.labels.name'),
+            'label' => app('translator')->trans('panel.labels.name'),
             'order' => true,
             'action' => true,
             'handler' => function ($model, &$cell, &$row) {
@@ -368,7 +365,7 @@ abstract class PanelListController extends Controller
 
     public function findModelsOrFail($primaryKeys)
     {
-        if (empty($collection = $this->findModels($primaryKeys))) {
+        if (count($collection = $this->findModels($primaryKeys)) == 0) {
             throw new ModelNotFoundException;
         }
 
@@ -431,27 +428,11 @@ abstract class PanelListController extends Controller
         $this->apply($row, $handlers, $methodPrefix = 'eachRow');
     }
 
-    public function config($key = null, $default = null)
-    {
-        if (is_null($this->config)) {
-            $this->initConfig();
-        }
-
-        return array_get($this->config, $key, $default);
-    }
-
-    public function setConfig($key, $value)
-    {
-        if (is_null($this->config)) {
-            $this->initConfig();
-        }
-
-        return array_set($this->config, $key, $value);
-    }
-
     protected function newModel()
     {
         $model = clone $this->model();
+
+        $this->apply($model, ['*'], 'newModel');
 
         return $model;
     }
@@ -520,6 +501,10 @@ abstract class PanelListController extends Controller
 
         if (empty($attributes['as'])) {
             $attributes['as'] = class_basename(static::class);
+        }
+
+        if (empty($attributes['prefix'])) {
+            $attributes = array_set($attributes, 'prefix', trim(rtrim(kebab_case(class_basename(static::class)), 'controller'), '-'));
         }
 
         $attributes['as'] = rtrim($attributes['as'], '.').'.';

@@ -1,8 +1,8 @@
-.panel-list .inactive, .panel-tree .inactive, .panel-form .inactive {
+.panel-list .inactive, .panel-tree .inactive, .panel-form .inactive, .panel-show .inactive, .panel-show .form-group .value.inactive {
     color: #ccc;
 }
 
-.panel-list .inactive img, .panel-tree .inactive img, .panel-form .inactive img {
+.panel-list .inactive img, .panel-tree .inactive img, .panel-form .inactive img, .panel-show .inactive img {
     opacity: 0.4;
 }
 

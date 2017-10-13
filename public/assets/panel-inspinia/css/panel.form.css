@@ -22,3 +22,11 @@
 .wrapper-tabs + .wrapper-panel .panel-form .ibox-content{
     border-top: 0;
 }
+
+.panel-form form h2 {
+    margin-top: 60px;
+}
+
+.panel-form form h2:first-child {
+    margin-top: 0;
+}

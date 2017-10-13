@@ -3,11 +3,10 @@ $errors = $form->fieldErrors($field['key']);
 $id = 'file-'.mt_rand(1, 1000);
 
 $value = $form->inputValue($field['key']);
-$value = intval($value);
 
-$file = \Dukhanin\Panel\Files\File::find($value);
+$file =  $value instanceof \Dukhanin\Panel\Files\File ? $value : \Dukhanin\Panel\Files\File::find( intval($value) );
 $resizes = isset($resizes) ? (array) $resizes : [];
-$directory = isset($directory) ? strval($directory) : null;
+$directory = isset($directory) ? strval($directory) : (method_exists($form, 'uploadDirectory') ? $form->uploadDirectory() : null);
 ?>
 
 <div class="panel-file form-group @if( ! empty($errors) ) has-error @endif">

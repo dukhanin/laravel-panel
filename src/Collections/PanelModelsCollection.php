@@ -38,37 +38,42 @@ class PanelModelsCollection extends Collection
         return $this->isTree;
     }
 
-    public function options($key, $depthPrefix = null)
+    public function flat()
     {
-        static $depth = 0;
+        $collection = new static;
 
+        foreach ($this->items as $item) {
+            $collection->push($item);
+
+            if ($this->isTree()) {
+                foreach ($item->nestedCollection()->flat() as $subitem) {
+                    $collection->push($subitem);
+                }
+            }
+        }
+
+        return $collection;
+    }
+
+    public function options($attribute, $depthPrefix = null)
+    {
         if (is_null($depthPrefix)) {
             $depthPrefix = '    ';
         }
 
-        $options = collect();
+        $flat = $this->flat();
 
-        foreach ($this->items as $item) {
-            $label = is_callable($key) ? $key($item) : array_get($item, $key);
+        $keys = $flat->map(function ($item) {
+            return array_get($item, $this->keyName);
+        });
 
-            $options->put(array_get($item, $this->keyName), str_repeat($depthPrefix, $depth).$label);
+        $values = $flat->map(function ($item) use ($attribute, $depthPrefix) {
+            $label = is_callable($attribute) ? $attribute($item) : array_get($item, $attribute);
 
-            if ($this->isTree()) {
-                $depth++;
+            return is_string($label) || is_numeric($label) ? str_repeat($depthPrefix, $item->nestedDepth).$label : $label;
+        });
 
-                $item->nestedCollection()->options($key, $depthPrefix)->each(function ($option, $key) use (
-                    $options,
-                    $depth,
-                    $depthPrefix
-                ) {
-                    $options->put($key, $option);
-                });
-
-                $depth--;
-            }
-        }
-
-        return $options;
+        return collect($keys)->combine($values);
     }
 
     protected function fillTreeCollectionRecursive(Collection $collection, array $index, $parentKey, $depth)

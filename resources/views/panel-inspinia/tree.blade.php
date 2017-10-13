@@ -13,7 +13,13 @@
 
 @section('content')
     <div class="wrapper wrapper-content wrapper-panel animated fadeInRight">
-        <div class="panel-list panel-tree" id="{{ $panelId }}">
+        @if($panel->paginator() && $panel->paginator()->hasPages())
+            <div class="panel-list-pagination-top text-right">
+                {!! $panel->paginator()->render('panel::panel-inspinia.pagination.default') !!}
+            </div>
+        @endif
+
+        <div class="panel-list panel-tree panel-{{ kebab_case( class_basename($panel) ) }}" id="{{ $panelId }}">
             <form method="post" action="{{ $panel->url() }}" class="panel-list-form">
 
                 <div class="mail-box-header">
@@ -157,9 +163,9 @@
                     </table>
                 </div>
 
-                @if($panel->paginator())
-                    <div class="text-right">
-                        {!! $panel->paginator()->render() !!}
+                @if($panel->paginator() && $panel->paginator()->hasPages())
+                    <div class="panel-list-pagination-bottom text-right">
+                        {!! $panel->paginator()->render('panel::panel-inspinia.pagination.default') !!}
                     </div>
                 @endif
 
@@ -168,3 +174,5 @@
         </div>
     </div>
 @endsection
+
+{{ $panel->pushAssets() }}

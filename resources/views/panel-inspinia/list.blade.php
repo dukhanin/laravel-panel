@@ -14,11 +14,29 @@
 @section('content')
 
     <div class="wrapper wrapper-content wrapper-panel animated fadeInRight">
+
+        @if( ($panel->paginator() && $panel->paginator()->hasPages()) || ($panel->perPageOptions() && !$panel->isEmpty()) )
+            <div class="panel-list-pagination panel-list-pagination-top row">
+                <div class="col-md-6">
+                    <ul class="pagination">
+                        @foreach($panel->perPageOptions() as $perPage)
+                            <li @if($perPage == $panel->perPage()) class="active"@endif>
+                                <a href="{{ $panel->urlTo('showList', ['perPage' => $perPage], ['!perPage', '!page']) }}">{{ is_numeric($perPage) ? $perPage : 'Все' }}</a>
+                            </li>
+                        @endforeach
+                    </ul>
+                </div>
+                <div class="col-md-6 text-right">
+                    {!! $panel->paginator() ? $panel->paginator()->render('panel::panel-inspinia.pagination.default') : '' !!}
+                </div>
+            </div>
+        @endif
+
         @if($panel->filter())
             {!! $panel->filter()->view() !!}
         @endif
 
-        <div class="panel-list" id="{{ $panelId }}">
+        <div class="panel-list panel-{{ kebab_case( class_basename($panel) ) }}" id="{{ $panelId }}">
             <form method="post" action="{{ $panel->url() }}" class="panel-list-form">
 
                 <div class="mail-box-header">
@@ -35,7 +53,7 @@
                                 @endforeach
 
                                 @foreach ($panel->groupActions()->resolved() as $actionKey => $action)
-                                    {!! $panel->renderGroupAction($action, 'button.panel-list-group-action', [ 'type' => 'submit' ]) !!}
+                                    {!! $panel->renderGroupAction($action +  [ 'type' => 'submit' ], 'button.panel-list-group-action') !!}
                                 @endforeach
 
                                 @if( count($panel->moveToOptions()) > 0 )
@@ -74,7 +92,7 @@
 
                     <table class="table table-hover table-mail panel-list-table">
 
-                        @if( $panel->isEmpty())
+                        @if( $panel->isEmpty() )
                             <tbody class="panel-list-empty">
                             <tr>
                                 <td colspan="99">
@@ -164,9 +182,20 @@
                     </table>
                 </div>
 
-                @if($panel->paginator())
-                    <div class="text-right">
-                        {!! $panel->paginator()->render() !!}
+                @if( ($panel->paginator() && $panel->paginator()->hasPages()) || ($panel->perPageOptions() && !$panel->isEmpty()) )
+                    <div class="panel-list-pagination panel-list-pagination-bottom row">
+                        <div class="col-md-6">
+                            <ul class="pagination">
+                                @foreach($panel->perPageOptions() as $perPage)
+                                    <li @if($perPage == $panel->perPage()) class="active"@endif>
+                                        <a href="{{ $panel->urlTo('showList', ['perPage' => $perPage], ['!perPage', '!page']) }}">{{ is_numeric($perPage) ? $perPage : 'Все' }}</a>
+                                    </li>
+                                @endforeach
+                            </ul>
+                        </div>
+                        <div class="col-md-6 text-right">
+                            {!! $panel->paginator() ? $panel->paginator()->render('panel::panel-inspinia.pagination.default') : '' !!}
+                        </div>
                     </div>
                 @endif
 
@@ -175,3 +204,5 @@
         </div>
     </div>
 @endsection
+
+{{ $panel->pushAssets() }}

@@ -44,11 +44,32 @@ trait Filter
                 continue;
             }
 
+            if (in_array($value = $this->filter()->data($field['key']), [null, ''], true)) {
+                continue;
+            }
+
             if (! is_callable($apply)) {
                 $apply = [$this, 'filterDefault'];
             }
 
-            $apply($query, $this->filter()->data($field['key']), $this, $field);
+            $apply($query, $value, $this, $field);
+        }
+    }
+
+    public function applyFormFilter($form)
+    {
+        foreach ($this->filter()->fields()->resolved() as $field) {
+            $apply = array_get($field, 'model');
+
+            if ($apply === false) {
+                continue;
+            }
+
+            if (! is_callable($apply)) {
+                $apply = [$this, 'setFormDataFromFilter'];
+            }
+
+            call_user_func($apply, $form, $field['key'], $this->filter()->data($field['key']), $this);
         }
     }
 
@@ -75,6 +96,15 @@ trait Filter
         }
     }
 
+    protected function setFormDataFromFilter($form, $key, $value, $filter)
+    {
+        if ($form->isSubmit() || array_key_exists($key, $form->data())) {
+            return;
+        }
+
+        $form->setData($key, $value);
+    }
+
     protected function filterAsText($query, $value, $filter, $field)
     {
         if (empty($value = $this->resolveFilterValue($value, $field))) {
@@ -91,7 +121,7 @@ trait Filter
             foreach ($value as $substring) {
                 $substring = strtolower($operator) == 'like' ? '%'.$substring.'%' : $substring;
 
-                $query->where($column, 'like', $substring, $boolean);
+                $query->where($column, $operator, $substring, $boolean);
             }
         });
     }

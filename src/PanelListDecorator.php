@@ -1,6 +1,8 @@
 <?php
 namespace Dukhanin\Panel;
 
+use Dukhanin\Panel\Files\File;
+
 class PanelListDecorator
 {
     protected $panel;
@@ -60,6 +62,23 @@ class PanelListDecorator
         return method_exists($this->panel, 'paginator') ? $this->panel->paginator() : null;
     }
 
+    public function perPageOptions()
+    {
+        if (method_exists($this->panel, 'perPageOptions')) {
+
+            $options = $this->panel->perPageOptions();
+            $options = array_map('intval', $options);
+            $options = array_filter($options);
+
+            if ($options && ($this->panel->total() > min($options))) {
+
+                return $this->panel->perPageOptions();
+            }
+        }
+
+        return null;
+    }
+
     public function filter()
     {
         return method_exists($this->panel, 'filter') ? $this->panel->filter() : false;
@@ -116,7 +135,7 @@ class PanelListDecorator
         if (isset($column['handler'])) {
             $content = is_callable($column['handler']) ? $column['handler']($model, $cell, $row) : 'invalid handler';
         } else {
-            $content = $model->getAttribute($column['key']);
+            $content = $this->cellContent($model->getAttribute($column['key']), $cell);
         }
 
         $content = $this->linkCell($cell, $row, $content);
@@ -157,7 +176,37 @@ class PanelListDecorator
         ], ...$overwrites);
     }
 
-    public function linkCell(&$cell, &$row, $content, $defaultAction = 'edit')
+    protected function cellContent($value, &$cell)
+    {
+        if ($value instanceof File) {
+            return $this->asFile($value, $cell);
+        }
+
+        if (is_string($value)) {
+            return e($value);
+        }
+
+        return $value;
+    }
+
+    protected function asFile($value, &$cell)
+    {
+        if (! $value->isDefined()) {
+            return '';
+        }
+
+        if ($value->isImage()) {
+            return $value->getResize(['panel_default', 'size' => '150xx150'])->img();
+        }
+
+        return html_tag('a', [
+            'href' => $value->url(),
+            'content' => $value->url(),
+            'target' => '_blank',
+        ]);
+    }
+
+    protected function linkCell(&$cell, &$row, $content, $defaultAction = 'edit')
     {
         if ($action = value(array_get($cell, 'column.action'))) {
             $action = $action === true ? $defaultAction : $action;

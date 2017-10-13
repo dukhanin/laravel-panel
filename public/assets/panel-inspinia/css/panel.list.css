@@ -67,6 +67,11 @@ body .panel-list table.panel-list-table tbody td.panel-list-sort-handler {
     background-size: 3px 3px;
 }
 
+.panel-list-table tr td:first-child:not(.panel-list-checkbox),
+.panel-list-table tr th:first-child:not(.panel-list-checkbox) {
+    padding-left: 20px;
+}
+
 .panel-list td.panel-list-model-action {
     padding: 12px 4px;
     width: 10px;
@@ -150,4 +155,28 @@ h2 + .panel-list-tools {
 .panel-list-filter .ibox-content {
     border-left: 1px solid #e7eaec;
     border-right: 1px solid #e7eaec;
+}
+
+.panel-list-pagination-top .pagination,
+.panel-list-pagination-bottom .pagination {
+    margin: 0;
+}
+
+.panel-list-pagination-bottom {
+    margin: 20px 0;
+}
+
+.panel-list-pagination-top {
+    margin-bottom: 10px;
+}
+
+.panel-list-pagination .total {
+    float: left;
+    padding: 4px 10px;
+    opacity: 0.7;
+}
+
+.panel-list-pagination .text-right .pagination > li:nth-child(2) span {
+    border-top-left-radius: 4px;
+    border-bottom-left-radius: 4px;
 }

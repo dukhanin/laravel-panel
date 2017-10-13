@@ -2,12 +2,21 @@
 
 @include('panel::panel-inspinia.init')
 
+@push('scripts')
+<script>
+    $(function () {
+        var panelForm = new panel.form('#{{ $panelId = str_random() }}');
+        panelForm.init();
+    });
+</script>
+@endpush
+
 @section('content')
     <div class="wrapper wrapper-content wrapper-panel animated fadeInRight">
-        <div class="ibox float-e-margins panel-form">
+        <div id="{{ $panelId }}" class="ibox float-e-margins panel-form panel-{{ kebab_case( class_basename($form) ) }}">
             @if ( $form->label() )
                 <div class="ibox-title">
-                    <h5>{{ $form->label() }}</h5>
+                    <h5>@lang($form->label())</h5>
                 </div>
             @endif
 
@@ -32,18 +41,19 @@
                     <div class="hr-line-dashed"></div>
 
                     <div class="form-group">
-                        <div class="col-lg-10 text-right">
+                        <div class="col-lg-10 text-right panel-buttons">
                             @foreach ($form->buttons()->resolved() as $buttonKey => $button)
-                                @if ($button['type'] == 'submit')
+                                @if (!in_array($button['key'], ['cancel', 'back']))
                                     @continue
                                 @endif
 
-                                {!! html_tag('a.btn', $button ) !!}
+                                {!! html_tag('a.btn', $button, [
+                                'class' => 'pull-left'
+                                ] ) !!}
                             @endforeach
 
-
                             @foreach ($form->buttons()->resolved() as $buttonKey => $button)
-                                @if ($button['type'] != 'submit')
+                                @if (in_array($button['key'], ['cancel', 'back']))
                                     @continue
                                 @endif
 
@@ -63,3 +73,5 @@
         </div>
     </div>
 @endsection
+
+{{ $form->pushAssets() }}

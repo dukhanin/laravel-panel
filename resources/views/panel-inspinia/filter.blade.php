@@ -1,5 +1,5 @@
 @if(!$form->fields()->isEmpty())
-    <div class="ibox panel-list-filter @if(!$form->isSubmit()) collapsed @endif">
+    <div class="ibox panel-list-filter panel-{{ kebab_case( class_basename($form) ) }} @if(!$form->isSubmit()) collapsed @endif">
         <div class="ibox-title">
             <div class="ibox-tools">
                 <h5><a class="collapse-link">@lang($form->config('labels.filter'))</a></h5>
@@ -28,7 +28,7 @@
 
             <div class="row text-right">
                 <div class="col-md-12">
-                    @foreach ($form->buttons() as $buttonKey => $button)
+                    @foreach ($form->buttons()->resolved() as $buttonKey => $button)
                         @if ($button['type'] == 'submit')
                             @continue
                         @endif
@@ -37,7 +37,7 @@
                     @endforeach
 
 
-                    @foreach ($form->buttons() as $buttonKey => $button)
+                    @foreach ($form->buttons()->resolved() as $buttonKey => $button)
                         @if ($button['type'] != 'submit')
                             @continue
                         @endif
@@ -55,3 +55,5 @@
         </form>
     </div>
 @endif
+
+{{ $form->pushAssets() }}

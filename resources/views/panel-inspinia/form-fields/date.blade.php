@@ -1,29 +1,33 @@
 <?php
-use Carbon\Carbon;
+use Jenssegers\Date\Date;
 
 global $dateIndex;
 
 $value = $form->inputValue($field['key']);
-
+$errors = $form->fieldErrors($field['key']);
+$id = 'date-'.(++$dateIndex);
 $format = isset($format) ? $format : $form->config('date.format', 'Y-m-d');
+$formatLabels = __("panel.formats");
+$now = isset($now) ? $now : true;
 
 try {
     if (is_null($value)) {
         $date = null;
     } elseif (is_numeric($value)) {
-        $date = Carbon::createFromTimestamp(intval($value));
+        $date = Date::createFromTimestamp(intval($value));
     } else {
-        $date = Carbon::parse($value);
+        $date = Date::parse($value);
     }
 } catch (Exception $e) {
     $date = null;
 }
 
-$value = $date ? $date->format($format) : '';
-$raw_value = $date ? $date->format('Y-m-d') : '';
+if (empty($date) && ! empty($now) ) {
+    $date = Date::now();
+}
 
-$errors = $form->fieldErrors($field['key']);
-$id = 'date-'.(++$dateIndex);
+$value = $date ? $date->format($format) : '';
+$rawValue = $date ? $date->format('Y-m-d') : '';
 ?>
 
 <div class="form-group @if( ! empty($errors) ) has-error @endif">
@@ -34,27 +38,21 @@ $id = 'date-'.(++$dateIndex);
     <div class="col-lg-10">
         <div class="input-group date" id="{{ $id }}">
             <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-
             {!! html_tag(
                 'input.form-control',
+                ['placeholder' => isset($formatLabels[$format]) ? $formatLabels[$format] : $format],
                 array_except($field, ['key', 'type', 'label']),
                 [
                     'type' => 'text',
-                    'value' => $value
+                    'value' => $value,
                 ]
             ) !!}
         </div>
 
-        {!! html_tag(
-            'input.form-control',
-            array_except($field, ['key', 'type', 'label']),
-            [
-                'type' => 'hidden',
-                'id' => $id . '-output',
-                'name' => $form->htmlInputName($field['key']),
-                'value' => $raw_value
-            ]
-        ) !!}
+        <input id="{{ $id }}-output"
+               type="hidden"
+               value="{{$rawValue}}"
+               name="{{$form->htmlInputName($field['key'])}}"/>
 
         @if ( ! empty( $errors ) )
             <div class="error-text">
@@ -71,12 +69,28 @@ $id = 'date-'.(++$dateIndex);
 @push('scripts')
 <script>
     $(function () {
-        $('#{{ $id }}').datepicker({
-            format: '{{ datepicker_format($format) }}'
-        }).on('clearDate changeDate', function (e) {
-            console.log(1);
-            $('#{{ $id }}-output').val(e.date === undefined ? '' : e.date.getFullYear() + '-' + (e.date.getMonth() + 1) + '-' + e.date.getDate());
-        });
-    })
+        var dateInput = $('#{{ $id }}'),
+            outputInput = $('#{{ $id }}-output');
+
+        function setRawDatetime() {
+            var date = dateInput.datepicker('getDate'),
+                y = date.getFullYear(),
+                m = date.getMonth() + 1,
+                d = date.getDate(),
+                raw = '';
+
+            if (y > 0 && m > 0 && d > 0) {
+                raw = y + '-' + m + '-' + d;
+            }
+
+            outputInput.val(raw);
+        }
+
+        dateInput
+            .datepicker({!! json_encode(['format' => datepicker_format($format)] + (empty($datepicker) ? [] : (array)$datepicker)) !!})
+            .on('clearDate changeDate', setRawDatetime);
+
+        dateInput.closest('form').on('submit', setRawDatetime);
+    });
 </script>
 @endpush

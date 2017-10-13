@@ -53,23 +53,35 @@ class ActionsCollection extends Collection
             $action = call_user_func($action, $this->panel, $model);
         }
 
+        if($action === false) {
+            return false;
+        }
+
         if (! is_array($action)) {
             $action = [];
         }
 
-        $action = $action + [
+        $stack = [
+            $this->panel->config("actions.{$key}", []),
+            $this->panel->config('actions.default', []),
+            [
                 'key' => strval($key),
                 'label' => strval($key),
                 'global' => false,
                 'class' => '',
                 'icon' => null,
                 'icon-only' => false,
-            ];
+            ],
+        ];
 
-        $action['label'] = trans($action['label']);
+        foreach ($stack as $arr) {
+            $action = $action + (array) (is_callable($arr) ? call_user_func($arr, $this->panel, $model) : $arr);
+        }
+
+        $action['label'] = app('translator')->trans($action['label']);
 
         if (! empty($action['confirm'])) {
-            $action['confirm'] = trans($action['confirm']);
+            $action['confirm'] = app('translator')->trans(strval($action['confirm']));
         }
 
         if (! isset($action['url'])) {
@@ -83,14 +95,14 @@ class ActionsCollection extends Collection
     {
         return collect($this->items)->map(function (&$action, $key) {
             return $this->resolve($key, $action);
-        });
+        })->filter();
     }
 
     public function resolvedForModel($model)
     {
         return collect($this->items)->map(function (&$action, $key) use ($model) {
             return $this->resolve($key, $action, $model);
-        });
+        })->filter();
     }
 
     public function put($key, $value = null)

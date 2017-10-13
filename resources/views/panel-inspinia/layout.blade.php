@@ -10,7 +10,8 @@
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/inspinia-animate.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/inspinia.css') }}"/>
     <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/plugins/sweetalert/sweetalert.css') }}"/>
-    <link rel="stylesheet" href="{{ URL::asset('assets/inspinia/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}"/>
+    <link rel="stylesheet"
+          href="{{ URL::asset('assets/inspinia/css/plugins/awesome-bootstrap-checkbox/awesome-bootstrap-checkbox.css') }}"/>
 
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -47,15 +48,8 @@
                 </li>
 
                 <li>
-                    <a href="https://www.instagram.com/antondukhanin/" target="_blank"><i class="fa fa-instagram"></i>
-                        <span class="nav-label">Instagram</span></a>
-                </li>
-                <li>
-                    <a href="https://www.facebook.com/anton.dukhanin" target="_blank"><i class="fa fa-facebook"></i>
-                        <span class="nav-label">Facebook</span></a>
-                </li>
-                <li>
-                    <a href="https://vk.com/buhankin" target="_blank"><i class="fa fa-vk"></i> <span class="nav-label">Vk</span></a>
+                    <a href="http://antondukhanin.ru" target="_blank"><i class="fa fa-external-link"></i>
+                        <span class="nav-label">Anton Dukhanin</span></a>
                 </li>
                 <li>
                     <a href="https://wrapbootstrap.com/theme/inspinia-responsive-admin-theme-WB0R5L90S" target="_blank"><i
@@ -144,10 +138,10 @@
                                 </p>
 
                                 <p>
-                                    <a href="https://antondukhanin.ru" target="_blank"
-                                       style="color: #676a6c; text-decoration: underline; /* @todo @dukhanin */"
+                                    <a href="http://antondukhanin.ru" target="_blank"
+                                       style="color: #676a6c; text-decoration: underline;"
 
-                                            >Anton Dukhanin</a> &copy; {{ date('Y') }}
+                                    >Anton Dukhanin</a> &copy; {{ date('Y') }}
                                 </p>
                             </small>
                         </div>

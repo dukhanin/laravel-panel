@@ -7,6 +7,13 @@ use Symfony\Component\Console\Input\ArgvInput;
 
 class PanelServiceProvider extends ServiceProvider
 {
+    public function register()
+    {
+        $this->app->singleton('upload', function ($app) {
+            return new \Dukhanin\Panel\Files\UploadHelper;
+        });
+    }
+
     public function boot()
     {
         $this->mergeConfigFrom($this->path('config/files.php'), 'files');
@@ -23,17 +30,9 @@ class PanelServiceProvider extends ServiceProvider
 
         $this->publishAssets();
 
-        $this->publishSample();
-
         $this->publishInspinia();
 
         $this->loadViews();
-
-        $this->loadHelpers();
-    }
-
-    public function register()
-    {
     }
 
     protected function publishConfig()
@@ -86,7 +85,6 @@ class PanelServiceProvider extends ServiceProvider
         ], 'tinymce');
 
         $this->publishes([
-            $this->path('public/assets/panel-bootstrap') => public_path('assets/panel-bootstrap'),
             $this->path('public/assets/panel-inspinia') => public_path('assets/panel-inspinia'),
         ], 'assets');
     }
@@ -105,37 +103,9 @@ class PanelServiceProvider extends ServiceProvider
         ], 'inspinia');
     }
 
-    protected function publishSample()
-    {
-        $input = new ArgvInput(isset($_SERVER['argv']) ? $_SERVER['argv'] : []);
-        $publishWithSample = $input->hasParameterOption('--tag=sample');
-
-        if (! $publishWithSample) {
-            return;
-        }
-
-        $this->publishes([
-            $this->path('app/Http/Controllers/Sample/') => app_path('Http/Controllers/Sample/'),
-            $this->path('app/Sample') => app_path('Sample/'),
-            $this->path('public/assets/inspinia/') => public_path('assets/inspinia/'),
-            $this->path('public/storage/') => public_path('storage'),
-            $this->path('database/migrations/2016_10_12_065204_sample_products.php') => database_path('migrations/2016_10_12_065204_sample_products.php'),
-            $this->path('database/migrations/2016_10_12_065204_sample_sections.php') => database_path('migrations/2016_10_12_065204_sample_sections.php'),
-            $this->path('database/seeds/SampleSeeder.php') => database_path('/seeds/SampleSeeder.php'),
-            $this->path('routes/sample.php') => base_path('routes/sample.php'),
-        ], 'sample');
-    }
-
     protected function loadViews()
     {
         $this->loadViewsFrom($this->path('resources/views'), 'panel');
-    }
-
-    protected function loadHelpers()
-    {
-        $this->app->singleton('upload', function ($app) {
-            return new \Dukhanin\Panel\Files\UploadHelper;
-        });
     }
 
     protected function path($path)

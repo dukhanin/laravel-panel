@@ -9,16 +9,16 @@ class CreateFilesTable extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->increments('id');
-            $table->bigInteger('parent_id')->nullable();
+            $table->unsignedBigInteger('parent_id')->nullable();
             $table->string('key')->nullable();
             $table->string('path', 4080)->nullable();
             $table->string('ext')->nullable();
-            $table->bigInteger('size')->nullable();
+            $table->unsignedBigInteger('size')->nullable();
             $table->string('mime')->nullable();
-            $table->bigInteger('width')->nullable();
-            $table->bigInteger('height')->nullable();
+            $table->unsignedBigInteger('width')->nullable();
+            $table->unsignedBigInteger('height')->nullable();
             $table->text('settings')->nullable();
-            $table->integer('site_id')->nullable();
+            $table->unsignedBigInteger('site_id')->nullable();
             $table->timestamps();
 
             $table->index(['parent_id']);

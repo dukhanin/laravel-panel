@@ -45,7 +45,7 @@ class PanelBuilder extends EloquentBuilder
     {
         $this->modelsDepths = collect();
 
-        $currentLevelKeys = collect([$this->model->exists ? $this->model->getKey() : 0]);
+        $currentLevelKeys = collect([$this->model->exists ? $this->model->getKey() : null]);
 
         $depth = 0;
 
@@ -60,52 +60,6 @@ class PanelBuilder extends EloquentBuilder
         }
 
         return $this->whereKey($this->modelsDepths->keys());
-    }
-
-    public function ordered($value = true)
-    {
-        $this->orderByDefault = (bool) $value;
-
-        return $this;
-    }
-
-    public function unordered()
-    {
-        return $this->ordered(false);
-    }
-
-    public function orderReset()
-    {
-        $this->orders = [];
-        $this->unionOrders = [];
-
-        return $this;
-    }
-
-    public function applyScopes()
-    {
-        $builder = parent::applyScopes();
-
-        $this->applyOrderDefault($builder);
-
-        return $builder;
-    }
-
-    public function applyOrderDefault(Builder $builder)
-    {
-        if (! empty($builder->orders) || ! empty($builder->unionOrders)) {
-            return;
-        }
-
-        if (! $this->orderByDefault) {
-            return;
-        }
-
-        if (! method_exists($this->model, 'scopeOrderDefault')) {
-            return;
-        }
-
-        $this->model->scopeOrderDefault($builder);
     }
 
     public function options($key, $depthPrefix = null)

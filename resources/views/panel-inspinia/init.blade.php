@@ -4,6 +4,7 @@
 
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.css') }}"/>
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.form.css') }}"/>
+<link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.show.css') }}"/>
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.list.css') }}"/>
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.tree.css') }}"/>
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.inputFiles.css') }}"/>
@@ -22,6 +23,8 @@
 
 <script src="{{ URL::asset('assets/panel-inspinia/js/panel.js') }}"></script>
 <script src="{{ URL::asset('assets/panel-inspinia/js/panel.list.js') }}"></script>
+<script src="{{ URL::asset('assets/panel-inspinia/js/panel.form.js') }}"></script>
+<script src="{{ URL::asset('assets/panel-inspinia/js/panel.show.js') }}"></script>
 <script src="{{ URL::asset('assets/panel-inspinia/js/panel.tree.js') }}"></script>
 <script src="{{ URL::asset('assets/panel-inspinia/js/panel.file.js') }}"></script>
 <script src="{{ URL::asset('assets/panel-inspinia/js/panel.imageEditor.js') }}"></script>

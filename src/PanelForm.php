@@ -10,16 +10,17 @@ use Illuminate\Database\Eloquent\Relations\Concerns\InteractsWithPivotTable;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Events\Dispatcher;
 use Illuminate\Support\ViewErrorBag;
 use Illuminate\Validation\ValidationException;
 use ErrorException;
 use Closure;
+use Dukhanin\Panel\Traits\HasAssets;
+use Dukhanin\Panel\Traits\HasConfig;
 
 class PanelForm
 {
-    protected $config;
+    use HasConfig, HasAssets;
 
     protected $model;
 
@@ -45,18 +46,21 @@ class PanelForm
 
     protected $errors;
 
+    protected $method = 'post';
+
+    protected $submitUrl = '';
+
     public function __construct()
     {
         $this->buttons = new ButtonsCollection;
-        $this->buttons->setForm($this);
+        $this->buttons->setConfig($this->config());
 
         $this->fields = new FieldsCollection;
-        $this->fields->setForm($this);
-    }
+        $this->fields->setConfig($this->config());
 
-    public function initConfig()
-    {
-        $this->config = config('panel');
+        $this->method = 'post';
+
+        $this->submitUrl = '';
     }
 
     public function initModel()
@@ -65,7 +69,7 @@ class PanelForm
 
     public function initLabel()
     {
-        $this->label = '';
+        $this->label = $this->config($this->model() && $this->model()->exists ? 'labels.edit' : 'labels.create');
     }
 
     public function initUploadDirectory()
@@ -110,7 +114,7 @@ class PanelForm
 
     protected function mergeAttributes(array &$data)
     {
-        if (empty($this->model)) {
+        if (empty($this->model())) {
             return;
         }
 
@@ -142,7 +146,9 @@ class PanelForm
 
     public function initButtons()
     {
-        $this->buttons->put('submit');
+        $this->buttons->put('submit', [
+            'url' => $this->submitUrl(),
+        ]);
     }
 
     public function initView()
@@ -164,9 +170,11 @@ class PanelForm
     {
         $this->eventDispatcher()->fire('success', $this);
 
-        $this->fillModel();
+        if ($this->model()) {
+            $this->fillModel();
 
-        $this->saveModel();
+            $this->saveModel();
+        }
 
         $this->eventDispatcher()->fire('succeed', $this);
     }
@@ -253,12 +261,22 @@ class PanelForm
 
     public function submitUrl()
     {
-        return '';
+        return $this->submitUrl;
+    }
+
+    public function setSubmitUrl(string $url)
+    {
+        return $this->submitUrl = $url;
+    }
+
+    public function setMethod(string $method)
+    {
+        $this->method = $method;
     }
 
     public function method()
     {
-        return 'post';
+        return $this->method;
     }
 
     public function fields()
@@ -294,7 +312,7 @@ class PanelForm
             return $viewFile;
         }
 
-        throw new Exception('No view found for field '.array_get($field, 'key').'(searched in '.implode(', ', array_filter($options)).')');
+        throw new ErrorException('No view found for field '.array_get($field, 'key').'(searched in '.implode(', ', array_filter($options)).')');
     }
 
     public function inputName($name = null)
@@ -362,8 +380,8 @@ class PanelForm
             return null;
         }
 
-        if ($this->fields->has("{$name}.value")) {
-            return $this->fields->get("{$name}.value");
+        if ($value = array_get($this->fields, $name.'.value')) {
+            return $value instanceof Closure ? $value($this->model()) : $value;
         }
 
         return $this->data($name);
@@ -394,6 +412,15 @@ class PanelForm
         }
 
         return array_get($this->data, $name, $default);
+    }
+
+    public function setData($name, $value)
+    {
+        if (is_null($this->data)) {
+            $this->initData();
+        }
+
+        return array_set($this->data, $name, $value);
     }
 
     public function dataFromRequest()
@@ -437,7 +464,7 @@ class PanelForm
         return $this;
     }
 
-    public function setModel(Model $model)
+    public function setModel($model)
     {
         $this->model = $model;
 
@@ -496,6 +523,10 @@ class PanelForm
     public function __call($method, $arguments)
     {
         if (starts_with(strtolower($method), 'add')) {
+            if (! $this->fields->touched() && ! collect(debug_backtrace(null, 4))->contains('function', 'initFields')) {
+                $this->initFields();
+            }
+
             return call_user_func_array([$this->fields, $method], $arguments);
         }
 
@@ -521,8 +552,6 @@ class PanelForm
 
     public function saveModelRelations()
     {
-        $anyChangesMade = false;
-
         foreach ($this->modelRelations() as $relationKey => $relation) {
             if ($relation instanceof BelongsTo) {
                 $relation->dissociate();
@@ -531,25 +560,18 @@ class PanelForm
                     $relation->associate($keys);
                 }
 
-                $anyChangesMade = true;
-
                 continue;
             }
 
             if (in_array(InteractsWithPivotTable::class, class_uses_recursive($relation))) {
-                $relation->detach();
+                $relationMethod = array_get($this->fields->resolved()->get($relationKey), 'relationMethod', 'sync');
 
-                if ($keys = (array) $this->data($relationKey)) {
-                    $relation->attach($keys);
-                }
-
-                $anyChangesMade = true;
-
+                $relation->{$relationMethod}((array) $this->data($relationKey));
                 continue;
             }
-
-            $anyChangesMade && $this->model->save();
         }
+
+        empty($this->model->getDirty()) || $this->model->save();
     }
 
     public function clearData()
@@ -559,6 +581,8 @@ class PanelForm
 
     public function handle($successResponse = null)
     {
+        $response = null;
+
         if ($this->isSubmit()) {
             $this->onSubmit();
         }
@@ -569,28 +593,10 @@ class PanelForm
             if (! is_null($successResponse)) {
                 $response = $successResponse instanceof Closure ? $successResponse($this) : $successResponse;
             }
-        } else {
+        } elseif ($this->isFailure()) {
             $response = $this->onFailure();
         }
 
         return ! is_null($response) ? $response : $this->view();
-    }
-
-    public function config($key = null, $default = null)
-    {
-        if (is_null($this->config)) {
-            $this->initConfig();
-        }
-
-        return array_get($this->config, $key, $default);
-    }
-
-    public function setConfig($key, $value)
-    {
-        if (is_null($this->config)) {
-            $this->initConfig();
-        }
-
-        return array_set($this->config, $key, $value);
     }
 }

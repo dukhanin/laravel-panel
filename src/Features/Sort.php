@@ -2,17 +2,18 @@
 
 namespace Dukhanin\Panel\Features;
 
+use Dukhanin\Panel\Controllers\PanelTreeController;
 use Dukhanin\Panel\PanelTree;
 
 trait Sort
 {
     protected $modelToSort;
 
-    protected $sortEnabled;
+    protected $sortEnabled = true;
 
-    protected $sortKey;
+    protected $sortKey = 'index';
 
-    protected $sortNewModelToTop;
+    protected $sortNewModelToTop = false;
 
     protected static function routesForSort(array $options = null)
     {
@@ -25,11 +26,6 @@ trait Sort
 
     public function initFeatureSort()
     {
-        $this->sortEnabled = true;
-
-        $this->sortKey = 'index';
-
-        $this->sortNewModelToTop = false;
     }
 
     public function sortUp()
@@ -44,7 +40,7 @@ trait Sort
 
     public function sortSlice()
     {
-        $group = (array) $this->input('group');
+        $group = (array)$this->input('group');
 
         $models = $this->findModelsOrFail($group);
 
@@ -78,7 +74,7 @@ trait Sort
 
     public function isSortEnabled()
     {
-        if (! $this->sortEnabled) {
+        if (! $this->sortEnabled || empty($this->sortKey)) {
             return false;
         }
 
@@ -97,7 +93,7 @@ trait Sort
 
     public function applyQueryOrderDefault($query)
     {
-        if (! method_exists($this, 'order') || empty($this->order())) {
+        if ($this->sortKey && (! method_exists($this, 'order') || empty($this->order()))) {
             $query->orderBy($this->sortKey, 'asc');
         }
     }
@@ -175,7 +171,7 @@ trait Sort
 
     protected function sortQuery()
     {
-        if ($this instanceof PanelTree) {
+        if ($this instanceof PanelTreeController) {
             return $this->queryBranch($this->modelToSort->{$this->parentKey()}, ['!order', '!page']);
         }
 

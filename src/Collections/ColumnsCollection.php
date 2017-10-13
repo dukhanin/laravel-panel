@@ -69,7 +69,7 @@ class ColumnsCollection extends Collection
             $column['order'] = $column['order'] === true ? $column['key'] : $column['order'];
         }
 
-        $column['label'] = trans($column['label']);
+        $column['label'] = app('translator')->trans($column['label']);
 
         return $column;
     }
