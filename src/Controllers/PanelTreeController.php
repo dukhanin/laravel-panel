@@ -2,7 +2,6 @@
 
 namespace Dukhanin\Panel\Controllers;
 
-use App\Http\Controllers\Controller;
 use Dukhanin\Panel\PanelTreeDecorator;
 
 abstract class PanelTreeController extends PanelListController
@@ -56,7 +55,8 @@ abstract class PanelTreeController extends PanelListController
 
     public function queryBranch($parentKeyValue = null, array $apply = ['*'])
     {
-        return $this->query($apply)->where($this->parentKey(), is_null($parentKeyValue) ? $this->parentKeyValue() : $parentKeyValue);
+        return $this->query($apply)->where($this->parentKey(),
+            is_null($parentKeyValue) ? $this->parentKeyValue() : $parentKeyValue);
     }
 
     public function items(array $apply = ['*'])
@@ -64,27 +64,13 @@ abstract class PanelTreeController extends PanelListController
         return $this->queryBranch(null, $apply)->get();
     }
 
-    protected function newModel()
+    public function applyNewModelParent($model)
     {
-        $model = clone $this->model();
+        $parent = ($parentKeyValue = $this->parameter('into')) ? $this->findModel($parentKeyValue) : null;
 
-        $parentKeyValue = $this->parameter('into');
-
-        if ($parentKeyValue) {
-            $parent = $this->findModel($parentKeyValue);
-
-            if (! $parent || $this->denies('append', [$parent, $model])) {
-                $parentKeyValue = null;
-            }
-        }
-
-        if (is_null($parentKeyValue)) {
-            $parentKeyValue = $this->parentKeyValue();
-        }
+        $parentKeyValue = $parent && $this->allows('append', [$parent, $model]) ? $parentKeyValue : $this->parentKeyValue();
 
         $model->{$this->parentKey()} = $parentKeyValue;
-
-        return $model;
     }
 
     protected function sortQuery()

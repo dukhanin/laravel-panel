@@ -1,10 +1,15 @@
 <?php
+use Dukhanin\Panel\Files\FileManager;
+use Illuminate\Database\Eloquent\Collection;
+
 $errors = $form->fieldErrors($field['key']);
 $id = 'file-'.mt_rand(1, 1000);
 
 $value = $form->inputValue($field['key']);
 
-$files = $value instanceof \Illuminate\Database\Eloquent\Collection ? $value : \Dukhanin\Panel\Files\File::findManyOrdered( collect($value)->map('intval') );
+$fileType = isset($fileType) ? (string) $fileType : 'default';
+
+$files = $value instanceof Collection ? $value : app(FileManager::class)->findMany($value);
 $resizes = isset($resizes) ? (array) $resizes : [];
 $directory = isset($directory) ? strval($directory) : (method_exists($form, 'uploadDirectory') ? $form->uploadDirectory() : null);
 ?>
@@ -42,7 +47,8 @@ $directory = isset($directory) ? strval($directory) : (method_exists($form, 'upl
     $(function () {
         var inputFiles = new panel.inputFiles('#{!! $id !!}', {
             resizes: {!! json_encode($resizes) !!},
-            directory: '{!! $directory !!}'
+            directory: '{!! $directory !!}',
+            fileType: '{!! $fileType !!}'
         });
 
         inputFiles.init();

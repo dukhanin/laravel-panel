@@ -25,9 +25,18 @@ class PanelFormUploadController extends Controller
 
         $files = $this->getUploadedFiles();
 
+        $validExtensions = $this->getValidExtensions();
+
+        if (!$this->validateFilesExt($files, $validExtensions))
+            return response()->json([
+                'error' => 1,
+                'success' => false,
+                'messages' => [__("files.extension_not_valid", ['values' => implode(', ', $validExtensions)])],
+                'data' => $files,
+            ]);
+
         foreach ($files as $file) {
             $this->uploadFileToDirectory($file);
-
             $file->save();
         }
 

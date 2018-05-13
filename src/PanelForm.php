@@ -72,6 +72,12 @@ class PanelForm
         $this->label = $this->config($this->model() && $this->model()->exists ? 'labels.edit' : 'labels.create');
     }
 
+    /**
+     * Инициализует директорию для upload файлов из полей file и
+     * wysiwyg
+     *
+     * @return void
+     */
     public function initUploadDirectory()
     {
         $this->uploadDirectory = date('Y-m').'/'.date('d');
@@ -100,14 +106,14 @@ class PanelForm
 
     protected function initDataFromInput()
     {
-        $this->data = (array) request()->input($this->inputName());
+        $this->data = (array)request()->input($this->inputName());
 
         $this->mergeAttributes($this->data);
     }
 
     protected function initDataFromOld()
     {
-        $this->data = (array) request()->old($this->inputName());
+        $this->data = (array)request()->old($this->inputName());
 
         $this->mergeAttributes($this->data);
     }
@@ -125,13 +131,13 @@ class PanelForm
                 continue;
             }
 
-            $data[$key] = (array) $data[$key] + (array) $dataFromModel[$key];
+            $data[$key] = (array)$data[$key] + (array)$dataFromModel[$key];
         }
     }
 
     protected function initDataFromModel()
     {
-        $this->data = (array) $this->dataFromModel();
+        $this->data = (array)$this->dataFromModel();
     }
 
     protected function initDataDefault()
@@ -312,7 +318,8 @@ class PanelForm
             return $viewFile;
         }
 
-        throw new ErrorException('No view found for field '.array_get($field, 'key').'(searched in '.implode(', ', array_filter($options)).')');
+        throw new ErrorException('No view found for field '.array_get($field, 'key').'(searched in '.implode(', ',
+                array_filter($options)).')');
     }
 
     public function inputName($name = null)
@@ -380,7 +387,9 @@ class PanelForm
             return null;
         }
 
-        if ($value = array_get($this->fields, $name.'.value')) {
+        if (isset($this->fields[$name]) && isset($this->fields[$name]['value'])) {
+            $value = $this->fields[$name]['value'];
+
             return $value instanceof Closure ? $value($this->model()) : $value;
         }
 
@@ -480,7 +489,7 @@ class PanelForm
     {
         $validator = $this->validator();
 
-        $validator->setData((array) $this->data());
+        $validator->setData((array)$this->data());
 
         return $this->isSubmit() && $validator->passes();
     }
@@ -566,7 +575,7 @@ class PanelForm
             if (in_array(InteractsWithPivotTable::class, class_uses_recursive($relation))) {
                 $relationMethod = array_get($this->fields->resolved()->get($relationKey), 'relationMethod', 'sync');
 
-                $relation->{$relationMethod}((array) $this->data($relationKey));
+                $relation->{$relationMethod}((array)$this->data($relationKey));
                 continue;
             }
         }

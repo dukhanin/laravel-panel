@@ -111,7 +111,7 @@ class PanelListDecorator
             return '';
         }
 
-        $action = html_tag_add_class($action, $action['key']);
+        html_tag_add_class($action, $action['key']);
 
         return html_tag($action, ...$overwrites);
     }
@@ -122,7 +122,7 @@ class PanelListDecorator
             return '';
         }
 
-        $action = html_tag_add_class($action, $action['key']);
+        html_tag_add_class($action, $action['key']);
 
         return html_tag($action, ...$overwrites);
     }
@@ -138,7 +138,11 @@ class PanelListDecorator
             $content = $this->cellContent($model->getAttribute($column['key']), $cell);
         }
 
-        $content = $this->linkCell($cell, $row, $content);
+        $defaultAction = collect(['edit', 'showModel'])->first(function($action) {
+            return method_exists($this->panel, $action);
+        });
+
+        $content = $this->linkCell($cell, $row, $content, $defaultAction);
 
         return $content;
     }

@@ -49,6 +49,7 @@ return [
         'validation-failed' => 'Validation Failed',
         'create' => 'Create new',
         'edit' => 'Edit',
+        'no-results' => 'No results',
     ],
     'formats' => [
         'H:i' => 'hh::mm',

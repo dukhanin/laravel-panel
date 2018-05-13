@@ -14,7 +14,9 @@ panel.inputFiles = function (input, options) {
 panel.inputFiles.prototype.defaults = {
     input: null,
     inputName: null,
+    loader: null,
     directory: '',
+    fileType: '',
     uploadUrl: panel.uploadUrl,
     multiple: false,
     container: null,
@@ -28,6 +30,7 @@ panel.inputFiles.prototype.init = function () {
     this.initContainer();
     this.initMultiple();
     this.initUpload();
+    this.initLoader();
 };
 
 panel.inputFiles.prototype.initInputName = function () {
@@ -59,6 +62,16 @@ panel.inputFiles.prototype.initUpload = function () {
     this.input.on('change', $.proxy(this.doUpload, this));
 };
 
+panel.inputFiles.prototype.initLoader = function () {
+    this.input.css('display', 'inline');
+    if (this.loader === null) {
+        this.loader = $('<i class="files-loader fa fa-spinner fa-spin" style="display: none;"></i>');
+        this.loader.insertAfter(this.input);
+    } else {
+        this.loader = $(this.loader);
+    }
+};
+
 panel.inputFiles.prototype.doUpload = function () {
     var data = new FormData(),
         files = this.input.prop('files');
@@ -68,6 +81,9 @@ panel.inputFiles.prototype.doUpload = function () {
     }
 
     data.append('directory', this.directory);
+    data.append('fileType', this.fileType);
+
+    this.showLoader();
 
     panel.ajax({
         url: this.uploadUrl,
@@ -83,9 +99,13 @@ panel.inputFiles.prototype.doUpload = function () {
 
             this.onFilesUpload(files);
 
-            for (var i in files) {
-                this.onFileUpload(files[i]);
-            }
+            if (responseJSON.success)
+                for (var i in files) {
+                    this.onFileUpload(files[i]);
+                }
+        }, this),
+        complete: $.proxy(function () {
+            this.hideLoader();
         }, this)
     });
 
@@ -268,4 +288,12 @@ panel.inputFiles.prototype.deleteFiles = function (file) {
     for (var i in this.files) {
         this.files[i].delete();
     }
+};
+
+panel.inputFiles.prototype.showLoader = function () {
+    this.loader.show();
+};
+
+panel.inputFiles.prototype.hideLoader = function () {
+    this.loader.hide();
 };

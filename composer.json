@@ -2,17 +2,29 @@
     "name": "dukhanin/laravel-panel",
     "description": "Laravel 5 panel constructor",
     "keywords": ["laravel", "panel", "form", "admin", "lists", "list"],
-    "minimum-stability": "dev",
     "authors": [
         {
             "name": "Anton Dukhanin",
             "email": "anton.dukhanin@gmail.com"
+        },
+        {
+            "name": "Sergey Yaremenko",
+            "email": "s.yaremenko91@gmail.com"
+        },
+        {
+            "name": "Sergey Raev",
+            "email": "2011dark.grey@gmail.com"
         }
     ],
     "require": {
-        "php": "~7.0",
-        "intervention/image": "^2.3",
-        "dukhanin/laravel-support": "dev-master"
+        "intervention/image": "^2.4",
+        "dukhanin/laravel-support": "~2.0",
+        "fzaninotto/faker": "^1.7",
+        "meyfa/php-svg": "^0.7.0"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^7.0",
+        "laravel/laravel": "^5.6"
     },
     "extra": {
         "laravel": {
@@ -20,10 +32,6 @@
                 "Dukhanin\\Panel\\Providers\\PanelServiceProvider"
             ]
         }
-    },
-    "require-dev": {
-        "phpunit/phpunit": "~5.7",
-        "laravel/laravel": "5.4"
     },
     "autoload": {
         "psr-4": {

@@ -1,6 +1,7 @@
 @push('styles')
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/cropper.min.css') }}"/>
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/datepicker3.css') }}"/>
+<link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/select2.min.css') }}"/>
 
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.css') }}"/>
 <link rel="stylesheet" href="{{ URL::asset('assets/panel-inspinia/css/panel.form.css') }}"/>
@@ -17,6 +18,8 @@
 <script src="{{ URL::asset('assets/panel-inspinia/js/cropper.min.js') }}"></script>
 <script src="{{ URL::asset('assets/panel-inspinia/js/bootstrap-datepicker.js') }}"></script>
 @if(app()->getLocale()  != 'en')<script src="{{ URL::asset('assets/panel-inspinia/js/bootstrap-datepicker.' . app()->getLocale() . '.js') }}"></script>@endif
+<script src="{{ URL::asset('assets/panel-inspinia/js/select2.min.js') }}"></script>
+@if(app()->getLocale()  != 'en')<script src="{{ URL::asset('assets/panel-inspinia/js/select2.' . app()->getLocale() . '.js') }}"></script>@endif
 <script src="{{ URL::asset('assets/tinymce/tinymce.jquery.min.js') }}"></script>
 <script src="{{ URL::asset('assets/tinymce/jquery.tinymce.min.js') }}"></script>
 

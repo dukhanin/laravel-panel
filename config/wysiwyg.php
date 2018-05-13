@@ -2,7 +2,7 @@
 
 return [
     'default' => [
-        'language' => 'en',
+        'language' => 'ru',
         'relative_urls' => false,
         'menubar' => false,
         'plugins' => [

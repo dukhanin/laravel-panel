@@ -4,13 +4,13 @@ namespace Dukhanin\Panel\Collections;
 
 use Dukhanin\Panel\Traits\HasConfig;
 use Dukhanin\Support\Traits\BeforeAndAfterCollection;
-use Dukhanin\Support\Traits\Toucheble;
+use Dukhanin\Support\Traits\Touchable;
 use Illuminate\Database\Eloquent\Collection;
 use ErrorException;
 
 class FieldsCollection extends Collection
 {
-    use Toucheble, BeforeAndAfterCollection, HasConfig;
+    use Touchable, BeforeAndAfterCollection, HasConfig;
 
     protected $form;
 

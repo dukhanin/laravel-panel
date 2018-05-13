@@ -1,7 +1,0 @@
-.panel-list .inactive, .panel-tree .inactive, .panel-form .inactive {
-    color: #ccc;
-}
-
-.panel-list .inactive img, .panel-tree .inactive img, .panel-form .inactive img {
-    opacity: 0.4;
-}

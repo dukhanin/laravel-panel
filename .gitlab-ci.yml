@@ -1,0 +1,17 @@
+image: dukhanin/php71-xdebug-alpine:latest
+
+stages:
+  - testing
+
+unit testing:
+  stage: testing
+  script:
+    - composer update
+    - ./vendor/bin/phpunit --coverage-text --colors=never
+    - if [ $? -ne 0 ]; then exit 1; fi;
+  artifacts:
+    when: on_success
+    expire_in: 1 month
+    name: "Coverage report (pipeline $CI_PIPELINE_ID)"
+    paths:
+      - ./storage/coverage/html/

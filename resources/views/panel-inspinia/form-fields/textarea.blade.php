@@ -9,10 +9,8 @@ $errors = $form->fieldErrors($field['key']);
     </label>
     <div class="col-lg-10">
         {!! html_tag(
-            'textarea.form-control', [
-            'rows' => 8
-            ],
-            array_except($field, ['key', 'type', 'label']),
+            'textarea.form-control', ['rows' => 8],
+            array_except($field, ['key', 'type', 'label', 'value']),
             [
                 'name' => $form->htmlInputName($field['key']),
                 'content' => e( strval($form->inputValue($field['key'])) )

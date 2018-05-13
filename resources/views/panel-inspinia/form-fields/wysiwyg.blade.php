@@ -1,6 +1,6 @@
 <?php
 $errors = $form->fieldErrors($field['key']);
-$id = 'wysiwyg-'.mt_rand(1, 1000);
+$id = 'wysiwyg-'.uniqid(true);
 
 $config = config('wysiwyg.default');
 $config['images_upload_url'] = urlbuilder($config['images_upload_url'])->query(['directory' => $form->uploadDirectory()])->compile();
@@ -15,7 +15,7 @@ $config['filemanager_subfolder'] = $form->uploadDirectory();
     <div class="col-lg-10">
         {!! html_tag(
             'textarea.form-control#' . $id,
-            array_except($field, ['key', 'type', 'label']),
+            array_except($field, ['key', 'type', 'label', 'value']),
             [
                 'name' => $form->htmlInputName($field['key']),
                 'style' => 'height: 400px',

@@ -3,12 +3,12 @@
 namespace Dukhanin\Panel\Collections;
 
 use Dukhanin\Support\Traits\BeforeAndAfterCollection;
-use Dukhanin\Support\Traits\Toucheble;
+use Dukhanin\Support\Traits\Touchable;
 use Illuminate\Support\Collection;
 
 class ColumnsCollection extends Collection
 {
-    use Toucheble, BeforeAndAfterCollection;
+    use Touchable, BeforeAndAfterCollection;
 
     protected $panel;
 

@@ -3,18 +3,17 @@
 namespace Dukhanin\Panel\Controllers;
 
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Route;
 use Dukhanin\Panel\Collections\ActionsCollection;
 use Dukhanin\Panel\Collections\ColumnsCollection;
 use Dukhanin\Panel\PanelListDecorator;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Support\Facades\Gate;
 use Dukhanin\Panel\Traits\HasAssets;
 use Dukhanin\Panel\Traits\HasConfig;
 
 abstract class PanelListController extends Controller
 {
-    use HasConfig, HasAssets;
+    use HasConfig, HasAssets, Concerns\ChecksAccess, Concerns\SetsRoutes;
 
     protected $url;
 
@@ -25,8 +24,6 @@ abstract class PanelListController extends Controller
     protected $label;
 
     protected $query;
-
-    protected $policy;
 
     protected $view;
 
@@ -115,10 +112,6 @@ abstract class PanelListController extends Controller
         $this->query = $this->model()->newQuery();
     }
 
-    public function initPolicy()
-    {
-        $this->policy = Gate::getPolicyFor($this->model());
-    }
 
     public function initView()
     {
@@ -182,7 +175,7 @@ abstract class PanelListController extends Controller
     {
         $this->urlParameters = [];
 
-        if ($route = app('router')->current()) {
+        if ($route = Route::current()) {
             foreach ($route->parameterNames as $name) {
                 $this->urlParameters[$name] = array_get($route->parameters, $name);
             }
@@ -264,15 +257,6 @@ abstract class PanelListController extends Controller
         $builder->getQuery()->unionOrders = [];
 
         return $builder->count();
-    }
-
-    public function policy()
-    {
-        if (is_null($this->policy)) {
-            $this->initPolicy();
-        }
-
-        return $this->policy;
     }
 
     public function view()
@@ -372,56 +356,6 @@ abstract class PanelListController extends Controller
         return $collection;
     }
 
-    public function allows($ability, $arguments = [])
-    {
-        $policy = $this->policy();
-
-        if ($policy === null) {
-            return false;
-        }
-
-        if (is_bool($policy)) {
-            return $policy;
-        }
-
-        if (empty($arguments)) {
-            $arguments = [$this->model()];
-        }
-
-        if (starts_with($ability, 'group-')) {
-            $ability = preg_replace('/^group-/', '', $ability);
-
-            if (empty($arguments)) {
-                $arguments = [$this->model()];
-            }
-
-            foreach ($arguments as $model) {
-                if ($this->denies($ability, $model)) {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        if (! is_array($arguments)) {
-            $arguments = [$arguments];
-        }
-
-        return is_callable([$policy, $ability]) && $policy->$ability(app('auth')->user(), ...$arguments);
-    }
-
-    public function denies($ability, $arguments = [])
-    {
-        return ! $this->allows($ability, $arguments);
-    }
-
-    public function authorize($ability, $arguments = [])
-    {
-        if ($this->denies($ability, $arguments)) {
-            throw new AuthorizationException('This action is unauthorized.');
-        }
-    }
 
     public function eachRow(&$row, $handlers = ['*'])
     {
@@ -489,48 +423,5 @@ abstract class PanelListController extends Controller
     public function initUrl()
     {
         $this->url = action(static::routeAction('showList'), $this->urlParameters());
-    }
-
-    static public function routes(array $attributes = null)
-    {
-        if (app()->routesAreCached()) {
-            return;
-        }
-
-        $attributes = $attributes ?: ['middleware' => ['web']];
-
-        if (empty($attributes['as'])) {
-            $attributes['as'] = class_basename(static::class);
-        }
-
-        if (empty($attributes['prefix'])) {
-            $attributes = array_set($attributes, 'prefix', trim(rtrim(kebab_case(class_basename(static::class)), 'controller'), '-'));
-        }
-
-        $attributes['as'] = rtrim($attributes['as'], '.').'.';
-
-        app('router')->group($attributes, function ($router) {
-            static::initRoutes();
-            static::initFeaturesRoutes();
-        });
-    }
-
-    static protected function routeAction($method)
-    {
-        return '\\'.static::class.'@'.$method;
-    }
-
-    static protected function initRoutes()
-    {
-        app('router')->get('', static::routeAction('showList'))->name('showList');
-    }
-
-    static protected function initFeaturesRoutes()
-    {
-        foreach (class_uses_recursive($class = get_called_class()) as $trait) {
-            if (is_callable([$class, $method = 'routesFor'.class_basename($trait)])) {
-                $class::$method();
-            }
-        }
     }
 }

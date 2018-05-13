@@ -3,35 +3,19 @@ namespace Dukhanin\Panel\Traits;
 
 use Illuminate\Database\Eloquent\Collection;
 use Dukhanin\Panel\Files\File;
-use Dukhanin\Panel\Files as PanelFile;
+use Dukhanin\Panel\Files\FileManager;
 
 trait CastsFiles
 {
-    protected $castsFileCached = [];
-
-    protected $castsFilesCached = [];
-
     protected function castAttribute($key, $value)
     {
         switch ($this->getCastType($key)) {
             case 'file':
             case 'image':
-                if (is_null($value)) {
-                    return $value;
-                }
-
-                if (! isset($this->castsFileCached[$key])) {
-                    return $this->castsFileCached[$key] = $this->asFile($value);
-                }
-
-                return $this->castsFileCached[$key];
+                return $this->asFile($value);
             case 'files':
             case 'images':
-                if (! isset($this->castsFilesCached[$key])) {
-                    return $this->castsFilesCached[$key] = $this->asFiles($value);
-                }
-
-                return $this->castsFilesCached[$key];
+                return $this->asFiles($value);
         }
 
         return parent::castAttribute($key, $value);
@@ -44,7 +28,6 @@ trait CastsFiles
         }
 
         if ($value && $this->isFilesAttribute($key)) {
-
             $value = $this->fromFiles($value);
         }
 
@@ -57,13 +40,15 @@ trait CastsFiles
             return null;
         }
 
-        $class = $this->castFileClass();
+        $fileManager = app(FileManager::class);
 
-        if ($value instanceof $class) {
+        $fileClass = $fileManager->getFileClass();
+
+        if ($value instanceof $fileClass) {
             return $value;
         }
 
-        return $class::find($value instanceof PanelFile ? $value->getKey() : $value);
+        return $fileManager->find($value instanceof File ? $value->getKey() : $value);
     }
 
     protected function asFiles($value)
@@ -74,26 +59,24 @@ trait CastsFiles
 
         if (is_string($value)) {
             $value = $this->fromJson($value);
-        } elseif (is_array($value)) {
-            $value = array_map('intval', $value);
         }
 
-        return ($this->castFileClass())::findManyOrdered($value);
+        return app(FileManager::class)->findMany($value);
     }
 
     protected function fromFile($value)
     {
-        if ($value instanceof PanelFile) {
-            return $value->getKey();
-        }
-
-        return $value;
+        return $value instanceof File ? $value->getKey() : $value;
     }
 
     protected function fromFiles($value)
     {
         if ($value instanceof Collection) {
             $value = $value->modelKeys();
+        }
+
+        if (is_string($value)) {
+            $value = $this->fromJson($value);
         }
 
         return $this->asJson($value);
@@ -107,14 +90,5 @@ trait CastsFiles
     protected function isFilesAttribute($key)
     {
         return in_array(array_get($this->getCasts(), $key), ['files', 'images']);
-    }
-
-    protected function castFileClass()
-    {
-        if (property_exists($this, 'castFileClass') && $this->castFileClass) {
-            return $this->castFileClass;
-        }
-
-        return File::class;
     }
 }

@@ -11,7 +11,7 @@ $file = ($value = $show->value($field['key'])) instanceof File ? $value : File::
             @if($file)
                 @if($file->isImage())
                     <a id="file-{{ $file->getKey() }}"
-                       href="{{ $file->url() }}">{!! $file->getResize(['panel_default', 'size' => '150xx150'])->img() !!} </a>
+                       href="#">{!! $file->getResize(['panel_default', 'size' => '150xx150'])->img() !!} </a>
 
                     @push('scripts')
                     <script>

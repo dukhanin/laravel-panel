@@ -1,8 +1,9 @@
 <?php
 use Dukhanin\Panel\Files\File;
-use \Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection;
+use Dukhanin\Panel\Files\FileManager;
 
-$files = ($value = $show->value($field['key'])) instanceof Collection ? $value : File::findManyOrdered($value);
+$files = ($value = $show->value($field['key'])) instanceof Collection ? $value : app(FileManager::class)->findMany($value);
 ?>
 <div class="form-group">
     <label class="col-sm-2 control-label">{{ $field['label'] }}</label>

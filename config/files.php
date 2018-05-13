@@ -4,17 +4,14 @@ return [
     'types' => [
         'image' => [
             'formats' => [
-                'jpeg',
-                'jpg',
-                'gif',
-                'png',
-
+                'image',
             ],
             'extensions' => [
                 'jpeg',
                 'jpg',
                 'gif',
                 'png',
+                'svg',
             ],
             'fake' => 'img/fake.png',
         ],

@@ -88,7 +88,7 @@ trait Pages
     protected function applyQueryPage($select)
     {
         if ($this->perPage() > 0) {
-            $select->forPage($this->page(), $this->perPage());
+            $select->skip(($this->page() - 1) * $this->perPage())->take($this->perPage());
         }
     }
 

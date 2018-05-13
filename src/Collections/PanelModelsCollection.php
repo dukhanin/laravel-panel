@@ -104,10 +104,6 @@ class PanelModelsCollection extends Collection
         foreach ($this->items as $item) {
             $parentKey = intval(array_get($item, $this->keyParentName));
 
-            if ($parentKey !== 0 && ! $this->contains($this->keyName, $parentKey)) {
-                continue;
-            }
-
             if (! isset($index[$parentKey])) {
                 $index[$parentKey] = [];
             }

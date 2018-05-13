@@ -15,9 +15,10 @@
 
     <div class="wrapper wrapper-content wrapper-panel animated fadeInRight">
 
-        @if( ($panel->paginator() && $panel->paginator()->hasPages()) || ($panel->perPageOptions() && !$panel->isEmpty()) )
+        @if( ($panel->paginator() && $panel->paginator()->hasPages()) || $panel->perPageOptions())
             <div class="panel-list-pagination panel-list-pagination-top row">
                 <div class="col-md-6">
+                    @if($panel->perPageOptions())
                     <ul class="pagination">
                         @foreach($panel->perPageOptions() as $perPage)
                             <li @if($perPage == $panel->perPage()) class="active"@endif>
@@ -25,6 +26,7 @@
                             </li>
                         @endforeach
                     </ul>
+                    @endif
                 </div>
                 <div class="col-md-6 text-right">
                     {!! $panel->paginator() ? $panel->paginator()->render('panel::panel-inspinia.pagination.default') : '' !!}
@@ -182,16 +184,18 @@
                     </table>
                 </div>
 
-                @if( ($panel->paginator() && $panel->paginator()->hasPages()) || ($panel->perPageOptions() && !$panel->isEmpty()) )
+                @if( ($panel->paginator() && $panel->paginator()->hasPages()) || $panel->perPageOptions() )
                     <div class="panel-list-pagination panel-list-pagination-bottom row">
                         <div class="col-md-6">
-                            <ul class="pagination">
-                                @foreach($panel->perPageOptions() as $perPage)
-                                    <li @if($perPage == $panel->perPage()) class="active"@endif>
-                                        <a href="{{ $panel->urlTo('showList', ['perPage' => $perPage], ['!perPage', '!page']) }}">{{ is_numeric($perPage) ? $perPage : 'Все' }}</a>
-                                    </li>
-                                @endforeach
-                            </ul>
+                            @if($panel->perPageOptions())
+                                <ul class="pagination">
+                                    @foreach($panel->perPageOptions() as $perPage)
+                                        <li @if($perPage == $panel->perPage()) class="active"@endif>
+                                            <a href="{{ $panel->urlTo('showList', ['perPage' => $perPage], ['!perPage', '!page']) }}">{{ is_numeric($perPage) ? $perPage : 'Все' }}</a>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                            @endif
                         </div>
                         <div class="col-md-6 text-right">
                             {!! $panel->paginator() ? $panel->paginator()->render('panel::panel-inspinia.pagination.default') : '' !!}

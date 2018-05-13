@@ -94,7 +94,7 @@ return [
             'label' => 'Открыть',
             'icon' => 'fa fa-xs fa-external-link',
             'icon-only' => true,
-            'target' => '_blank'
+            'target' => '_blank',
         ],
         'append' => [
             'class' => 'btn btn-default btn-xs',

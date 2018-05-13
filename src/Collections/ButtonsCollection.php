@@ -2,14 +2,14 @@
 
 namespace Dukhanin\Panel\Collections;
 
+use Illuminate\Support\Collection;
 use Dukhanin\Panel\Traits\HasConfig;
 use Dukhanin\Support\Traits\BeforeAndAfterCollection;
-use Dukhanin\Support\Traits\Toucheble;
-use Illuminate\Support\Collection;
+use Dukhanin\Support\Traits\Touchable;
 
 class ButtonsCollection extends Collection
 {
-    use Toucheble, BeforeAndAfterCollection, HasConfig;
+    use Touchable, BeforeAndAfterCollection, HasConfig;
 
     protected $form;
 
@@ -54,6 +54,10 @@ class ButtonsCollection extends Collection
             $button = call_user_func($button, $this);
         }
 
+        if ($button === false) {
+            return false;
+        }
+
         if (! is_array($button)) {
             $button = [];
         }
@@ -69,7 +73,7 @@ class ButtonsCollection extends Collection
         ];
 
         foreach ($stack as $arr) {
-            $button = $button + (array) (is_callable($arr) ? call_user_func($arr, $this) : $arr);
+            $button = $button + (array)(is_callable($arr) ? call_user_func($arr, $this) : $arr);
         }
 
         if (! empty($button['confirm'])) {
@@ -85,7 +89,7 @@ class ButtonsCollection extends Collection
     {
         return collect($this->items)->map(function ($button, $key) {
             return $this->resolve($key, $button);
-        });
+        })->filter();
     }
 
     public function put($key, $value = null)

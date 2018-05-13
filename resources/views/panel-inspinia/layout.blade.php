@@ -48,7 +48,7 @@
                 </li>
 
                 <li>
-                    <a href="http://antondukhanin.ru" target="_blank"><i class="fa fa-external-link"></i>
+                    <a href="https://antondukhanin.ru" target="_blank"><i class="fa fa-external-link"></i>
                         <span class="nav-label">Anton Dukhanin</span></a>
                 </li>
                 <li>
@@ -138,7 +138,7 @@
                                 </p>
 
                                 <p>
-                                    <a href="http://antondukhanin.ru" target="_blank"
+                                    <a href="https://antondukhanin.ru" target="_blank"
                                        style="color: #676a6c; text-decoration: underline;"
 
                                     >Anton Dukhanin</a> &copy; {{ date('Y') }}

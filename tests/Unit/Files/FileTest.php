@@ -2,628 +2,382 @@
 
 namespace Dukhanin\Panel\Tests\Unit\Files;
 
+use Faker\Factory as FakerFactory;
+use Illuminate\Http\UploadedFile;
+use Symfony\Component\HttpFoundation\File\File as BaseFile;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Foundation\Testing\DatabaseTransactions;
-use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\File as Filesystem;
 use Dukhanin\Panel\Tests\TestCase;
 use Dukhanin\Panel\Files\File;
-use Symfony\Component\HttpFoundation\File\File as BaseFile;
-use SplFileInfo;
 
 class FileTest extends TestCase
 {
-    use DatabaseTransactions;
+    protected $faker;
 
     public function setUp()
     {
-        parent::setUp();
+        $this->createApplication();
 
-        Filesystem::copyDirectory(__DIR__.'/../../mocks/', $this->mocks());
+        $this->faker = FakerFactory::create();
     }
 
-    public function tearDown()
-    {
-        Filesystem::deleteDirectory($this->mocks());
-
-        parent::tearDown();
-    }
-
-    public function testConfig()
+    public function test_config_is_not_empty()
     {
         $this->assertNotEmpty(config('files.types.image'));
     }
 
-    public function testGetPath()
+    public function test_setBaseFile_resolves_upload_path()
     {
-        $file = new File();
+        $file = factory(File::class)->make();
+
+        $file->setBaseFile(rtrim(config('upload.path'), '/').'/hello/world.jpg');
+
+        $this->assertEquals(trim(config('upload.url'), '/').'/hello/world.jpg', $file->path);
+        $this->assertEquals(rtrim(config('upload.url'), '/').'/hello/world.jpg', $file->url);
+        $this->assertEquals(rtrim(config('upload.url'), '/').'/hello/world.jpg', $file->url());
+        $this->assertEquals(rtrim(config('upload.url'), '/').'/hello/world.jpg', $file->getUrl());
+    }
+
+    public function test_setBaseFile_resolves_public_path()
+    {
+        $file = factory(File::class)->make();
+
+        $file->setBaseFile(public_path('hello/world.jpg'));
+
+        $this->assertEquals('hello/world.jpg', $file->path);
+        $this->assertEquals('/hello/world.jpg', $file->url);
+        $this->assertEquals('/hello/world.jpg', $file->url());
+        $this->assertEquals('/hello/world.jpg', $file->getUrl());
+    }
+
+    public function test_setBaseFile_does_not_resolve_foreign_path()
+    {
+        $file = factory(File::class)->make();
+
+        $file->setBaseFile('/var/hello/world.jpg');
+
+        $this->assertEquals('/var/hello/world.jpg', $file->path);
+        $this->assertEquals('/var/hello/world.jpg', $file->url);
+        $this->assertEquals('/var/hello/world.jpg', $file->url());
+        $this->assertEquals('/var/hello/world.jpg', $file->getUrl());
+    }
+
+    public function test_setBaseFile_resolves_relative_public_path()
+    {
+        $file = factory(File::class)->make();
+
+        $file->setBaseFile('hello/world.jpg');
+
+        $this->assertEquals('hello/world.jpg', $file->path);
+        $this->assertEquals(public_path('hello/world.jpg'), $file->getPath());
+        $this->assertEquals('/hello/world.jpg', $file->url);
+        $this->assertEquals('/hello/world.jpg', $file->url());
+        $this->assertEquals('/hello/world.jpg', $file->getUrl());
+    }
+
+    public function test_setBaseFile_resolves_relative_upload_path()
+    {
+        $file = factory(File::class)->make();
+
+        $file->setBaseFile(trim(config('upload.url'), '/').'/hello/world.jpg');
+
+        $this->assertEquals(trim(config('upload.url'), '/').'/hello/world.jpg', $file->path);
+        $this->assertEquals(rtrim(config('upload.path'), '/').'/hello/world.jpg', $file->getPath());
+        $this->assertEquals(rtrim(config('upload.url'), '/').'/hello/world.jpg', $file->url);
+        $this->assertEquals(rtrim(config('upload.url'), '/').'/hello/world.jpg', $file->url());
+        $this->assertEquals(rtrim(config('upload.url'), '/').'/hello/world.jpg', $file->getUrl());
+    }
+
+    public function test_getPath_returns_null_when_file_is_undefined()
+    {
+        $file = factory(File::class)->create();
+
         $this->assertNull($file->getPath());
-
-        $file->path = 'storage/folder/path.ext';
-        $this->assertEquals($file->getPath(), public_path('storage/folder/path.ext'));
-
-        $file->path = $fullPath = base_path('storage/folder/path.ext');
-        $this->assertEquals($file->getPath(), $fullPath);
     }
 
-    public function testGetUrl()
+    public function test_children_if_there_are_no_associated_files()
     {
-        $file = new File();
-        $this->assertEquals($file->getUrl(), '#undefined');
-        $this->assertEquals($file->url, '#undefined');
+        $file = factory(File::class)->make();
 
-        $file->setBaseFile(public_path('storage/folder/path.ext'));
-        $this->assertEquals($file->getUrl(), '/storage/folder/path.ext');
-        $this->assertEquals($file->url, '/storage/folder/path.ext');
-
-        $file->setBaseFile('storage/folder/path.ext');
-        $this->assertEquals($file->getUrl(), '/storage/folder/path.ext');
-        $this->assertEquals($file->url, '/storage/folder/path.ext');
-    }
-
-    public function testChildren()
-    {
-        $file = new File;
-        $file->save();
         $this->assertInstanceOf(HasMany::class, $file->children());
         $this->assertInstanceOf(Collection::class, $file->children);
-
-        $child = new File;
-        $child->parent()->associate($file);
-        $child->save();
-
-        $file->load('children');
-        $this->assertEquals($file->children->count(), 1);
-        $this->assertEquals($file->children->first()->id, $child->id);
+        $this->assertCount(0, $file->children);
     }
 
-    public function testParent()
+    public function test_children_if_there_are_associated_files()
     {
-        $file = new File;
+        $file = factory(File::class)->create();
+        $child = factory(File::class)->create([
+            'parent_id' => $file->id,
+        ]);
+
+        $this->assertInstanceOf(HasMany::class, $file->children());
+        $this->assertInstanceOf(Collection::class, $file->children);
+        $this->assertCount(1, $file->children);
+        $this->assertEquals($child->id, $file->children->first()->id);
+    }
+
+    public function test_parent_returns_null_if_it_is_empty()
+    {
+        $file = factory(File::class)->create();
+
         $this->assertInstanceOf(BelongsTo::class, $file->parent());
         $this->assertNull($file->parent);
+    }
 
-        $parent = new File;
-        $parent->save();
+    public function test_parent_returns_file_if_it_has_been_set()
+    {
+        $parent = factory(File::class)->create();
+        $file = factory(File::class)->create([
+            'parent_id' => $parent->id,
+        ]);
 
-        $file->parent()->associate($parent);
-
+        $this->assertInstanceOf(BelongsTo::class, $file->parent());
         $this->assertInstanceOf(File::class, $file->parent);
         $this->assertEquals($parent->id, $file->parent->id);
     }
 
-    public function testGetWidth()
+    public function test_getBaseFile_returns_correct_BaseFile_object_for_defined_file()
     {
-        $file = new File();
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-        $this->assertEquals($file->getWidth(), 400);
-
-        $file = new File();
-        $file->setBaseFile($this->mocks('test.txt'));
-        $this->assertNull($file->getWidth());
-
-        $file = new File();
-        $file->setBaseFile('not_exists');
-        $this->assertNull($file->getWidth());
+        $file = factory(File::class)->states('exists')->make();
+        $this->assertInstanceOf(BaseFile::class, $file->getBaseFile());
+        $this->assertStringEndsWith($file->getFilename(), $file->path);
     }
 
-    public function testGetHeight()
+    public function test_getBaseFile_returns_correct_BaseFile_object_for_undefined_file()
     {
-        $file = new File();
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-        $this->assertEquals($file->getHeight(), 300);
-
-        $file = new File();
-        $file->setBaseFile($this->mocks('test.txt'));
-        $this->assertNull($file->getHeight());
-
-        $file = new File();
-        $file->setBaseFile('not_exists');
-        $this->assertNull($file->getHeight());
-    }
-
-    public function testGetResizeWithSizeOption()
-    {
-        $this->assertNull((new File)->getResize(['key' => 'small', 'no_size_defined']));
-    }
-
-    public function testGetResizeFromUndefined()
-    {
-        $this->assertNull((new File)->getResize(['key' => 'small', 'size' => '100x100']));
-    }
-
-    public function testGetResizeLoaded()
-    {
-        $file = new File;
-        $file->save();
-
-        $resize = new File;
-        $resize->key = 'small';
-        $resize->parent()->associate($file);
-        $resize->save();
-
-        $this->assertEquals($file->getResize(['key' => 'small', 'size' => '100x100'])->id, $resize->id);
-    }
-
-    public function testGetResizeCreating()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-
-        $resize = $file->getResize(['key' => 'small', 'size' => '100x100']);
-        $this->assertEquals($resize->key, 'small');
-        $this->assertEquals($resize->getWidth(), 100);
-        $this->assertEquals($resize->getHeight(), 75);
-
-        $resize = $file->getResize('100x100');
-        $this->assertEquals($resize->key, '100x100');
-        $this->assertEquals($resize->getWidth(), 100);
-        $this->assertEquals($resize->getHeight(), 75);
-    }
-
-    public function testGetResizeWithShortNotation()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-
-        $resize = $file->getResize('100x100');
-        $this->assertEquals($resize->key, '100x100');
-        $this->assertEquals($resize->getWidth(), 100);
-        $this->assertEquals($resize->getHeight(), 75);
-    }
-
-    public function testGetResizeForced()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-
-        $file->getResize(['key' => 'small', 'size' => '200x200']);
-        $resize = $file->getResize(['key' => 'small', 'size' => '100x100', 'force' => true]);
-        $resize->initWidthAndHeight();
-        $this->assertEquals($resize->key, 'small');
-        $this->assertEquals($resize->getWidth(), 100);
-        $this->assertEquals($resize->getHeight(), 75);
-    }
-
-    public function testGetResizeFromInvalidFile()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test.txt'));
-
-        $file->mime = 'image/jpeg';
-
-        $resize = $file->getResize(['key' => 'small', 'size' => '200x200', 'force' => true]);
-        $this->assertEquals($resize->getFilename(), pathinfo(config('files.types.image.fake'), PATHINFO_BASENAME));
-        $this->assertEquals($resize->getWidth(), 200);
-        $this->assertEquals($resize->getHeight(), 200);
-    }
-
-    public function testHasResize()
-    {
-        $file = new File;
-        $this->assertFalse($file->hasResize('small'));
-
-        $file->save();
-        $this->assertFalse($file->hasResize('small'));
-
-        $resize = new File;
-        $resize->key = 'small';
-        $resize->parent()->associate($file);
-        $resize->save();
-        $this->assertTrue($file->hasResize('small'));
-    }
-
-    public function testGetBaseFile()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
+        $file = factory(File::class)->make();
 
         $this->assertInstanceOf(BaseFile::class, $file->getBaseFile());
-        $this->assertEquals($file->getFilename(), 'test-400x300.jpg');
+        $this->assertEmpty($file->getBaseFile()->getFilename());
     }
 
-    public function testInitWidthAndHeight()
+    public function test_initBaseFile_sets_correct_BaseFile_object()
     {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
+        $filepath = factory(File::class)->states('exists')->make()->getPath();
+        $fileWithAbsolutelyPath = factory(File::class)->make([
+            'path' => $filepath,
+        ]);
 
-        $file->initWidthAndHeight();
-        $this->assertEquals($file->width, 400);
-        $this->assertEquals($file->height, 300);
+        $fileWithRelativePath = factory(File::class)->make([
+            'path' => preg_replace('#^('.preg_quote(config('upload.path')).')/*#', trim(config('upload.url'), '/').'/',
+                $filepath),
+        ]);
 
-        $file->setBaseFile($this->mocks('test.txt'));
-        $file->initWidthAndHeight();
-        $this->assertNull($file->width);
-        $this->assertNull($file->height);
-
-        $file->setBaseFile('not_exists');
-        $file->initWidthAndHeight();
-        $this->assertNull($file->width);
-        $this->assertNull($file->height);
+        $this->assertEquals($filepath, $fileWithRelativePath->getBaseFile()->getPathname());
+        $this->assertEquals($filepath, $fileWithAbsolutelyPath->getBaseFile()->getPathname());
     }
 
-    public function testInitBaseFile()
+    public function test_initBaseFile_sets_correct_BaseFile_object_for_undefined_path()
     {
-        $file = new File;
+        $file = factory(File::class)->make();
 
-        $file->path = $this->mocks('test-400x300.jpg');
-        $file->initBaseFile();
-        $this->assertEquals($file->getBaseFile()->getFilename(), 'test-400x300.jpg');
+        $this->assertEmpty($file->getBaseFile()->getPathname());
     }
 
-    public function testSetBaseFile()
+    public function test_setBaseFile_handles_BaseFile_object()
     {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-        $this->assertEquals($file->getBaseFile()->getFilename(), 'test-400x300.jpg');
+        $file = factory(File::class)->make();
+        $filepath = factory(File::class)->states('exists')->make()->getPath();
+        $baseFile = new BaseFile($filepath);
 
-        $file = new File;
-        $file->setBaseFile(new BaseFile($this->mocks('test-400x300.jpg')));
-        $this->assertEquals($file->getBaseFile()->getFilename(), 'test-400x300.jpg');
+        $file->setBaseFile($baseFile);
 
-        $file = new File;
-        $file->setBaseFile(new SplFileInfo($this->mocks('test-400x300.jpg')));
-        $this->assertEquals($file->getBaseFile()->getFilename(), 'test-400x300.jpg');
+        $this->assertEquals($baseFile->getPathname(), $file->getPath());
+        $this->assertEquals($baseFile, $file->getBaseFile());
     }
 
-    public function testIsMime()
+    public function test_setBaseFile_handles_filepath_string()
     {
-        $file = new File;
-        $this->assertFalse($file->isMime());
-        $this->assertFalse($file->isMime('image'));
-        $this->assertFalse($file->isMime('image', 'jpeg'));
+        $file = factory(File::class)->make();
+        $filepath = factory(File::class)->states('exists')->make()->getPath();
 
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-        $this->assertTrue($file->isMime('image'));
-        $this->assertTrue($file->isMime('image', 'jpeg'));
+        $file->setBaseFile($filepath);
 
-        $this->assertFalse($file->isMime());
-        $this->assertFalse($file->isMime('image', 'gif'));
-        $this->assertFalse($file->isMime('plain', 'jpeg'));
-        $this->assertFalse($file->isMime('plain', 'text'));
+        $this->assertEquals($filepath, $file->getPath());
+        $this->assertInstanceOf(BaseFile::class, $file->getBaseFile());
     }
 
-    public function testIsExtension()
+    public function test_isDefined()
     {
-        $file = new File;
-        $this->assertFalse($file->isExtension());
-        $this->assertFalse($file->isExtension('jpeg'));
-        $this->assertFalse($file->isExtension(['jpeg', 'gif']));
+        $file = factory(File::class)->make();
+        $this->assertFalse($file->isDefined());
 
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-        $this->assertTrue($file->isExtension('jpg'));
-        $this->assertTrue($file->isExtension('JPG'));
-        $this->assertTrue($file->isExtension('Jpg'));
-        $this->assertTrue($file->isExtension(['jpg', 'gif']));
-
-        $this->assertFalse($file->isExtension());
-        $this->assertFalse($file->isExtension('gif'));
-        $this->assertFalse($file->isExtension(['jpeg', 'gif']));
+        $file = factory(File::class)->states('defined')->make();
+        $this->assertTrue($file->isDefined());
     }
 
-    public function testIsImage()
+    public function test_isExists()
     {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-        $this->assertTrue($file->isImage());
-        $this->assertFalse($file->isVideo());
-        $this->assertFalse($file->isAudio());
-        $this->assertFalse($file->isDocument());
+        $file = factory(File::class)->make();
+        $this->assertFalse($file->isExists());
+
+        $file = factory(File::class)->states('defined')->make();
+        $this->assertFalse($file->isExists());
+
+        $file = factory(File::class)->states('exists')->make();
+        $this->assertTrue($file->isExists());
     }
 
-    public function testIsVideo()
+    public function test_delete()
     {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test.mp4'));
-        $this->assertFalse($file->isImage());
-        $this->assertTrue($file->isVideo());
-        $this->assertFalse($file->isAudio());
-        $this->assertFalse($file->isDocument());
+        $file = factory(File::class)->states('exists')->create();
+        $filepath = $file->getPath();
+
+        $file->delete();
+
+        $this->assertNull($file->fresh());
+        $this->assertFileNotExists($filepath);
     }
 
-    public function testIsAudio()
+    public function test_delete_deletes_children()
     {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test.mp3'));
-        $this->assertFalse($file->isImage());
-        $this->assertFalse($file->isVideo());
-        $this->assertTrue($file->isAudio());
-        $this->assertFalse($file->isDocument());
+        $file = factory(File::class)->states('exists')->create();
+        $children = factory(File::class, 2)->states('exists')->create([
+            'parent_id' => $file->id,
+        ]);
+
+        $file->delete();
+
+        $this->assertNull($children[0]->fresh());
+        $this->assertNull($children[1]->fresh());
+        $this->assertNotNull($children[0]->getPath());
+        $this->assertNotNull($children[1]->getPath());
+        $this->assertFileNotExists($children[0]->getPath());
+        $this->assertFileNotExists($children[1]->getPath());
     }
 
-    public function testIsDocument()
+    public function test_remove()
     {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test.xlsx'));
-        $this->assertFalse($file->isImage());
-        $this->assertFalse($file->isVideo());
-        $this->assertFalse($file->isAudio());
-        $this->assertTrue($file->isDocument());
-    }
-
-    public function testResizeWithInvalidSize()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-
-        $this->assertFalse($file->resize(''));
-
-        $file->initWidthAndHeight();
-        $this->assertEquals($file->getWidth(), 400);
-        $this->assertEquals($file->getHeight(), 300);
-    }
-
-    public function testResizeFromUndefined()
-    {
-        $file = new File;
-
-        $this->assertFalse($file->resize('400x300'));
-    }
-
-    public function testResizeFromActualSize()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-
-        $this->assertTrue($file->resize('400x300'));
-
-        $file->initWidthAndHeight();
-        $this->assertEquals($file->getWidth(), 400);
-        $this->assertEquals($file->getHeight(), 300);
-    }
-
-    public function testResizeStatic()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-
-        $this->assertTrue($file->resize('300xx300'));
-
-        $file->initWidthAndHeight();
-        $this->assertEquals($file->getWidth(), 300);
-        $this->assertEquals($file->getHeight(), 300);
-    }
-
-    public function testResizeRegular()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-
-        $this->assertTrue($file->resize('100x100'));
-
-        $file->initWidthAndHeight();
-        $this->assertEquals($file->getWidth(), 100);
-        $this->assertEquals($file->getHeight(), 75);
-    }
-
-    public function testResizeEnlarge()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-
-        $this->assertTrue($file->resize('800x600-'));
-
-        $file->initWidthAndHeight();
-        $this->assertEquals($file->getWidth(), 400);
-        $this->assertEquals($file->getHeight(), 300);
-
-        $this->assertTrue($file->resize('800x600+'));
-
-        $file->initWidthAndHeight();
-        $this->assertEquals($file->getWidth(), 800);
-        $this->assertEquals($file->getHeight(), 600);
-    }
-
-    public function testCropFromUndefined()
-    {
-        $file = new File;
-        $this->assertFalse($file->crop(100, 100));
-    }
-
-    public function testCrop()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-
-        $crop = $file->copy($this->mocks('crop1.jpg'));
-        $this->assertTrue($crop->crop(100, 100));
-
-        $crop->initWidthAndHeight();
-        $this->assertEquals($crop->getWidth(), 100);
-        $this->assertEquals($crop->getHeight(), 100);
-
-        $crop = $file->copy($this->mocks('crop2.jpg'));
-        $this->assertTrue($crop->crop(100, 100, 300, 0));
-        $crop->initWidthAndHeight();
-        $this->assertEquals($crop->getWidth(), 100);
-        $this->assertEquals($crop->getHeight(), 100);
-
-        $crop = $file->copy($this->mocks('crop3.jpg'));
-        $this->assertTrue($crop->crop(100, 100, 300, 200));
-        $crop->initWidthAndHeight();
-        $this->assertEquals($crop->getWidth(), 100);
-        $this->assertEquals($crop->getHeight(), 100);
-
-        $crop = $file->copy($this->mocks('crop4.jpg'));
-        $this->assertTrue($crop->crop(100, 100, 0, 200));
-        $crop->initWidthAndHeight();
-        $this->assertEquals($crop->getWidth(), 100);
-        $this->assertEquals($crop->getHeight(), 100);
-    }
-
-    public function testDelete()
-    {
-        $parent = new File;
-        $parent->setBaseFile($parentPath = $this->mocks('test-400x300.jpg'));
-        $parent->save();
-
-        $child = new File;
-        $child->setBaseFile($childPath = $this->mocks('test-400x400.jpg'));
-        $child->parent()->associate($parent);
-        $child->save();
-
-        $this->assertFileExists($parentPath);
-        $this->assertFileExists($childPath);
-        $this->assertEquals(File::findMany($ids = [$parent->id, $child->id])->count(), 2);
-
-        $parent->delete();
-        $this->assertFileNotExists($parentPath);
-        $this->assertFileNotExists($childPath);
-        $this->assertEquals(File::findMany($ids)->count(), 0);
-    }
-
-    public function testRemove()
-    {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
-        $this->assertFileExists($filePath = $file->getPath());
+        $file = factory(File::class)->states('exists')->create();
+        $filepath = $file->getPath();
 
         $file->remove();
-        $this->assertFileNotExists($filePath);
+
+        $this->assertNotNull($file->fresh());
+        $this->assertFileNotExists($filepath);
     }
 
-    public function testCopy()
+    public function test_copy()
     {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
+        $file = factory(File::class)->states('exists')->make();
 
-        $this->assertFileNotExists($targetPath = $this->mocks('test-400x300-new.jpg'));
+        $newFile = $file->copy(config('upload.path').'/hello.world');
 
-        $copy = $file->copy($targetPath);
-        $this->assertFileExists($targetPath);
+        $this->assertFileExists($newFile->getPath());
+        $this->assertNotEquals($file->getPath(), $newFile->getPath());
+        $this->assertEquals($file->getSize(), $newFile->getSize());
     }
 
-    public function testMove()
+    public function test_move()
     {
+        $file = factory(File::class)->states('exists')->make();
+        $oldFilepath = $file->getPath();
 
-        $file = new File;
-        $file->setBaseFile($sourcePath = $this->mocks('test-400x300.jpg'));
+        $file->move($newFilepath = config('upload.path').'/hello.world');
 
-        $this->assertFileExists($sourcePath);
-        $this->assertFileNotExists($targetPath = $this->mocks('test-400x300-new.jpg'));
-
-        $file->move($targetPath);
-
-        $this->assertFileNotExists($sourcePath);
-        $this->assertFileExists($targetPath);
+        $this->assertFileNotExists($oldFilepath);
+        $this->assertFileExists($newFilepath);
+        $this->assertEquals($file->getPath(), $newFilepath);
     }
 
-    public function testImg()
+    public function test_img_returns_empty_string_if_file_is_not_an_image()
     {
-        $file = new File;
+        $file = factory(File::class)->make();
+
         $this->assertEmpty($file->img());
-
-        $file->setBaseFile(public_path('image.jpg'));
-        $this->assertStringStartsWith('<img ', $file->img());
-        $this->assertTrue(str_contains($file->img(), ['src="/image.jpg"', "src='/image.jpg'",]));
-        $this->assertTrue(str_contains($file->img(['some-attr' => 'some-value']), [
-            'some-attr="some-value"',
-            "some-attr='some-value'",
-        ]));
     }
 
-    public function testAttr()
+    public function test_img_returns_tag_if_file_defined()
     {
-        $file = new File;
-        $this->assertEmpty($file->attr());
+        $file = factory(File::class)->states('image')->make();
 
-        $file->setBaseFile(public_path('image.jpg'));
-
-        $this->assertTrue(str_contains($file->attr(), ['src="/image.jpg"', "src='/image.jpg'"]));
-        $this->assertTrue(str_contains($file->attr(['some-attr' => 'some-value']), [
-            'some-attr="some-value"',
-            "some-attr='some-value'",
-        ]));
+        $this->assertRegExp(":<img.*?src='".preg_quote($file->getUrl())."':", $file->img());
     }
 
-    public function testUpdateFileAttributes()
+    public function test_jsonSerialize()
     {
-        $file = new File;
-        $file->resize('100x100');
+        $file = factory(File::class)->states('defined')->make();
+
+        $this->assertArraySubset([
+            'url' => $file->getUrl(),
+            'is_image' => $file->isImage(),
+            'is_video' => $file->isVideo(),
+            'is_audio' => $file->isAudio(),
+            'is_document' => $file->isDocument(),
+            'children' => [],
+        ], $file->jsonSerialize());
     }
 
-    public function testIsActualSize()
+    public function test_jsonSerialize_includes_children()
     {
-        // @todo
-    }
-
-    public function testUploadedSettings()
-    {
-        $uploadedFile = new UploadedFile($this->mocks('test-400x300.jpg'), 'original.jpg', null, $filesize = filesize($this->mocks('test-400x300.jpg')), UPLOAD_ERR_OK);
-
-        $file = new File;
-        $file->setBaseFile($uploadedFile);
-
-        $this->assertEquals(array_get($file->settings, 'upload_info'), [
-            'extension' => $uploadedFile->clientExtension(),
-            'name' => $uploadedFile->getClientOriginalName(),
-            'type' => $uploadedFile->getClientMimeType(),
-            'size' => $uploadedFile->getClientSize(),
-            'error' => $uploadedFile->getError(),
+        $file = factory(File::class)->states('defined')->create();
+        $children = factory(File::class, 2)->states('defined')->create([
+            'parent_id' => $file->id,
         ]);
+
+        $this->assertCount(2, $file->jsonSerialize()['children']);
+        $this->assertArraySubset([
+            'children' => [
+                0 => ['url' => $children[0]->getUrl()],
+                1 => ['url' => $children[1]->getUrl()],
+            ],
+        ], $file->jsonSerialize());
     }
 
-    public function testSizeToKey()
+    public function test_sleep_excludes_baseFile_attribute()
     {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x300.jpg'));
+        $file = factory(File::class)->states('defined')->make();
+        $this->assertInstanceOf(BaseFile::class, $baseFile = $file->getBaseFile());
 
-        $resize = $file->getResize(['size' => '100x100']);
-        $this->assertEquals($resize->key, '100x100');
-
-        $resize = $file->getResize(['size' => '100xx100']);
-        $this->assertEquals($resize->key, '100xx100');
+        $this->assertArrayNotHasKey('baseFile', $file->__sleep());
     }
 
-    public function testSanitizePath()
+    public function test_setBaseFile_saves_uploadFile_attributes()
     {
-        $file = new File;
-        $file->setBaseFile($fullPath = base_path($relativePath = 'directory/image.jpg'));
-        $this->assertEquals($file->path, $fullPath);
+        $file = factory(File::class)->states('image')->make([
+            'ext' => 'jpg',
+        ]);
 
-        $file->setBaseFile(public_path($relativePath));
-        $this->assertEquals($file->path, $relativePath);
+        $file->setBaseFile(new UploadedFile($file->getPath(), $file->getBasename(), 'image/jpeg', 12345));
+
+        $this->assertArraySubset([
+            'upload_info' => [
+                'name' => $file->getBasename(),
+                'type' => 'image/jpeg',
+                'size' => 12345,
+            ],
+        ], $file->settings);
     }
 
-    public function testJsonSerialize()
+    public function test_attr_returns_attributes_for_image()
     {
-        $parent = new File;
-        $parent->setBaseFile($this->mocks('test-400x300.jpg'));
-        $parent->save();
+        $image = factory(File::class)->states('image')->make([
+            'width' => 200,
+            'height' => 100,
+        ]);
 
-        $child = new File;
-        $child->setBaseFile($this->mocks('test-400x400.jpg'));
-        $child->parent()->associate($parent);
-        $child->save();
-
-        $json = $parent->jsonSerialize();
-
-        $this->assertEquals(array_get($json, 'url'), $parent->getUrl());
-        $this->assertEquals(array_get($json, 'id'), $parent->getKey());
-
-        $this->assertEquals(array_get($json, 'children.0.url'), $child->getUrl());
-        $this->assertEquals(array_get($json, 'children.0.id'), $child->getKey());
+        $this->assertTrue(str_contains($image->attr(), "width='200'"));
+        $this->assertTrue(str_contains($image->attr(), "height='100'"));
+        $this->assertTrue(str_contains($image->attr(), "src='{$image->getUrl()}'"));
     }
 
-    public function testIsSizeActual()
+    public function test_attr_overrides_attributes()
     {
-        $file = new File;
-        $file->setBaseFile($this->mocks('test-400x400.jpg'));
+        $image = factory(File::class)->states('image')->make([
+            'width' => 200,
+            'height' => 100,
+        ]);
 
-        $this->assertTrue($file->isSizeActual('400x400'));
-        $this->assertTrue($file->isSizeActual('400xx400'));
-        $this->assertTrue($file->isSizeActual('800x800'));
-
-        $this->assertFalse($file->isSizeActual([]));
-        $this->assertFalse($file->isSizeActual('400x300'));
-        $this->assertFalse($file->isSizeActual('300x400'));
-        $this->assertFalse($file->isSizeActual('800x800+'));
+        $this->assertTrue(str_contains($image->attr(['width' => 50]), "width='50'"));
+        $this->assertTrue(str_contains($image->attr(['hello' => 'world']), "hello='world'"));
     }
 
-    private function mocks($path = '')
+    public function test_attr_returns_empty_string_for_undefined()
     {
-        return config('upload.path', __DIR__.'/../../../storage/app/public').($path ? '/'.$path : '');
+        $image = factory(File::class)->make();
+
+        $this->assertEquals('', $image->attr());
     }
 }

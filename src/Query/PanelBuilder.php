@@ -4,6 +4,7 @@ namespace Dukhanin\Panel\Query;
 
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 
 class PanelBuilder extends EloquentBuilder
@@ -24,13 +25,17 @@ class PanelBuilder extends EloquentBuilder
 
         $keys = is_array($keys) ? $keys : [$keys];
 
+        $keys = array_map(function ($key) {
+            return $key instanceof Model ? $key->getKey() : $key;
+        }, $keys);
+
         return $this->where(function ($query) use ($keys) {
             if (in_array(null, $keys)) {
                 $query->whereNull($this->parentKeyName);
             }
 
             $keys = array_filter($keys, function ($key) {
-                return $key !== null;
+                return ! is_null($key);
             });
 
             if ($keys) {
@@ -41,11 +46,11 @@ class PanelBuilder extends EloquentBuilder
         });
     }
 
-    public function nested($depthTo = null)
+    public function nested($parentId = null, $depthTo = null)
     {
         $this->modelsDepths = collect();
 
-        $currentLevelKeys = collect([$this->model->exists ? $this->model->getKey() : null]);
+        $currentLevelKeys = collect([$parentId ?? $this->model->getKey()]);
 
         $depth = 0;
 

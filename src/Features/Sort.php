@@ -17,11 +17,11 @@ trait Sort
 
     protected static function routesForSort(array $options = null)
     {
-        app('router')->get('sort-up/{id}', '\\'.static::class.'@sortUp')->name('sortUp');
+        app('router')->get('sort-up/{id}', static::routeAction('sortUp'))->name('sortUp');
 
-        app('router')->get('sort-down/{id}', '\\'.static::class.'@sortDown')->name('sortDown');
+        app('router')->get('sort-down/{id}', static::routeAction('sortDown'))->name('sortDown');
 
-        app('router')->post('sort-slice', '\\'.static::class.'@sortSlice')->name('sortSlice');
+        app('router')->post('sort-slice', static::routeAction('sortSlice'))->name('sortSlice');
     }
 
     public function initFeatureSort()
@@ -161,7 +161,7 @@ trait Sort
     {
         $index = 0;
 
-        $this->sortQuery()->select(['id'])->orderBy($this->sortKey, 'asc')->chunk(50, function ($models) use ($index) {
+        $this->sortQuery()->orderBy($this->sortKey, 'asc')->chunk(50, function ($models) use ($index) {
             foreach ($models as $model) {
                 $model->index = $index++;
                 $model->save();

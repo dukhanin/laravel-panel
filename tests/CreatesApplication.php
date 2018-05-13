@@ -2,7 +2,10 @@
 
 namespace Dukhanin\Panel\Tests;
 
-use Intervention\Image\ImageManager;
+use App\Exceptions\Handler;
+use Exception;
+use Intervention\Image\ImageServiceProviderLaravel5;
+use Illuminate\Support\Facades\File as Filesystem;
 
 trait CreatesApplication
 {
@@ -16,33 +19,26 @@ trait CreatesApplication
 
         $this->app->make('Illuminate\Contracts\Console\Kernel')->bootstrap();
 
+        $this->app->register(new ImageServiceProviderLaravel5($this->app));
+
         $this->loadConfig();
 
-        $this->configureInterventionImage();
-
-        $this->migrate();
+        $this->runMigrations();
 
         return $this->app;
     }
 
     protected function loadConfig()
     {
+        $this->app->setBasePath(realpath(__DIR__.'/../'));
+
         $this->app->config->set('files', require __DIR__.'/../config/files.php');
         $this->app->config->set('upload', require __DIR__.'/../config/upload.php');
-        $this->app->config->set('upload.path', __DIR__.'/../storage/app/public/tests');
-        $this->app->config->set('upload.url', '/tests');
+        $this->app->config->set('upload.path', realpath(__DIR__.'/../storage/app/public/storage'));
+        $this->app->config->set('upload.url', '/storage');
     }
 
-    protected function configureInterventionImage()
-    {
-        $this->app->config->set('image', require __DIR__.'/../../../intervention/image/src/config/config.php');
-
-        $this->app->singleton('image', function ($app) {
-            return new ImageManager($app['config']->get('image'));
-        });
-    }
-
-    protected function migrate()
+    protected function runMigrations()
     {
         $migrator = $this->app->make('migrator');
 
@@ -51,5 +47,35 @@ trait CreatesApplication
         }
 
         $migrator->run([__DIR__.'/../database/migrations']);
+    }
+
+    protected function disableExceptionHandling()
+    {
+        $this->app->instance(Handler::class, new class extends Handler
+        {
+            public function __construct()
+            {
+            }
+
+            public function report(Exception $exception)
+            {
+            }
+
+            public function render($request, Exception $exception)
+            {
+                throw $exception;
+            }
+        });
+    }
+
+    protected function tearDown()
+    {
+        foreach (Filesystem::glob(config('upload.path').'/*') as $path) {
+            if (is_dir($path)) {
+                Filesystem::deleteDirectory($path);
+            } else {
+                Filesystem::delete($path);
+            }
+        }
     }
 }

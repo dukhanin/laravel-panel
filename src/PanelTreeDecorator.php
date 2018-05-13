@@ -55,7 +55,7 @@ class PanelTreeDecorator extends PanelListDecorator
             return $keys;
         }
 
-        if ($keys = array_first(array_keys($columns->whereNot('depth', false)->all()))) {
+        if ($keys = array_first(array_keys($columns->where('depth', '!=', false)->all()))) {
             return $keys;
         }
 

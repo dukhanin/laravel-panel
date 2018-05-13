@@ -9,7 +9,7 @@ $icon = isset($icon) ? $icon : false;
 <div class="form-group @if( ! empty($errors) )  has-error @endif">
     <div class="col-lg-10">
 
-        <div class="checkbox">
+        <div class="checkbox{{ (array_key_exists('disabled', $field) && $field['disabled']) ? ' disabled' : '' }}">
             <input type="hidden" name="{{ $form->htmlInputName($field['key']) }}" value="0"/>
 
             <input type="checkbox"
@@ -17,6 +17,7 @@ $icon = isset($icon) ? $icon : false;
                    name="{{  $form->htmlInputName($field['key']) }}"
                    value="1"
                    @if( $form->inputValue($field['key']) ) checked @endif
+                   {!! html_tag_attr(array_except($field, ['key', 'type', 'label', 'id', 'name', 'value', 'checked', 'icon', 'state'])) !!}
             />
 
             <label class="@if( $state ) text-{{ $state }} checkbox-{{ $state }} @endif"

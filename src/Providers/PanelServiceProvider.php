@@ -2,21 +2,30 @@
 
 namespace Dukhanin\Panel\Providers;
 
+use Illuminate\Database\Eloquent\Factory;
 use Illuminate\Support\ServiceProvider;
+use Dukhanin\Panel\Files\FileManager;
+use Dukhanin\Panel\Files\UploadHelper;
 use Symfony\Component\Console\Input\ArgvInput;
 
 class PanelServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton('upload', function ($app) {
-            return new \Dukhanin\Panel\Files\UploadHelper;
-        });
+        $this->app->singleton(FileManager::class);
+
+        $this->app->singleton(UploadHelper::class);
+
+        $this->app->alias(UploadHelper::class, 'upload');
     }
 
     public function boot()
     {
         $this->mergeConfigFrom($this->path('config/files.php'), 'files');
+
+        $this->loadMigrationsFrom(__DIR__.'/../../database/migrations');
+
+        $this->app->make(Factory::class)->load(__DIR__.'/../../database/factories');
 
         $this->publishConfig();
 
@@ -71,6 +80,8 @@ class PanelServiceProvider extends ServiceProvider
         $this->publishes([
             $this->path('resources/lang/en/panel.php') => resource_path('lang/en/panel.php'),
             $this->path('resources/lang/ru/panel.php') => resource_path('lang/ru/panel.php'),
+            $this->path('resources/lang/en/files.php') => resource_path('lang/en/files.php'),
+            $this->path('resources/lang/ru/files.php') => resource_path('lang/ru/files.php'),
         ], 'lang');
     }
 

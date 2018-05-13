@@ -4,6 +4,8 @@ $id = 'file-'.mt_rand(1, 1000);
 
 $value = $form->inputValue($field['key']);
 
+$fileType = isset($fileType) ? (string) $fileType : 'default';
+
 $file =  $value instanceof \Dukhanin\Panel\Files\File ? $value : \Dukhanin\Panel\Files\File::find( intval($value) );
 $resizes = isset($resizes) ? (array) $resizes : [];
 $directory = isset($directory) ? strval($directory) : (method_exists($form, 'uploadDirectory') ? $form->uploadDirectory() : null);
@@ -41,7 +43,8 @@ $directory = isset($directory) ? strval($directory) : (method_exists($form, 'upl
     $(function () {
         var inputFiles = new panel.inputFiles('#{!! $id !!}', {
             resizes: {!! json_encode($resizes) !!},
-            directory: '{!! $directory !!}'
+            directory: '{!! $directory !!}',
+            fileType: '{!! $fileType !!}'
         });
 
         inputFiles.init();
