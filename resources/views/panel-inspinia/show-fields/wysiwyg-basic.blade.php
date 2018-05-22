@@ -3,7 +3,7 @@
 
     <div class="col-sm-10">
         <div class="value">
-            {!! $value = trim($show->value($field['key'])) ? : '&nbsp;'  !!}
+            {!! trim($show->value($field['key'])) ? : '&nbsp;'  !!}
         </div>
     </div>
 </div>

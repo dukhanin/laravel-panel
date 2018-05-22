@@ -35,7 +35,7 @@ $nullTitleSelected = count($value) == 1 && array_intersect($value, array(NULL, '
             <option
                     value="{{ $optionKey }}"
                     @if(! $nullTitleSelected && in_array($optionKey, $value)) selected @endif
-            >{{ preg_replace('/\s{2}/', '&nbsp;&nbsp;', $optionLabel) }}</option>
+            >{!! preg_replace('/\s{2}/', '&nbsp;&nbsp;', e($optionLabel)) !!}</option>
         @endforeach
         {!! html_tag_close('select') !!}
 
