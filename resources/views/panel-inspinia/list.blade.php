@@ -67,7 +67,7 @@
 
                                         @foreach($panel->moveToOptions() as $key => $label)
                                             <option value="{{$key}}">
-                                                &nbsp;&nbsp;&nbsp;&nbsp;{{preg_replace('/\s{2}/', '&nbsp;&nbsp;', $label)}}</option>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;{!! preg_replace('/\s{2}/', '&nbsp;&nbsp;', e($label)) !!}</option>
                                         @endforeach
                                     </select>
                                 @endif
@@ -79,7 +79,7 @@
                                             url="{!! $panel->urlTo('showList', ['category' => 'dummyCategory'], ['!page', '!category']) !!}">
                                         @foreach($panel->categories() as $categoryKey=>$category)
                                             <option value="{{$categoryKey}}"
-                                                    @if($categoryKey == $panel->category()) selected @endif>{{preg_replace('/\s{2}/', '&nbsp;&nbsp;', $category)}}</option>
+                                                    @if($categoryKey == $panel->category()) selected @endif>{!! preg_replace('/\s{2}/', '&nbsp;&nbsp;', e($category)) !!}</option>
                                         @endforeach
                                     </select>
                                 </div>
