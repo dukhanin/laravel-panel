@@ -174,7 +174,7 @@ class PanelForm
 
     public function onSuccess()
     {
-        $this->eventDispatcher()->fire('success', $this);
+        $this->eventDispatcher()->dispatch('success', $this);
 
         if ($this->model()) {
             $this->fillModel();
@@ -182,21 +182,21 @@ class PanelForm
             $this->saveModel();
         }
 
-        $this->eventDispatcher()->fire('succeed', $this);
+        $this->eventDispatcher()->dispatch('succeed', $this);
     }
 
     public function onSubmit()
     {
-        $this->eventDispatcher()->fire('submit', $this);
+        $this->eventDispatcher()->dispatch('submit', $this);
 
-        $this->eventDispatcher()->fire('submited', $this);
+        $this->eventDispatcher()->dispatch('submited', $this);
     }
 
     public function onFailure()
     {
-        $this->eventDispatcher()->fire('failure', $this);
+        $this->eventDispatcher()->dispatch('failure', $this);
 
-        $this->eventDispatcher()->fire('failed', $this);
+        $this->eventDispatcher()->dispatch('failed', $this);
 
         throw new ValidationException($this->validator());
     }
