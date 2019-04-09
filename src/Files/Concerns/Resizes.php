@@ -251,7 +251,11 @@ trait Resizes
                 'size' => null,
             ];
 
-        $options['key'] = $this->sizeToKey($options['key'] ?: $options['size']);
+        if (!$options['key']) {
+            $options['key'] = $this->sizeToKey($options['size']);
+        } elseif ($parsed = static::parseImageSize($options['key'])) {
+            $options['key'] = $this->sizeToKey($options['key']);
+        }
 
         $options['size'] = $this->resolveImageSize($options['size']);
 
